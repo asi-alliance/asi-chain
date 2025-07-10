@@ -13,14 +13,14 @@ We have launched a custom blockchain based on F1R3FLY with the following node ty
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Bootstrap           │──▶│ Validator 1          │─▶  | Validator 2          │
-│  (Genesis)           │     │                      │     |                      │
+│  Bootstrap  │ ──▶ │ Validator 1 │ ──▶ | Validator 2 │
+│  (Genesis)  │     │             │     |             │
 └─────────────┘     └─────────────┘     └─────────────┘
-       │                                 │                            │
-       ▼                                 ▼                            ▼
+       │                   │                   │
+       ▼                   ▼                   ▼
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│ Validator 3          │──▶│ Validator 4          │ ─▶│  Observer            │
-│                      │     │  (Extra)             │    │ (Read-only)          │
+│ Validator 3 │ ──▶ │ Validator 4 │ ──▶ │  Observer   │
+│             │     │  (Extra)    │     │ (Read-only) │
 └─────────────┘     └─────────────┘     └─────────────┘
 ```
 
