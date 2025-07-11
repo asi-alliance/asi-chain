@@ -4,8 +4,7 @@ This instruction describes how you will be able to connect to the ASI:Chain bloc
 Stay tuned for updates as we finalize external validator onboarding!
 
 ## System Requirements
-
-- **RAM**: 16GB minimum (Docker Desktop needs 8GB allocated on macOS)
+- **RAM**: 16GB minimum (Docker Desktop needs 16GB allocated on macOS)
 - **CPU**: 4+ cores
 - **Storage**: 50GB free
 - **Network**: Stable connection, no strict firewall
@@ -38,9 +37,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ## Setup
 Generate private and public keys
 
-```bash
-UNDER CONTRACTION
-```
+Use our wallet generator script to generate private and public keys for wallet
+This keys need for managing your wallet and validator node
+
+See more in [instruction](https://github.com/asi-alliance/asi-chain/blob/master/wallet-generator/README.md)
 
 Clone the repository
 
@@ -60,7 +60,7 @@ In `docker` directory edit `observer.yml` file
 You need line:
 `--bootstrap=rnode://138410b5da898936ec1dc13fafd4893950eb191b@$BOOTSTRAP_HOST?protocol=40400&discovery=40404`
 
-change it to `UNDER CONTRACTION BOOTSTRAP_HOST`
+change it to `OUR BOOTSTRAP_HOST IN UNDER CONTRACTION`
 
 Setup `.env` file in `/docker/` directory:
 ```bash
@@ -83,9 +83,15 @@ You should create own `validator.conf` in directory `./docker/conf`
 cd conf
 ```
 
-Create your own validator.conf using one of validator's config files as example
+Create your own `validator.conf` using one of validator's config files as example
 
-You just need to change some parameters in your validator.conf file:
+You just need to change some parameters in your `validator.conf` file:
+
+You need line:
+`--bootstrap=rnode://138410b5da898936ec1dc13fafd4893950eb191b@$BOOTSTRAP_HOST?protocol=40400&discovery=40404`
+
+change it to `OUR BOOTSTRAP_HOST IN UNDER CONTRACTION`
+
 ```
 api-server {
   ...
@@ -104,15 +110,34 @@ also setup all ports
 
 After everything have been set up - you are ready to launch validator and connect it to our network.
 
-1. You need launch observer node and connect to our shard.
+Create your own `validator.yaml` using one of validator's config files as example
+
+You just need to change some parameters in your `validator.yml` file:
+
+Rename $VALIDATOR_HOST to your validator name and path
+```
+...
+container_name: $VALIDATOR_HOST
+...
+...
+volumes:
+      - ./data/$VALIDATOR_HOST:/var/lib/rnode/
+      - ./conf/validator.conf:/var/lib/rnode/rnode.conf
+      - ./conf/validator.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./conf/validator.key.pem:/var/lib/rnode/node.key.pem
+      - ./conf/logback.xml:/var/lib/rnode/logback.xml
+...
+```
+
+1. You need launch validator node and connect to our shard.
 
 ```bash
-docker compose -f docker/observer.yml up
+docker compose -f validator.yml up -d
 ```
 
 Check logs of observer:
 ```bash
-docker compose -f observer.yml logs -f
+docker compose -f validator.yml logs -f
 ```
 
 You should see smth like this:
@@ -135,12 +160,6 @@ Go to terminal with CLI and launch command:
 cargo run -- bond-validator --private-key <YOU_PRIVATE_KEY>
 ```
 
-or
-
-```bash
-/target/release/node_cli bond-validator --private-key <YOU_PRIVATE_KEY>
-```
-
 You should see:
 ```
 Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.34s
@@ -160,7 +179,7 @@ Use example `validator.yaml` file from any validator
 
 Return to terminal where opened `f1r3fly/docker` directory and run command
 ```bash
-docker compose -f validator.yml up
+docker compose -f validator.yml up -d
 ```
 
 After a few minutes you should see in logs of your validator:
