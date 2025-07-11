@@ -38,7 +38,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 Generate private and public keys
 
 Use our wallet generator script to generate private and public keys for wallet
-This keys need for managing your wallet and validator node
+
+This keys are requirment for managing your wallet and validator node
 
 See more in [instruction](https://github.com/asi-alliance/asi-chain/blob/master/wallet-generator/README.md)
 
@@ -60,7 +61,7 @@ In `docker` directory edit `observer.yml` file
 You need line:
 `--bootstrap=rnode://138410b5da898936ec1dc13fafd4893950eb191b@$BOOTSTRAP_HOST?protocol=40400&discovery=40404`
 
-change it to `OUR BOOTSTRAP_HOST IN UNDER CONTRACTION`
+change it to our `BOOTSTRAP_HOST` but now it's under construction
 
 Setup `.env` file in `/docker/` directory:
 ```bash
@@ -90,7 +91,7 @@ You just need to change some parameters in your `validator.conf` file:
 You need line:
 `--bootstrap=rnode://138410b5da898936ec1dc13fafd4893950eb191b@$BOOTSTRAP_HOST?protocol=40400&discovery=40404`
 
-change it to `OUR BOOTSTRAP_HOST IN UNDER CONTRACTION`
+change it to our `BOOTSTRAP_HOST` but now it's under construction
 
 ```
 api-server {
@@ -110,7 +111,7 @@ also setup all ports
 
 After everything have been set up - you are ready to launch validator and connect it to our network.
 
-Create your own `validator.yaml` using one of validator's config files as example
+Create your own `validator.yml` using one of validator's config files as example
 
 You just need to change some parameters in your `validator.yml` file:
 
@@ -175,7 +176,7 @@ DeployId is: 3045022100b4a835effb0941fc755957878498b71f2ac761738f6346e7f8683f2a5
 
 3. After set bond you need wait for a few minutes and launch your validator
 
-Use example `validator.yaml` file from any validator
+Use example `validator.yml` file from any validator
 
 Return to terminal where opened `f1r3fly/docker` directory and run command
 ```bash
