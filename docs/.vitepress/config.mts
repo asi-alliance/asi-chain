@@ -6,6 +6,14 @@ export default defineConfig({
   themeConfig: {
     sidebar: [
       {
+        text: 'Quick Start',
+        collapsed: true,
+        items: [
+          { text: 'Quick Start Guide', link: '/quick-start/' },
+          { text: 'Common Errors', link: '/quick-start/troubleshooting/' },
+        ]
+      },
+      {
         text: 'Node Image',
         collapsed: true,
         items: [
@@ -19,14 +27,6 @@ export default defineConfig({
         items: [
           { text: 'YAML File Source', link: '/yaml-configuration/' },
           { text: 'YAML Parameters & Examples', link: '/yaml-configuration/parameters/' },
-        ]
-      },
-      {
-        text: 'Explorer',
-        collapsed: true,
-        items: [
-          { text: 'Explorer Overview', link: '/explorer/' },
-          { text: 'Explorer Field Guide', link: '/explorer/guide/' },
         ]
       },
       {
@@ -44,16 +44,6 @@ export default defineConfig({
           { text: 'Network Configuration Overview', link: '/network-configuration/' },
           { text: 'Network Parameters', link: '/network-configuration/parameters/' },
           { text: 'Network Topology', link: '/network-configuration/topology/' },
-        ]
-      },
-      {
-        text: 'Quick Start',
-        collapsed: true,
-        items: [
-          { text: 'Quick Start Guide', link: '/quick-start/' },
-          { text: 'Configuration Guide', link: '/quick-start/configuration/' },
-          { text: 'Message Exchange Scenarios', link: '/quick-start/messages/' },
-          { text: 'Common Errors', link: '/quick-start/troubleshooting/' },
         ]
       },
       {

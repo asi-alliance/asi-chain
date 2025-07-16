@@ -19,6 +19,16 @@ hero:
       link: https://github.com/asi-alliance/asi-chain
 
 features:
+  - icon: 🚀
+    title: Quick Start Guide
+    details: Step-by-step guide to connect to ASI:Chain network
+    link: /quick-start/
+
+  - icon: 🔍
+    title: Explorer
+    details: Learn about the blockchain explorer and how to interpret its data
+    link: http://44.198.8.24:5173/
+
   - icon: 🖥️
     title: Node Image Source
     details: Learn about the Docker image used for ASI:Chain nodes and how to obtain it
@@ -29,11 +39,6 @@ features:
     details: Understand YAML configuration files and their parameters
     link: /yaml-configuration/
     
-  - icon: 🔍
-    title: Explorer
-    details: Learn about the blockchain explorer and how to interpret its data
-    link: /explorer/
-    
   - icon: 🌐
     title: Network Access
     details: Explorer address and RPC endpoints for network interaction
@@ -43,11 +48,6 @@ features:
     title: Network Configuration
     details: Current network parameters, validator setup, and topology
     link: /network-configuration/
-    
-  - icon: 🚀
-    title: Quick Start Guide
-    details: Step-by-step guide to connect to ASI:Chain network
-    link: /quick-start/
     
   - icon: 🔧
     title: Troubleshooting
