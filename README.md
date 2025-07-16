@@ -30,32 +30,23 @@ Bootstrap Node
 bootstrap: `rnode://138410b5da898936ec1dc13fafd4893950eb191b@44.198.8.24?protocol=40400&discovery=40404`
 ```
 
-Validators
-
-```bash
-Validator #1: rnode://46412097b9895ccf786c84d8db3a91ec80762a8e@44.198.8.24?protocol=40410?discovery=40414
-Validator #2: rnode://992703c92b5ea37e27256a687cdb68d8b182badf@44.198.8.24?protocol=40420&discovery=40424
-Validator #3: rnode://67676f0954467aa3507f36fe801b8ec12370501@44.198.8.24?protocol=40430?discovery=40434
-Validator #4: rnode://73992afad92256bcc914836c40decccdbd0048d4@44.198.8.24?protocol=40440?discovery=40444
-```
-
 ## Explorer
 
 You can explore the chain via the testnet block explorer:
 Link to explorer: http://44.198.8.24:5173/
 
-⚠️ At the moment, access to validator nodes is only possible via direct access to the machine, under the validator user.
+⚠️ At the moment, access to validator nodes is only possible via this [guide](https://github.com/asi-alliance/asi-chain/blob/master/Become-ASI-Chain-Validator.md)
 
 ## External Validators Status
 
-External validator joining is currently disabled and under testing. The bonding and connection process from external machines is being validated. We're coordinating this work with the official F1R3FLY and MetaCycle teams.
+External validator joining is currently disabled and under testing. The connection with bonding process from external nodes is being validated. We're coordinating this work with the official F1R3FLY and MetaCycle teams.
 
 Once stable support for external validators is enabled, we will:
 
 * Update this documentation
 
-* Provide additional step-by-step instructions
+* Provide additional step-by-step instructions to full setup from your side
 
-* Open the network for bonding from outside nodes
+* Open the network for bonding from outside nodes with new generated wallets
 
 For advanced users who want to dive in early, we welcome your feedback. Stay tuned for updates as we finalize external validator onboarding!
