@@ -5,6 +5,10 @@ Testnet portal, detailed documentation and information about testnet is availabl
 
 https://asi-testnet.singularitynet.io/
 
+Please use the following credentials to access the developer portal:
+login = "website_user"
+password = "tYfrgWp4D5CyGM8U"
+
 ## Network Configuration
 
 We have launched a custom blockchain based on F1R3FLY with the following node types:
