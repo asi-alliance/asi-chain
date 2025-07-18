@@ -1,49 +1,93 @@
 # Message Exchange Scenarios
 
-This section outlines typical logs and message sequences that occur when connecting a new node to the ASI:Chain network.
+## Expected Node Connection Messages
 
-Use this as a checklist to verify successful node connection.
+When connecting a new node to the ASI:Chain network, monitor logs for these message patterns to verify successful connection.
 
----
+## Observer Node Messages
 
-## Observer Node Logs
+### Successful Connection Indicators
 
-### Expected Messages:
-
+**Genesis State Restoration**:
 ```
-Approved state for block Block #0 (b22fa19038...) with empty parents (supposedly genesis) is successfully restored.
-Received ForkChoiceTipRequest from rnode.validatorX
-Sending tips [b22fa19038...] to rnode.validatorX
-Peers: 4 or more
+rnode.readonly | Approved state for block Block #0 (b22fa19038...) with empty parents (supposedly genesis) is successfully restored.
 ```
+✅ **Meaning**: Node has successfully loaded the correct blockchain state
 
-- ✅ **Genesis state restored** — your node loaded the correct blockchain state
-- ✅ **Tip exchange started** — observer is syncing with validators
-- ✅ **Peers >= 4** — node is fully connected to the network
+**Peer Communication**:
+```
+rnode.readonly | Received ForkChoiceTipRequest from rnode.validator2
+rnode.readonly | Sending tips [b22fa19038...] to rnode.validator2
+rnode.readonly | Received ForkChoiceTipRequest from rnode.bootstrap
+rnode.readonly | Sending tips [b22fa19038...] to rnode.bootstrap
+```
+✅ **Meaning**: Observer is actively communicating with other network nodes
 
----
+**Network Connectivity**:
+```
+rnode.readonly | Received ForkChoiceTipRequest from rnode.validator1
+rnode.readonly | Sending tips [b22fa19038...] to rnode.validator1
+rnode.readonly | Received ForkChoiceTipRequest from rnode.validator3
+rnode.readonly | Sending tips [b22fa19038...] to rnode.validator3
+```
+✅ **Meaning**: Node is fully connected to the network
 
-## Validator Node Logs
+## Validator Node Messages
 
-### After Bonding:
+### After Bonding
+
+**Peer Discovery**:
 ```
 Creating new channel to peer rnode://...
 Responded to protocol handshake request from rnode://...
+```
+✅ **Meaning**: Validator found and connected to other peers
+
+**Network Participation**:
+```
 Peers: 4 or more
-``` 
+```
+✅ **Meaning**: Validator has sufficient peer connections
 
-- ✅ **Channel creation** — validator found other peers
-- ✅ **Handshake** — successful peer registration
-- ✅ **Bonded status visible in explorer** (external check)
+## Success Checklist
 
----
+Monitor logs for these indicators:
 
-## Tips
+1. **Genesis State**: ✅ "Approved state for block Block #0... successfully restored"
+2. **Tip Exchange**: ✅ "ForkChoiceTipRequest" and "Sending tips" messages
+3. **Peer Count**: ✅ "Peers: 4 or more"
+4. **Network Handshake**: ✅ "Responded to protocol handshake request"
 
-- If `Peers` remains below 2, check firewall/NAT issues
-- Missing `ForkChoiceTipRequest` logs indicate sync failure
-- Ensure `bootstrap` address is reachable and not mistyped
+## Troubleshooting
 
----
+### Missing Messages
 
-Continue to [Common Errors](/quick-start/troubleshooting/) if your node doesn’t appear to connect properly.
+**If "Peers" remains below 2**:
+- Check firewall/NAT configuration
+- Verify bootstrap node connectivity
+- Confirm port accessibility
+
+**If no "ForkChoiceTipRequest" messages**:
+- Indicates synchronization failure
+- Check network connectivity
+- Verify configuration parameters
+
+**If "genesis" messages missing**:
+- Node may not be properly connecting to network
+- Verify bootstrap configuration
+- Check network ID settings
+
+## Connection Verification
+
+Use these commands to verify successful connection:
+
+```bash
+# Check container logs
+sudo docker logs validator -f --tail 20
+
+# Look for success patterns
+sudo docker logs validator 2>&1 | grep -E "(Approved state|ForkChoiceTipRequest|Sending tips)"
+
+# Monitor peer connections
+sudo docker logs validator 2>&1 | grep "Peers:"
+```

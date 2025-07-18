@@ -1,52 +1,120 @@
-# Simple Smart Contract
+# Smart Contract Deployment
 
-This guide shows how to deploy a basic Rholang smart contract to the ASI:Chain testnet.
+## Overview
+
+This guide shows how to deploy Rholang smart contracts to the ASI:Chain testnet using your validator node.
 
 ## Requirements
 
-- A validator node running and accessible
-- A `.rho` contract file (e.g. `stdout.rho`)
-- CLI available with `cargo run` or compiled binary
+- Running validator node with API access
+- Valid private key for transaction signing
+- Node synchronized with the network
 
----
+## Basic Contract Example
 
-## Example Contract
+### Hello World Contract
 
-The following example writes to the node’s standard output:
 ```rholang
 new stdout(`rho:io:stdout`) in {
   stdout!("Hello, ASI:Chain!")
 }
 ```
 
-Save this to `stdout.rho` or use the example file in `rholang/examples/`.
+## Deployment Process
 
----
+### Step 1: Deploy Contract
 
-## Deploy Command
+Use the RNode CLI to deploy your contract:
 
-Use the CLI to deploy the contract:
 ```bash
-cargo run -- deploy -f ../rholang/examples/stdout.rho -p 40412
+sudo docker compose -f "validator.yml" exec "validator" /opt/docker/bin/rnode \
+    --grpc-host localhost \
+    --grpc-port "40402" \
+    deploy \
+    --private-key "<YOUR-PRIVATE-KEY>" \
+    --phlo-limit 10000000 \
+    --phlo-price 1 \
+    --valid-after-block-number 0 \
+    --shard-id root \
+    "/opt/docker/examples/stdout.rho"
 ```
 
-- `-f` — path to the `.rho` contract
-- `-p` — port of the target validator node
+### Parameters Explanation
 
----
+- `--grpc-host localhost`: Connect to local node
+- `--grpc-port "40402"`: Internal gRPC port
+- `--private-key`: Your validator's private key
+- `--phlo-limit`: Maximum computational resources (gas limit)
+- `--phlo-price`: Price per computational unit (gas price) 
+- `--valid-after-block-number`: Minimum block for execution
+- `--shard-id root`: Target shard for deployment
 
-## Verifying Execution
+### Step 2: Verify Deployment
 
-Check the logs of your validator node:
+**Expected Success Response**:
+```
+Response: Success!
+DeployId is: 304402206c435cee64d97d123f0c1b4552b3568698e64096a29fb50ec38f11a6c5f7758b022002e05322156bf5ed878ce20cef072cd8faf9e8bb15b58131f2fee06053b5d1c5
+```
+
+### Step 3: Propose Block
+
+After deployment, propose a block to include your contract:
+
 ```bash
-docker compose -f validator.yml logs -f
+sudo docker compose -f "validator.yml" exec "validator" /opt/docker/bin/rnode \
+    --grpc-host localhost \
+    --grpc-port "40402" \
+    propose
 ```
 
-Look for output similar to:
+**Expected Success Response**:
 ```
-Hello, ASI:Chain!
+Response: Success! Block 4dda69c62838e18abd3c131818e60110ac3caccc66ec05792cedb327a3bafff7 created and added.
 ```
 
----
+## Verify Execution
 
-For more interaction options, return to [Interaction Scenarios](/interaction-examples/).
+### Check Logs
+
+Monitor validator logs for contract execution:
+
+```bash
+sudo docker logs validator -f
+```
+
+Look for your contract output (e.g., "Hello, ASI:Chain!")
+
+### Alternative: Custom Term Deployment
+
+You can also deploy custom Rholang code directly:
+
+```bash
+sudo docker compose -f "validator.yml" exec "validator" /opt/docker/bin/rnode \
+    --grpc-host localhost \
+    --grpc-port "40402" \
+    deploy \
+    --private-key "<YOUR-PRIVATE-KEY>" \
+    --phlo-limit 10000000 \
+    --phlo-price 1 \
+    --valid-after-block-number 0 \
+    --shard-id root \
+    --term 'new stdout(`rho:io:stdout`) in { stdout!("Custom message") }'
+```
+
+## Available Examples
+
+The node container includes example contracts in `/opt/docker/examples/`:
+- `stdout.rho` - Simple output example
+
+## Troubleshooting
+
+**Deployment Fails**:
+- Verify private key is correct
+- Check node synchronization status
+- Ensure sufficient phlo limit
+
+**No Output in Logs**:
+- Wait for block proposal and finalization
+- Check if contract uses stdout correctly
+- Verify contract syntax

@@ -10,6 +10,7 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: 'Quick Start Guide', link: '/quick-start/' },
+          { text: 'Message Exchange Scenarios', link: '/quick-start/messages/' },
           { text: 'Common Errors', link: '/quick-start/troubleshooting/' },
         ]
       },
