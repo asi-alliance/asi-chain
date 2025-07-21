@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="15" fill="#0D1012" stroke="#93E27C" stroke-width="1"/>
+  
+  <!-- ASI Alliance simplified logo -->
+  <!-- Center circle -->
+  <circle cx="16" cy="16" r="3" fill="#93E27C"/>
+  
+  <!-- Top circles -->
+  <circle cx="10" cy="9" r="3" fill="#93E27C"/>
+  <circle cx="22" cy="9" r="3" fill="#93E27C"/>
+  
+  <!-- Bottom circles -->
+  <circle cx="10" cy="23" r="3" fill="#93E27C"/>
+  <circle cx="22" cy="23" r="3" fill="#93E27C"/>
+  
+  <!-- Connecting curves -->
+  <path d="M 10 12 Q 16 14 22 12" fill="none" stroke="#93E27C" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 10 20 Q 16 18 22 20" fill="none" stroke="#93E27C" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 13 9 Q 16 12 19 9" fill="none" stroke="#93E27C" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 13 23 Q 16 20 19 23" fill="none" stroke="#93E27C" stroke-width="2" stroke-linecap="round"/>
+</svg>
