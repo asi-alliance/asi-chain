@@ -1,0 +1,23 @@
+{
+  "name": "test-dapp-asi-chain",
+  "version": "1.0.0",
+  "description": "Test dApp for ASI Chain WalletConnect Integration",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:gh": "GITHUB_PAGES=true vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build:gh",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "@walletconnect/sign-client": "^2.17.3",
+    "@walletconnect/types": "^2.17.3",
+    "@walletconnect/utils": "^2.17.3",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "vite": "^5.0.0"
+  }
+}

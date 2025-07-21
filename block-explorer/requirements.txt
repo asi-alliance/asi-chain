@@ -1,0 +1,11 @@
+# ASI-Chain Block Explorer Dependencies
+
+# Core dependencies
+flask>=2.0.0
+docker>=5.0.0
+
+# Optional dependencies for development
+# Uncomment if needed:
+# pytest>=7.0.0
+# black>=22.0.0
+# flake8>=4.0.0

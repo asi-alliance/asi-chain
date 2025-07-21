@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Rounded square background -->
+  <rect width="32" height="32" rx="6" fill="#0D1012"/>
+  
+  <!-- Simplified ASI symbol -->
+  <!-- Letter A shape with nodes -->
+  <g transform="translate(16, 16)">
+    <!-- Main triangle -->
+    <path d="M 0 -8 L -6 6 L 6 6 Z" fill="none" stroke="#93E27C" stroke-width="2.5" stroke-linejoin="round"/>
+    
+    <!-- Node circles -->
+    <circle cx="0" cy="-8" r="2.5" fill="#93E27C"/>
+    <circle cx="-6" cy="6" r="2.5" fill="#93E27C"/>
+    <circle cx="6" cy="6" r="2.5" fill="#93E27C"/>
+    
+    <!-- Center horizontal bar -->
+    <line x1="-3" y1="-1" x2="3" y2="-1" stroke="#93E27C" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

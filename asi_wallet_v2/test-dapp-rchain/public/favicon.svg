@@ -1,0 +1,25 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="32" height="32" rx="6" fill="#0d1012"/>
+  
+  <!-- ASI Chain Logo - Interconnected nodes -->
+  <g transform="translate(4, 4)">
+    <!-- Central node -->
+    <circle cx="12" cy="12" r="3" fill="#93e27c"/>
+    
+    <!-- Surrounding nodes -->
+    <circle cx="6" cy="6" r="2.5" fill="#33e4ff"/>
+    <circle cx="18" cy="6" r="2.5" fill="#33e4ff"/>
+    <circle cx="6" cy="18" r="2.5" fill="#33e4ff"/>
+    <circle cx="18" cy="18" r="2.5" fill="#33e4ff"/>
+    
+    <!-- Connections -->
+    <path d="M12 12L6 6M12 12L18 6M12 12L6 18M12 12L18 18" stroke="#93e27c" stroke-width="1.5" opacity="0.6"/>
+    
+    <!-- Outer ring segments -->
+    <path d="M12 3A9 9 0 0 1 21 12" stroke="#93e27c" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M21 12A9 9 0 0 1 12 21" stroke="#33e4ff" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M12 21A9 9 0 0 1 3 12" stroke="#93e27c" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M3 12A9 9 0 0 1 12 3" stroke="#33e4ff" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

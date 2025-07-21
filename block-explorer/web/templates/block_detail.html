@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Details - ASI-Chain Explorer</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon-nodes.svg') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon-nodes.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="description" content="Detailed information about block {{ block_hash[:10] }}... on the ASI-Chain network.">
+</head>
+<body>
+    <!-- Accessibility skip link -->
+    <a href="#main" class="skip-link">Skip to main content</a>
+    
+    <div class="container">
+        <header>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; gap: 2rem;">
+                    <img src="{{ url_for('static', filename='asi-icon.png') }}" alt="ASI Alliance" class="asi-logo" style="height: 45px; width: auto;">
+                    <h1 style="margin-bottom: 0;">ASI Block Explorer</h1>
+                </div>
+                <div style="display: flex; gap: 1.5rem; align-items: center;">
+                    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <span class="theme-icon-light">☀️</span>
+                        <span class="theme-icon-dark">🌙</span>
+                    </button>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <span class="text-muted">Network:</span>
+                        <span class="text-success">● Connected</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav style="margin-bottom: 2rem;">
+                <a href="/" class="btn btn-secondary">← Back to Blocks</a>
+            </nav>
+        </header>
+        
+        <main id="main" class="fade-in">
+            <!-- Block Summary Cards -->
+            <div id="block-summary" style="display: none; margin-bottom: 2rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div class="asi-card glass">
+                        <p class="text-muted" style="margin-bottom: 0.5rem;">Block Number</p>
+                        <h3 class="text-success" id="summary-block-number" style="margin: 0;">-</h3>
+                    </div>
+                    <div class="asi-card glass">
+                        <p class="text-muted" style="margin-bottom: 0.5rem;">Proposer</p>
+                        <h3 id="summary-proposer" style="margin: 0;">-</h3>
+                    </div>
+                    <div class="asi-card glass">
+                        <p class="text-muted" style="margin-bottom: 0.5rem;">Time</p>
+                        <h3 id="summary-time" style="margin: 0;">-</h3>
+                    </div>
+                    <div class="asi-card glass">
+                        <p class="text-muted" style="margin-bottom: 0.5rem;">Status</p>
+                        <h3 class="text-success" style="margin: 0;">✓ Finalized</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <section class="asi-card">
+                <h2 style="margin-bottom: 1.5rem;">Block Details</h2>
+                <div id="loading-state" class="text-center">
+                    <span class="loading"></span>
+                    <p class="text-muted mt-2">Loading block details...</p>
+                </div>
+                <div id="block-details" style="display: none;">
+                    <!-- Block details will be populated here -->
+                </div>
+                <div id="error-state" class="status-message error" style="display: none;">
+                    <strong>Error:</strong> <span id="error-message"></span>
+                </div>
+            </section>
+            
+            <section class="asi-card mt-3" id="validators-section" style="display: none;">
+                <h2>Active Validators</h2>
+                <p class="text-muted mb-2"><span id="validator-count">0</span> validators were active for this block</p>
+                <table id="validators-table">
+                    <thead>
+                        <tr>
+                            <th>Validator</th>
+                            <th>Public Key</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Validators will be populated here -->
+                    </tbody>
+                </table>
+            </section>
+            
+            <section class="asi-card mt-3" id="deployments-section" style="display: none;">
+                <h2>Transactions / Deployments</h2>
+                <p class="text-muted mb-2"><span id="deployment-count">0</span> deployments in this block</p>
+                <div id="deployments-list">
+                    <!-- Deployments will be populated here -->
+                </div>
+            </section>
+        </main>
+        
+        <footer class="footer">
+            <p>© 2025 ASI-Chain • <a href="https://github.com/F1R3FLY-io/f1r3fly" target="_blank" rel="noopener">GitHub</a></p>
+        </footer>
+    </div>
+
+    <script>
+        const BLOCK_HASH = "{{ block_hash }}";
+        
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+        
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Smooth transition
+            document.documentElement.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+            setTimeout(() => {
+                document.documentElement.style.transition = '';
+            }, 300);
+        }
+        
+        // Initialize theme on page load
+        initTheme();
+        
+        // Known validators mapping
+        const KNOWN_VALIDATORS = {
+            '04ffc016579a68050d655d55df4e09f04605164543e257c8e6df10361e6068a5336588e9b355ea859c5ab4285a5ef0efdf62bc28b80320ce99e26bb1607b3ad93d': 'Bootstrap',
+            '0457febafcc25dd34ca5e5c025cd445f60e5ea6918931a54eb8c3a204f51760248090b0c757c2bdad7b8c4dca757e109f8ef64737d90712724c8216c94b4ae661c': 'Validator 1',
+            '04837a4cff833e3157e3135d7b40b8e1f33c6e6b5a4342b9fc784230ca4c4f9d356f258debef56ad4984726d6ab3e7709e1632ef079b4bcd653db00b68b2df065f': 'Validator 2',
+            '04fa70d7be5eb750e0915c0f6d19e7085d18bb1c22d030feb2a877ca2cd226d04438aa819359c56c720142fbc66e9da03a5ab960a3d8b75363a226b7c800f60420': 'Validator 3'
+        };
+        
+        // Format timestamp to relative time
+        function formatRelativeTime(dateString) {
+            const date = new Date(dateString.replace(',', '.'));
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return `${seconds} seconds ago`;
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            return `${Math.floor(seconds / 86400)} days ago`;
+        }
+        
+        // Format REV amount with smart decimal places
+        function formatRevAmount(amount) {
+            // If it's a whole number, show no decimals
+            if (amount % 1 === 0) {
+                return amount.toString();
+            }
+            // If it's >= 1, show up to 4 decimal places, removing trailing zeros
+            else if (amount >= 1) {
+                return parseFloat(amount.toFixed(4)).toString();
+            }
+            // If it's < 1, show up to 6 decimal places, removing trailing zeros
+            else if (amount >= 0.000001) {
+                return parseFloat(amount.toFixed(6)).toString();
+            }
+            // For very small amounts, use scientific notation
+            else {
+                return amount.toExponential(3);
+            }
+        }
+        
+        // Show/hide UI states
+        function showLoading() {
+            document.getElementById('loading-state').style.display = 'block';
+            document.getElementById('block-details').style.display = 'none';
+            document.getElementById('error-state').style.display = 'none';
+        }
+        
+        function showContent() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('block-details').style.display = 'block';
+            document.getElementById('block-summary').style.display = 'block';
+            document.getElementById('error-state').style.display = 'none';
+        }
+        
+        function showError(message) {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('block-details').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        function renderDetails(data) {
+            const detailsDiv = document.getElementById('block-details');
+            const block = data.block;
+            const relativeTime = formatRelativeTime(block.created_at);
+            const validatorName = KNOWN_VALIDATORS[block.proposer_pub_key] || 'Unknown';
+            
+            // Update summary cards
+            document.getElementById('summary-block-number').textContent = block.block_number.toLocaleString();
+            document.getElementById('summary-proposer').textContent = validatorName;
+            document.getElementById('summary-time').textContent = relativeTime;
+            
+            detailsDiv.innerHTML = `
+                <dl>
+                    <dt>Block Number</dt>
+                    <dd class="block-number">${block.block_number.toLocaleString()}</dd>
+                    
+                    <dt>Block Hash</dt>
+                    <dd class="mono">${block.block_hash}</dd>
+                    
+                    <dt>Parent Hash</dt>
+                    <dd class="mono">${block.parent_hash}</dd>
+                    
+                    <dt>State Hash</dt>
+                    <dd class="mono">${block.state_hash || 'N/A'}</dd>
+                    
+                    <dt>Content Hash</dt>
+                    <dd class="mono">${block.content_hash || 'N/A'}</dd>
+                    
+                    <dt>Proposer</dt>
+                    <dd>
+                        <span class="text-muted">${validatorName}</span>
+                        <br>
+                        <span class="mono" style="font-size: 11px;">${block.proposer_pub_key}</span>
+                    </dd>
+                    
+                    <dt>Timestamp</dt>
+                    <dd>${new Date(block.created_at.replace(',', '.')).toLocaleString()} <span class="text-muted">(${relativeTime})</span></dd>
+                </dl>
+            `;
+
+            // Handle validators
+            if (data.active_validators && data.active_validators.length > 0) {
+                document.getElementById('validators-section').style.display = 'block';
+                document.getElementById('validator-count').textContent = data.active_validators.length;
+                
+                const validatorsBody = document.querySelector('#validators-table tbody');
+                validatorsBody.innerHTML = '';
+                
+                data.active_validators.forEach(validator => {
+                    const row = document.createElement('tr');
+                    const validatorName = KNOWN_VALIDATORS[validator.public_key] || 'Unknown Validator';
+                    
+                    row.innerHTML = `
+                        <td class="text-muted">${validatorName}</td>
+                        <td class="code" style="font-size: 11px;">${validator.public_key}</td>
+                    `;
+                    validatorsBody.appendChild(row);
+                });
+            } else {
+                document.getElementById('validators-section').style.display = 'none';
+            }
+            
+            // Handle deployments/transactions
+            if (data.deployments && data.deployments.length > 0) {
+                document.getElementById('deployments-section').style.display = 'block';
+                document.getElementById('deployment-count').textContent = data.deployments.length;
+                
+                const deploymentsList = document.getElementById('deployments-list');
+                deploymentsList.innerHTML = '';
+                
+                // Separate transfers from other deployments
+                const transfers = [];
+                const otherDeployments = [];
+                
+                data.deployments.forEach((deploy) => {
+                    if (deploy.term.includes('RevVault') && deploy.term.includes('transfer')) {
+                        // Parse REV transfer
+                        const term = deploy.term.replace(/\\n/g, ' ');
+                        const matchPattern = /match\s*\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*(\d+)\s*\)/;
+                        const match = term.match(matchPattern);
+                        
+                        if (match) {
+                            transfers.push({
+                                ...deploy,
+                                from_address: match[1],
+                                to_address: match[2],
+                                amount: parseInt(match[3]),
+                                rev_amount: parseInt(match[3]) / 1000000000
+                            });
+                        } else {
+                            otherDeployments.push(deploy);
+                        }
+                    } else {
+                        otherDeployments.push(deploy);
+                    }
+                });
+                
+                // Display transfers first
+                if (transfers.length > 0) {
+                    const transfersDiv = document.createElement('div');
+                    transfersDiv.innerHTML = '<h3 style="color: var(--asi-lime); margin-bottom: 1rem;">REV Transfers</h3>';
+                    
+                    transfers.forEach((transfer) => {
+                        const transferItem = document.createElement('div');
+                        transferItem.className = 'deployment-item';
+                        transferItem.style.marginBottom = '1.5rem';
+                        
+                        transferItem.innerHTML = `
+                            <div style="padding: 1rem; background: var(--charcoal-500); border-radius: 8px; border: 1px solid var(--asi-lime);">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+                                    <h4 style="margin: 0; color: var(--asi-lime); font-size: 1.1rem;">REV Transfer</h4>
+                                    <span class="${transfer.errored ? 'text-danger' : 'text-success'}" style="font-size: 14px;">
+                                        ${transfer.errored ? '✕ Failed' : '✓ Success'}
+                                    </span>
+                                </div>
+                                
+                                <dl style="margin: 0; display: grid; grid-template-columns: 120px 1fr; gap: 0.5rem; align-items: start;">
+                                    <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">From</dt>
+                                    <dd class="mono" style="font-size: 12px; margin: 0; word-break: break-all;">${transfer.from_address}</dd>
+                                    
+                                    <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">To</dt>
+                                    <dd class="mono" style="font-size: 12px; margin: 0; word-break: break-all;">${transfer.to_address}</dd>
+                                    
+                                    <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Amount</dt>
+                                    <dd style="font-size: 14px; margin: 0; color: var(--asi-lime); font-weight: 600;">
+                                        ${formatRevAmount(transfer.rev_amount)} REV
+                                    </dd>
+                                    
+                                    <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Deploy ID</dt>
+                                    <dd class="mono" style="font-size: 12px; margin: 0; word-break: break-all;">${transfer.deploy_id}</dd>
+                                    
+                                    <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Phlo Cost</dt>
+                                    <dd style="font-size: 13px; margin: 0;">
+                                        ${transfer.phlo_cost.toLocaleString()} / ${transfer.phlo_limit.toLocaleString()} 
+                                        <span class="text-muted">(${transfer.phlo_price} dust/phlo)</span>
+                                    </dd>
+                                    
+                                    ${transfer.errored && transfer.error_message ? `
+                                    <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Error</dt>
+                                    <dd class="text-danger" style="font-size: 13px; margin: 0;">${transfer.error_message}</dd>
+                                    ` : ''}
+                                </dl>
+                            </div>
+                        `;
+                        
+                        transfersDiv.appendChild(transferItem);
+                    });
+                    
+                    deploymentsList.appendChild(transfersDiv);
+                }
+                
+                // Display other deployments
+                if (otherDeployments.length > 0) {
+                    const otherDiv = document.createElement('div');
+                    if (transfers.length > 0) {
+                        otherDiv.innerHTML = '<h3 style="color: var(--text-secondary); margin: 2rem 0 1rem 0;">Other Deployments</h3>';
+                    }
+                    
+                    otherDeployments.forEach((deploy, index) => {
+                    const deployDiv = document.createElement('div');
+                    deployDiv.className = 'deployment-item';
+                    deployDiv.style.marginBottom = '1.5rem';
+                    
+                    // Parse the Rholang term to identify transaction type
+                    let transactionType = 'Contract Deployment';
+                    let details = '';
+                    
+                    if (deploy.term.includes('transfer')) {
+                        transactionType = 'REV Transfer';
+                        // Try to extract transfer details
+                        const amountMatch = deploy.term.match(/amount[:\s]+(\d+)/);
+                        const toMatch = deploy.term.match(/to[:\s]+"([^"]+)"/);
+                        if (amountMatch) details += `Amount: ${amountMatch[1]} REV`;
+                        if (toMatch) details += ` To: ${toMatch[1].substring(0, 20)}...`;
+                    } else if (deploy.term.includes('validator') || deploy.term.includes('bond')) {
+                        transactionType = 'Validator Operation';
+                    } else if (deploy.term.includes('ch_')) {
+                        transactionType = 'Channel Operation';
+                    }
+                    
+                    deployDiv.innerHTML = `
+                        <div style="padding: 1rem; background: var(--charcoal-500); border-radius: 8px; border: 1px solid var(--border-color);">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+                                <h4 style="margin: 0; color: var(--asi-lime); font-size: 1.1rem;">${transactionType}</h4>
+                                <span class="${deploy.errored ? 'text-danger' : 'text-success'}" style="font-size: 14px;">
+                                    ${deploy.errored ? '✕ Failed' : '✓ Success'}
+                                </span>
+                            </div>
+                            
+                            <dl style="margin: 0; display: grid; grid-template-columns: 120px 1fr; gap: 0.5rem; align-items: start;">
+                                <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Deploy ID</dt>
+                                <dd class="mono" style="font-size: 12px; margin: 0; word-break: break-all;">${deploy.deploy_id}</dd>
+                                
+                                <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Deployer</dt>
+                                <dd class="mono" style="font-size: 12px; margin: 0; word-break: break-all;">${deploy.deployer}</dd>
+                                
+                                ${details ? `
+                                <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Details</dt>
+                                <dd style="font-size: 13px; margin: 0;">${details}</dd>
+                                ` : ''}
+                                
+                                <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Phlo Cost</dt>
+                                <dd style="font-size: 13px; margin: 0;">
+                                    ${deploy.phlo_cost.toLocaleString()} / ${deploy.phlo_limit.toLocaleString()} 
+                                    <span class="text-muted">(${deploy.phlo_price} dust/phlo)</span>
+                                </dd>
+                                
+                                ${deploy.errored && deploy.error_message ? `
+                                <dt style="font-size: 13px; color: var(--text-tertiary); margin: 0;">Error</dt>
+                                <dd class="text-danger" style="font-size: 13px; margin: 0;">${deploy.error_message}</dd>
+                                ` : ''}
+                            </dl>
+                            
+                            <details style="margin-top: 0.75rem;">
+                                <summary style="cursor: pointer; color: var(--asi-pulse-blue); font-size: 14px; padding: 0.5rem 0;">View Rholang Code</summary>
+                                <pre style="margin: 0.5rem 0 0 0; padding: 1rem; background: var(--deep-space); border-radius: 6px; font-size: 13px; line-height: 1.6; border: 1px solid var(--border-color); max-height: 500px; overflow: auto;"><code id="rholang-${index}" style="color: var(--asi-lime); font-family: 'Fira Mono', 'SF Mono', Monaco, monospace; display: block;">${deploy.term}</code></pre>
+                            </details>
+                        </div>
+                    `;
+                    
+                        otherDiv.appendChild(deployDiv);
+                    });
+                    
+                    deploymentsList.appendChild(otherDiv);
+                }
+                
+                // Format Rholang code after adding to DOM for non-transfers
+                otherDeployments.forEach((deploy, index) => {
+                    const codeElement = document.getElementById(`rholang-${index}`);
+                    if (codeElement) {
+                        // Unescape the JSON string
+                        let formattedCode = deploy.term
+                            .replace(/\\"/g, '"')
+                            .replace(/\\\\/g, '\\');
+                        
+                        // Replace \n with actual newlines for proper display
+                        const properlyFormatted = formattedCode
+                            .replace(/\\n/g, '\n')
+                            .replace(/\\t/g, '  '); // Replace tabs with spaces
+                        
+                        // Display the code with proper formatting
+                        codeElement.textContent = properlyFormatted;
+                        
+                        // Add CSS class for code styling
+                        codeElement.style.whiteSpace = 'pre-wrap';
+                        codeElement.style.wordBreak = 'break-word';
+                        codeElement.style.overflowX = 'auto';
+                        codeElement.style.maxHeight = '600px';
+                        codeElement.style.overflowY = 'auto';
+                    }
+                });
+            } else {
+                document.getElementById('deployments-section').style.display = 'none';
+            }
+            
+            showContent();
+        }
+
+        async function fetchBlockDetails() {
+            showLoading();
+            
+            try {
+                const response = await fetch(`/api/block/${BLOCK_HASH}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                renderDetails(data);
+            } catch (error) {
+                console.error("Failed to fetch block details:", error);
+                showError('Failed to load block details. The block may not exist or the API may be unavailable.');
+            }
+        }
+
+        // Auto-refresh configuration
+        let autoRefreshEnabled = false;  // Disabled by default for block detail page
+        let refreshInterval = null;
+        
+        function startAutoRefresh() {
+            if (autoRefreshEnabled && !refreshInterval) {
+                refreshInterval = setInterval(fetchBlockDetails, 5000);
+            }
+        }
+        
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchBlockDetails();
+            // startAutoRefresh();  // Disabled auto-refresh for better reading experience
+        });
+    </script>
+</body>
+</html>
