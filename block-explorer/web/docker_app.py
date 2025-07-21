@@ -554,11 +554,11 @@ new return, rl(`rho:registry:lookup`), RevVaultCh, vaultCh in {{
                 d.block_hash,
                 d.deploy_id,
                 d.term,
-                d.timestamp,
-                d.phlo_cost,
-                d.errored,
+                d.created_at as timestamp,
+                d.cost as phlo_cost,
+                CASE WHEN d.errors IS NOT NULL AND d.errors != '' THEN 1 ELSE 0 END as errored,
                 b.block_number,
-                b.created_at
+                b.created_at as block_created_at
             FROM deployments d
             JOIN blocks b ON d.block_hash = b.block_hash
             WHERE d.term LIKE ?

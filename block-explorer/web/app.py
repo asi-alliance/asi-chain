@@ -503,7 +503,7 @@ new return, rl(`rho:registry:lookup`), RevVaultCh, vaultCh in {{
                 d.phlo_cost,
                 d.errored,
                 b.block_number,
-                b.created_at
+                b.created_at as block_created_at
             FROM deployments d
             JOIN blocks b ON d.block_hash = b.block_hash
             WHERE d.term LIKE ?
@@ -514,6 +514,10 @@ new return, rl(`rho:registry:lookup`), RevVaultCh, vaultCh in {{
         deployments = []
         for row in cursor.fetchall():
             deployment = dict(row)
+            
+            # The errored column is already a boolean, no conversion needed
+            # Just ensure it's present in the response
+            deployment['errored'] = bool(deployment.get('errored'))
             
             # Check if this is a transfer
             term = deployment['term'].replace('\\n', ' ')

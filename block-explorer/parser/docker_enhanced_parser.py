@@ -216,8 +216,12 @@ class DockerNodeParser:
                     # End of deploy, save it
                     if deploy_data.get('deployer') and deploy_data.get('term'):
                         try:
-                            # Generate a deploy ID from deployer + timestamp
-                            deploy_id = f"{deploy_data.get('deployer', '')[:16]}_{deploy_data.get('timestamp', '0')}"
+                            # Use the actual signature as deploy_id, fallback to generated ID if not found
+                            deploy_id = deploy_data.get('sig')
+                            if not deploy_id:
+                                # Fallback to generated ID if signature not found
+                                deploy_id = f"{deploy_data.get('deployer', '')[:16]}_{deploy_data.get('timestamp', '0')}"
+                                logger.warning(f"No signature found for deployment, using generated ID: {deploy_id}")
                             
                             cursor.execute('''INSERT OR IGNORE INTO deployments 
                                            (deploy_id, block_hash, deployer_pub_key, term, cost, errors, created_at)
@@ -231,7 +235,7 @@ class DockerNodeParser:
                                          datetime.now()))
                             
                             if cursor.rowcount > 0:
-                                logger.debug(f"Added deployment {deploy_id} to block {block_hash[:8]}...")
+                                logger.debug(f"Added deployment {deploy_id[:64]}... to block {block_hash[:8]}...")
                                 
                         except Exception as e:
                             logger.error(f"Error inserting deployment: {e}")
@@ -248,6 +252,9 @@ class DockerNodeParser:
                         deploy_data['term'] = line[term_start:].strip().strip('"')
                     elif line.strip().startswith('timestamp:'):
                         deploy_data['timestamp'] = line.split(':')[1].strip()
+                    elif line.strip().startswith('sig:'):
+                        # Extract the signature (deployment ID)
+                        deploy_data['sig'] = line.split('"')[1] if '"' in line else ''
                     elif line.strip().startswith('cost:'):
                         deploy_data['cost'] = int(line.split(':')[1].strip())
                     elif line.strip().startswith('systemDeployError:'):

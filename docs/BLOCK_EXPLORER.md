@@ -1441,6 +1441,43 @@ After running the reset process:
 
 ---
 
+## Known Issues and Recent Fixes
+
+### Recently Fixed Issues
+
+#### Wallet Balance Check SQL Error (Fixed in v1.1.0)
+**Issue**: The "Check Wallet Balance" feature was broken with SQL error `no such column: d.timestamp`  
+**Cause**: Database schema mismatch between Docker and local versions  
+**Fix**: Updated SQL queries in both `app.py` and `docker_app.py` to use correct column names  
+**Resolution Date**: July 2025  
+
+**Details**: The Docker version uses a different database schema with columns:
+- `created_at` instead of `timestamp`
+- `cost` instead of `phlo_cost`
+- `errors` instead of `errored`
+
+Both versions now correctly map these columns to maintain API compatibility.
+
+#### Deployment ID Truncation (Fixed in v1.1.1)
+**Issue**: Deployment IDs in the Docker version were showing truncated values like `deployer_timestamp` instead of full cryptographic signatures  
+**Cause**: Docker parser was generating artificial IDs instead of extracting the actual deployment signatures  
+**Fix**: Updated `docker_enhanced_parser.py` to parse the `sig:` field from blockchain data  
+**Resolution Date**: July 2025  
+
+**Details**: 
+- Added parsing for the `sig:` field in deployment data
+- Now uses actual blockchain signatures as deployment IDs
+- Maintains fallback to generated IDs with warning if signature not found
+- Deployment IDs now match between Docker and local versions
+
+### Current Limitations
+
+1. **Schema Incompatibility**: Docker and local versions use different database schemas and cannot share databases
+2. **Memory Leak**: Deploy storage is never garbage collected, requiring periodic restarts
+3. **Transaction Gossip**: Broken - must deploy directly to validators
+
+---
+
 ## Summary
 
 The ASI-Chain Block Explorer is a comprehensive blockchain monitoring solution designed specifically for the ASI-Chain ecosystem. It combines:
