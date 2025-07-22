@@ -25,8 +25,8 @@ The workspace is organized into the following directories:
 -   **`chain/`**: ASI Chain configuration and setup files
     - **`conf/`**: Node configuration files
     - **`.env.example`**: Example environment variables configuration
-    - **`Become-ASI-Chain-Validator.md`**: Guide for becoming a validator on the ASI Chain
-    - **`How-We-Launch.md`**: Detailed launch process documentation
+    - **[`Become-ASI-Chain-Validator.md`](chain/Become-ASI-Chain-Validator.md)**: Guide for becoming a validator on the ASI Chain
+    - **[`How-We-Launch.md`](chain/How-We-Launch.md)**: Detailed launch process documentation
     - **`README.md`**: Chain-specific documentation
     - **`testnet-wallets.txt`**: List of testnet wallet addresses
     - **`validator.yml`**: Validator configuration template
