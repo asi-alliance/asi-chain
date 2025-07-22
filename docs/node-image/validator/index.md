@@ -6,7 +6,7 @@ This guide describes how you can connect to the ASI:Chain testnet and become a v
 
 We are working on allowing you to create your own wallets and become a validator with your own credentials, but this feature is currently in development.
 
-**For now**: Use our prepared wallet keys from the [`testnet-wallets.txt`](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt) file.
+**For now**: Use our prepared wallet keys from the [`testnet-wallets.txt`](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt) file.
 
 ## System Requirements
 
@@ -57,7 +57,7 @@ See more in the [wallet generator instruction](https://github.com/asi-alliance/a
 > Connection of validators with new wallets is under development.
 
 > [!TIP]
-> Connection with new wallets is currently not available. **Use our prepared wallet keys sets from the [testnet-wallets.txt file](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt)**
+> Connection with new wallets is currently not available. **Use our prepared wallet keys sets from the [testnet-wallets.txt file](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt)**
 
 ## Setup Process
 
@@ -84,7 +84,7 @@ VALIDATOR_HOST=<YOUR-PUBLIC-IP-ADDRESS>
 ```
 
 > [!TIP]
-> Use prepared wallet keys from the [testnet-wallets.txt file](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt)
+> Use prepared wallet keys from the [testnet-wallets.txt file](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt)
 
 ### Step 3: Configure Validator YAML
 
@@ -111,7 +111,7 @@ casper {
 }
 ```
 
-**TIP**: **Use our prepared wallet keys sets from the [testnet-wallets.txt file](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt)**
+**TIP**: **Use our prepared wallet keys sets from the [testnet-wallets.txt file](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt)**
 
 ### Step 5: Launch Validator Node
 

@@ -39,7 +39,7 @@ Responsible for **consensus participation**, **block validation**, and **finaliz
 - May also serve as a bootstrap node itself, if needed
 - Must be registered in the network at genesis via its public key
 
-**Important:** To include a validator at launch, its public key must be added to the [`testnet-wallets.txt`](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt) configuration.
+**Important:** To include a validator at launch, its public key must be added to the [`testnet-wallets.txt`](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt) configuration.
 
 ### Observer Node
 

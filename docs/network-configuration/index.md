@@ -44,7 +44,7 @@ Validator 4: rnode://73992afad92256bcc914836c40decccdbd0048d4@44.198.8.24?protoc
 
 **Status**: External validator connection with custom wallets is under development.
 
-**Current Requirement**: Use prepared wallet credentials from [`testnet-wallets.txt`](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt).
+**Current Requirement**: Use prepared wallet credentials from [`testnet-wallets.txt`](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt).
 
 **Development Timeline**: Connection procedures for custom wallets are being validated with F1R3FLY and MetaCycle teams.
 

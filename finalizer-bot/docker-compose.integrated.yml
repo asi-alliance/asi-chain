@@ -1,0 +1,190 @@
+version: "3.8"
+
+x-rnode: &default-rnode
+  image: f1r3flyindustries/f1r3fly-scala-node
+  user: root
+  networks:
+    - asi-chain-net
+  restart: unless-stopped
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+    nofile:
+      soft: 165536
+      hard: 165536
+  environment:
+    - JAVA_OPTS=-Djava.net.preferIPv4Stack=true
+
+services:
+  boot:
+    <<: *default-rnode
+    container_name: rnode.bootstrap
+    command:
+      [
+        "run",
+        "--host=rnode.bootstrap",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml",
+        "-J-Xss16m",
+        "-J-Xms1g",
+        "-J-Xmx2g",
+        "-J-XX:+UseG1GC",
+        "-J-XX:MaxGCPauseMillis=200"
+      ]
+    ports:
+      - "40400:40400"
+      - "40401:40401"
+      - "40402:40402"
+      - "40403:40403"
+      - "40404:40404"
+      - "40405:40405"
+    volumes:
+      - rnode_bootstrap_data:/var/lib/rnode/
+      - ./genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+      - ./genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+      - ./conf/bootstrap.conf:/var/lib/rnode/rnode.conf
+      - ./conf/bootstrap.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./conf/bootstrap.key.pem:/var/lib/rnode/node.key.pem
+      - ./conf/logback.xml:/var/lib/rnode/logback.xml
+
+  validator1:
+    <<: *default-rnode
+    container_name: rnode.validator1
+    command:
+      [
+        "run",
+        "--host=rnode.validator1",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml",
+        "-J-Xss16m",
+        "-J-Xms1g",
+        "-J-Xmx2g",
+        "-J-XX:+UseG1GC",
+        "-J-XX:MaxGCPauseMillis=200"
+      ]
+    ports:
+      - "40410:40400"
+      - "40411:40401"
+      - "40412:40402"
+      - "40413:40403"
+      - "40414:40404"
+      - "40415:40405"
+    volumes:
+      - rnode_validator1_data:/var/lib/rnode/
+      - ./genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+      - ./genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+      - ./conf/validator1.conf:/var/lib/rnode/rnode.conf
+      - ./conf/validator1.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./conf/validator1.key.pem:/var/lib/rnode/node.key.pem
+      - ./conf/logback.xml:/var/lib/rnode/logback.xml
+
+  validator2:
+    <<: *default-rnode
+    container_name: rnode.validator2
+    command:
+      [
+        "run",
+        "--host=rnode.validator2",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml",
+        "-J-Xss16m",
+        "-J-Xms1g",
+        "-J-Xmx2g",
+        "-J-XX:+UseG1GC",
+        "-J-XX:MaxGCPauseMillis=200"
+      ]
+    ports:
+      - "40420:40400"
+      - "40421:40401"
+      - "40422:40402"
+      - "40423:40403"
+      - "40424:40404"
+      - "40425:40405"
+    volumes:
+      - rnode_validator2_data:/var/lib/rnode/
+      - ./genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+      - ./genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+      - ./conf/validator2.conf:/var/lib/rnode/rnode.conf
+      - ./conf/validator2.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./conf/validator2.key.pem:/var/lib/rnode/node.key.pem
+      - ./conf/logback.xml:/var/lib/rnode/logback.xml
+
+  validator3:
+    <<: *default-rnode
+    container_name: rnode.validator3
+    command:
+      [
+        "run",
+        "--host=rnode.validator3",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml",
+        "-J-Xss16m",
+        "-J-Xms1g",
+        "-J-Xmx2g",
+        "-J-XX:+UseG1GC",
+        "-J-XX:MaxGCPauseMillis=200"
+      ]
+    ports:
+      - "40430:40400"
+      - "40431:40401"
+      - "40432:40402"
+      - "40433:40403"
+      - "40434:40404"
+      - "40435:40405"
+    volumes:
+      - rnode_validator3_data:/var/lib/rnode/
+      - ./genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+      - ./genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+      - ./conf/validator3.conf:/var/lib/rnode/rnode.conf
+      - ./conf/validator3.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./conf/validator3.key.pem:/var/lib/rnode/node.key.pem
+      - ./conf/logback.xml:/var/lib/rnode/logback.xml
+
+  readonly:
+    <<: *default-rnode
+    container_name: rnode.readonly
+    ports:
+      - "40451:40401"
+      - "40452:40402"
+      - "40453:40403"
+    command:
+    - run
+    - --host=rnode.readonly
+    - --bootstrap=rnode://138410b5da898936ec1dc13fafd4893950eb191b@rnode.bootstrap?protocol=40400&discovery=40404
+    - --no-upnp
+    - --allow-private-addresses
+    - -Dlogback.configurationFile=/var/lib/rnode/logback.xml
+    - -J-Xss16m
+    - -J-Xms512m
+    - -J-Xmx1g
+    - -J-XX:+UseG1GC
+    - -J-XX:MaxGCPauseMillis=200
+    volumes:
+      - rnode_readonly_data:/var/lib/rnode/
+      - ./conf/logback.xml:/var/lib/rnode/logback.xml
+
+  finalizer-bot:
+    build:
+      context: ../..
+      dockerfile: finalizer-bot/Dockerfile
+    container_name: finalizer-bot
+    restart: unless-stopped
+    networks:
+      - asi-chain-net
+    depends_on:
+      - boot
+      - validator1
+      - validator2
+      - validator3
+      - readonly
+    environment:
+      - RETRY_INTERVAL=5
+      - MAX_RETRIES=20
+
+networks:
+  asi-chain-net:
+    name: "asi-chain-net"
+
+volumes:
+  rnode_bootstrap_data:
+  rnode_validator1_data:
+  rnode_validator2_data:
+  rnode_validator3_data:
+  rnode_readonly_data:

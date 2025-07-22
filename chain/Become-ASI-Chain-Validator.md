@@ -48,7 +48,7 @@ See more in [instruction](https://github.com/asi-alliance/asi-chain/blob/master/
 > CONNECTION OF VALIDATORS WITH NEW WALLETS IS UNDER DEVELOPMENT.
 
 >[!TIP]
-> Connection with new wallets is currently not available, **use our prepared wallet keys sets from the [file](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt)**
+> Connection with new wallets is currently not available, **use our prepared wallet keys sets from the [file](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt)**
 
 Clone the repository
 
@@ -72,7 +72,7 @@ Make the following changes:
 `VALIDATOR_HOST` — set the public IP address of the machine where this validator will be running.
 
 > [!TIP]
-> **Use our prepared wallet keys sets from the [file](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt)**
+> **Use our prepared wallet keys sets from the [file](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt)**
 
 ## 2. Setup `validator.yml`
 
@@ -96,7 +96,7 @@ ports:
 Replace these `validator-public-key` and `validator-private-key` in `casper` section of `conf/validator.conf` file with the current keys of the validator you're connecting to the network.
 
 > [!TIP]
-> **Use our prepared wallet keys sets from the [file](https://github.com/asi-alliance/asi-chain/blob/master/testnet-wallets.txt)**
+> **Use our prepared wallet keys sets from the [file](https://github.com/asi-alliance/asi-chain/blob/master/chain/testnet-wallets.txt)**
 
 And also configure the **ports** that were previously configured in `validator.yml`
 
