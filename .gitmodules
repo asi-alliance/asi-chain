@@ -1,4 +1,4 @@
 [submodule "node"]
 	path = node
-	url = https://github.com/F1R3FLY-io/f1r3fly.git
+	url = https://github.com/asi-alliance/asi-f1r3fly-node.git
 	branch = preston/rholang_rust
