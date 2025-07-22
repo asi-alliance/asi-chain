@@ -4,4 +4,5 @@ dist
 package-lock.json
 yarn.lock
 .env
+.idea/
 **/tmp
