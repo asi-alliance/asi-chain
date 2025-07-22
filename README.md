@@ -9,25 +9,56 @@ This workspace provides the scripts and configuration to deploy a local ASI-Chai
 
 ## 🚀 Quick Links
 
+### Getting Started
 - **[Quick Start Guide](docs-external/GETTING_STARTED.md)** - Get running in 5 minutes
+- **[Interactive Quick Start](docs/quick-start/index.md)** - Step-by-step interactive guide
+- **[Message Exchange Scenarios](docs/quick-start/messages/index.md)** - Common communication patterns
+- **[Common Errors](docs/quick-start/troubleshooting/index.md)** - Quick troubleshooting reference
+
+### Documentation
 - **[Documentation Index](docs-external/INDEX.md)** - Complete documentation overview
 - **[Architecture Overview](docs-external/ARCHITECTURE.md)** - System design and components
+- **[Network Configuration](docs/network-configuration/index.md)** - Network setup and topology
+- **[Interaction Examples](docs/interaction-examples/index.md)** - Practical usage examples
+
+### Operations & Maintenance
 - **[Troubleshooting Guide](docs-external/TROUBLESHOOTING.md)** - Common issues and solutions
 - **[Repository Operations](docs-external/REPO_OPERATIONS_AND_MAINTENANCE.md)** - Git workflow and maintenance
+- **[Validator Setup](docs/node-image/validator/index.md)** - Become a validator node
+- **[Network Access](docs/network-access/index.md)** - RPC endpoints and explorer access
 
 ## 📁 Repository Structure
 
 The workspace is organized into the following directories:
 
+### Core Components
 -   **`asi_wallet_v2/`**: Modern React-based cryptocurrency wallet with WalletConnect support. See [Wallet Documentation](docs-external/WALLET.md).
 -   **`block-explorer/`**: Python-based blockchain explorer with web interface (Docker supported). See [Explorer Documentation](docs-external/BLOCK_EXPLORER.md).
+-   **`chain/`**: ASI Chain configuration and setup files
+    - **`conf/`**: Node configuration files
+    - **`.env.example`**: Example environment variables configuration
+    - **[`Become-ASI-Chain-Validator.md`](chain/Become-ASI-Chain-Validator.md)**: Guide for becoming a validator on the ASI Chain
+    - **[`How-We-Launch.md`](chain/How-We-Launch.md)**: Detailed launch process documentation
+    - **`README.md`**: Chain-specific documentation
+    - **`testnet-wallets.txt`**: List of testnet wallet addresses
+    - **`validator.yml`**: Validator configuration template
 -   **`contracts/`**: Contains sample Rholang smart contracts.
--   **`docs-external/`**: Contains all project documentation. See [Documentation Index](docs-external/INDEX.md).
 -   **`finalizer-bot/`**: Contains the Python-based automated finalizer bot and Docker configuration.
 -   **`logs/`**: Contains log files from test runs.
 -   **`patches/`**: Contains Git patches for fixing upstream issues, particularly the VABN CLI patch.
 -   **`scripts/`**: Contains deployment and utility scripts (`deploy.sh`, `docker-flush.sh`).
 
+### Documentation
+-   **`docs-external/`**: Contains all project documentation. See [Documentation Index](docs-external/INDEX.md).
+-   **`docs/`**: VitePress documentation site source files
+    - **[`quick-start/`](docs/quick-start/index.md)**: Getting started guides, message exchange scenarios, and troubleshooting common errors
+    - **[`node-image/`](docs/node-image/index.md)**: Node image source information and validator node setup instructions
+    - **[`yaml-configuration/`](docs/yaml-configuration/index.md)**: YAML configuration file documentation, parameters, and examples
+    - **[`network-access/`](docs/network-access/index.md)**: Explorer and RPC endpoint information, RNode address generation guides
+    - **[`network-configuration/`](docs/network-configuration/index.md)**: Network configuration overview, parameters, and topology documentation
+    - **[`interaction-examples/`](docs/interaction-examples/index.md)**: Practical examples including smart contracts, block history viewing, and balance checking
+
+### Generated Directories
 The `deploy.sh` script will automatically clone the required external repositories:
 - **`node/`**: F1R3FLY Scala node from https://github.com/F1R3FLY-io/f1r3fly/
 - **`cli/`**: F1R3FLY Rust CLI from https://github.com/F1R3FLY-io/f1r3fly/ (branch: preston/rholang_rust)
