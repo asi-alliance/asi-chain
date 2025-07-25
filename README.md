@@ -12,6 +12,7 @@ This workspace provides the scripts and configuration to deploy a local ASI-Chai
 ### Getting Started
 - **[Quick Start Guide](docs-external/GETTING_STARTED.md)** - Get running in 5 minutes
 - **[Interactive Quick Start](docs/quick-start/index.md)** - Step-by-step interactive guide
+- **[ASI Wallet](http://184.73.0.34:3000)** - Access the ASI:Chain wallet for managing your tokens and transactions
 - **[Message Exchange Scenarios](docs/quick-start/messages/index.md)** - Common communication patterns
 - **[Common Errors](docs/quick-start/troubleshooting/index.md)** - Quick troubleshooting reference
 
