@@ -11,9 +11,12 @@ hero:
     # src: /asi-chain-logo.png
     alt: ASI:Chain
   actions:
-    - theme: brand
+    - theme: sponsor
       text: Quick Start
       link: /quick-start/
+    - theme: brand
+      text: ASI Wallet
+      link: http://184.73.0.34:3000
     - theme: alt
       text: View on GitHub
       link: https://github.com/asi-alliance/asi-chain
@@ -23,6 +26,11 @@ features:
     title: Quick Start Guide
     details: Step-by-step guide to connect to ASI:Chain network
     link: /quick-start/
+
+  - icon: 🔐
+    title: Wallet
+    details: Access the ASI:Chain wallet for managing your tokens and transactions
+    link: http://184.73.0.34:3000
 
   - icon: 🔍
     title: Explorer
@@ -78,6 +86,7 @@ ASI:Chain is a blockchain network based on F1R3FLY technology, designed for the 
 
 - Bootstrap Node: `rnode://138410b5da898936ec1dc13fafd4893950eb191b@44.198.8.24?protocol=40400&discovery=40404`
 - Block Explorer: [http://44.198.8.24:5173/](http://44.198.8.24:5173/)
+- Wallet: [http://184.73.0.34:3000](http://184.73.0.34:3000)
 - Network: 1 Bootstrap + 4 Validators + 1 Observer
 
 </div>
@@ -88,9 +97,11 @@ Choose your path based on your needs:
 
 1. **Want to validate blocks?** → [Set up a Validator Node](/node-image/validator/)
 2. **Just exploring?** → [View the Block Explorer](http://44.198.8.24:5173/)
+3. **Need to manage tokens?** → [Access the Wallet](http://184.73.0.34:3000)
 
 ### Quick Links
 
+- [ASI:Chain Wallet](http://184.73.0.34:3000)
 - [Generate RNode Address](/network-access/address-generation/)
 - [Network Parameters](/network-configuration/parameters/)
 - [Deploy Your First Smart Contract](/interaction-examples/smart-contracts/)
