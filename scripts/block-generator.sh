@@ -18,7 +18,8 @@ echo "Bot started..."
 echo "Logs streaming to $LOGFILE"
 echo ""
 
-block_number=5154
+# block number for vabn
+block_number=0
 
 while true; do
   for i in "${!containers[@]}"; do
