@@ -76,12 +76,15 @@ ASI:Chain is a blockchain network based on F1R3FLY technology, designed for the 
 
 ### Current Network Status
 <div class="tip custom-block" style="padding-top: 8px">
+
 **Testnet is Live!** 🟢
+
 - Bootstrap Node: `rnode://138410b5da898936ec1dc13fafd4893950eb191b@44.198.8.24?protocol=40400&discovery=40404`
 - Block Explorer 1 (Original): [http://44.198.8.24:5173/](http://44.198.8.24:5173/)
 - Block Explorer 2 (Enhanced): [http://54.175.6.183:5173/](http://54.175.6.183:5173/)
 - Wallet: [http://184.73.0.34:3000](http://184.73.0.34:3000)
 - Network: 1 Bootstrap + 4 Validators + 1 Observer
+
 </div>
 
 ### Available Block Explorers
