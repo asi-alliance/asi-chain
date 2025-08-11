@@ -1,0 +1,8 @@
+.validation-messages-block {
+    list-style: none;
+}
+
+.validation-message {
+    font-size: 15px;
+    color: var(--error-color);
+}

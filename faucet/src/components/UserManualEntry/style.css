@@ -1,0 +1,19 @@
+.user-manual-entry {
+    border-radius: 10px;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+}
+
+.user-manual-entry svg {
+    width: 20px;
+    height: 20px;
+}
+
+.user-manual-entry:hover {
+    cursor: pointer;
+    background: var(--accent-color);
+}

@@ -1,0 +1,17 @@
+:root {
+    --navbar-height: 60px;
+}
+
+.content-container {
+    height: 100%;
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+header {
+    height: var(--navbar-height);
+}
+
+main {
+    padding-top: var(--navbar-height);
+}

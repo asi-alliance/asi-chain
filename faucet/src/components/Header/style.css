@@ -1,0 +1,12 @@
+header {
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.header-content {
+    padding: 5px;
+    height: 100%;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
