@@ -17,19 +17,6 @@ exports.config = {
   capabilities: [{
     browserName: 'Chrome',
     browserVersion: 'latest',
-    'LT:Options': {
-      user: process.env.LT_USER_NAME,
-      accessKey: process.env.LT_ACCESS_KEY,
-      platformName: 'Windows 10',
-      build: 'ASI Wallet Build',
-      name: 'Test on LambdaTest',
-      tunnel: true,
-      tunnelName: 'ASI:Chain',
-      console: true,
-      network: true,
-      video: true,
-      visual: true
-    }
   }],
 
   logLevel: 'info',

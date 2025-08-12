@@ -2,7 +2,7 @@ const { expect, browser, $ } = require('@wdio/globals');
 
 describe('My Login application', () => {
     it('should navigate to the Create Account page and fill in account name and password', async () => {
-        await browser.url(`http://localhost:3000/#/`);
+        await browser.url(`http://184.73.0.34:3000/#/`);
 
         await $("//button[contains(., 'Create Account')]").click();
         await $("//input[@placeholder='Enter account name']").click();
