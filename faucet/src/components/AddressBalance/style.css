@@ -1,0 +1,27 @@
+.address-balance {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.balance-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-right: 10px;
+}
+
+.balance-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.balance-value {
+    font-size: 14px;
+    opacity: .7;
+}

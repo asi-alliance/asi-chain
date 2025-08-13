@@ -1,0 +1,20 @@
+.loader-with-label {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.spinner-container img,
+.spinner-container svg {
+    width: 25px;
+    height: 25px;
+    animation: loader 1s infinite;
+}
+
+@keyframes loader {
+    to {
+        transform: rotate(360deg);
+    }
+}

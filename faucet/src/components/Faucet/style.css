@@ -1,3 +1,17 @@
 .faucet {
-    
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+}
+
+.faucet-content {
+    width: 100%;
+}
+
+.faucet-with-balance {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }

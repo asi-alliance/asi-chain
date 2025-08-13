@@ -7,7 +7,7 @@ import { type ReactElement } from "react";
 
 const FaucetSection = (): ReactElement => {
     const { address, setAddress, isAddressValid, validationMessages } =
-        useAddressInput();
+        useAddressInput();    
 
     return (
         <Section title="Address">

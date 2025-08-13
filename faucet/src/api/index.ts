@@ -1,13 +1,60 @@
-export const getBalance = async (walletAddress: string): Promise<string> => {
-    return walletAddress;
+const BASE_URL: string = "http://184.73.0.34:40470";
+
+export interface IStatusResponse {
+    status: string;
+    msg?: string
+}
+
+export const getBalance = async (walletAddress: string): Promise<number> => {
+    const response = await fetch(`${BASE_URL}/balance/${walletAddress}`, {
+        method: "GET",
+        mode: "cors",
+        credentials: "omit",
+        headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching balance: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    return data?.balance;
 };
 
-export const faucetTokens = async (walletAddress: string): Promise<void> => {
-    console.log(walletAddress);
+export const faucetTokens = async (walletAddress: string): Promise<string> => {
+    const response = await fetch(`${BASE_URL}/transfer`, {
+        method: "POST",
+        mode: "cors",
+        credentials: "omit",
+        headers: { Accept: "application/json" },
+        body: JSON.stringify({ to_address: walletAddress }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error on check deploy_id: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    return data?.deploy_id;
 };
 
-export const getFaucetStatus = async (
-    walletAddress: string
-): Promise<string> => {
-    return walletAddress;
+export const getTransactionStatus = async (
+    deployId: string
+): Promise<IStatusResponse> => {
+    const response = await fetch(`${BASE_URL}/deploy/${deployId}`, {
+        method: "GET",
+        mode: "cors",
+        credentials: "omit",
+        headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error on check deploy_id: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    return data;
 };
