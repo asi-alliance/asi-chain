@@ -2,7 +2,7 @@ import { BASE_URL } from "@utils/config";
 
 export interface IStatusResponse {
     status: string;
-    msg?: string
+    msg?: string;
 }
 
 export const getBalance = async (walletAddress: string): Promise<number> => {
@@ -27,7 +27,10 @@ export const faucetTokens = async (walletAddress: string): Promise<string> => {
         method: "POST",
         mode: "cors",
         credentials: "omit",
-        headers: { Accept: "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
         body: JSON.stringify({ to_address: walletAddress }),
     });
 

@@ -4,6 +4,7 @@ import useAddressInput from "@hooks/useAddressInput";
 import AddressInput from "@components/DebounceInput";
 import ValidationMessagesList from "@components/ValidationMessagesList";
 import { type ReactElement } from "react";
+import "./style.css";
 
 const FaucetSection = (): ReactElement => {
     const { address, setAddress, isAddressValid, validationMessages } =
