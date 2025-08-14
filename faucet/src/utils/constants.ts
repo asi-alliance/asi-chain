@@ -1,7 +1,6 @@
 import { FAUCET_BALANCE_REV_LIMIT } from "./config";
-import { convertBalanceToCogs } from "./methods";
 
-const BALANCE_FAUCET_CEILING: number = convertBalanceToCogs(FAUCET_BALANCE_REV_LIMIT);
+const BALANCE_FAUCET_CEILING: number = FAUCET_BALANCE_REV_LIMIT;
 const MINUTES_TO_MS_MULTIPLIER: number = 60 * 1000;
 const MAX_POLL_MS: number = 5 * MINUTES_TO_MS_MULTIPLIER;
 const POLL_INTERVAL_SEC: number = 30;
