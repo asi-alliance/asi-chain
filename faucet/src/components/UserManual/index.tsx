@@ -1,7 +1,7 @@
 import { type ReactElement } from "react";
 import "./style.css";
 
-const UserManualEntry = (): ReactElement => {
+const UserManual = (): ReactElement => {
     return (
         <div
             className="user-manual-entry"
@@ -24,4 +24,4 @@ const UserManualEntry = (): ReactElement => {
     );
 };
 
-export default UserManualEntry;
+export default UserManual;

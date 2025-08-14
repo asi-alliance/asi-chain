@@ -1,0 +1,14 @@
+.Deploying,
+.Finalizing {
+    color: var(--accent-color);
+}
+
+.Finalized {
+    color: var(--success-color);
+}
+
+.FinalizationError,
+.DeployError,
+.Unknown {
+    color: var(--error-color);
+}

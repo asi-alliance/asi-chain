@@ -1,4 +1,4 @@
-import UserManualEntry from "@components/UserManualEntry";
+import UserManual from "@components/UserManual";
 import { type ReactElement } from "react";
 import "./style.css";
 
@@ -10,7 +10,7 @@ const Header = (): ReactElement => {
                     <h2>
                         MettaCycle Faucet
                     </h2>
-                    <UserManualEntry />
+                    <UserManual />
                 </div>
             </div>
         </header>

@@ -15,3 +15,11 @@
     justify-content: space-between;
     margin-bottom: 10px;
 }
+
+.faucet-success {
+    color: var(--success-color);
+}
+
+.faucet-failed {
+    color: var(--error-color);
+}

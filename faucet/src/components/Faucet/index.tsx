@@ -1,36 +1,22 @@
-/* eslint-disable react-refresh/only-export-components */
 import AddressBalance from "@components/AddressBalance";
 import LoaderWithLabel from "@components/LoaderWithLabel";
 import ValidationMessagesList from "@components/ValidationMessagesList";
-import {
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-    type ReactElement,
-} from "react";
+import { BALANCE_FAUCET_CEILING, FaucetCoins, FaucetPhases } from "@utils/constants";
 import { useFaucetTransactions } from "@context/FaucetTransactionsContext";
 import { TValidationMessage } from "@hooks/useAddressInput";
 import { faucetTokens, getBalance } from "@api/index";
+import { convertCogsToBalance } from "@utils/methods";
+import {
+    type ReactElement,
+    useCallback,
+    useEffect,
+    useState,
+    useRef,
+} from "react";
 import "./style.css";
-import { formatBalance } from "@utils/index";
 
 export interface IFaucetProps {
     address: string;
-}
-
-export const BALANCE_FAUCET_CEILING = 20000000000000;
-
-export enum FaucetCoins {
-    REV = "REV",
-}
-
-export enum FaucetPhases {
-    ELIGIBILITY_TEST = "ELIGIBILITY_TEST",
-    READY_TO_CLAIM = "READY_TO_CLAIM",
-    IN_PROGRESS = "IN_PROGRESS",
-    COMPLETED = "COMPLETED",
-    ERROR = "ERROR",
 }
 
 const Faucet = ({ address }: IFaucetProps): ReactElement => {
@@ -70,7 +56,7 @@ const Faucet = ({ address }: IFaucetProps): ReactElement => {
                 );
             }
 
-            const formattedBalance = formatBalance(balance);
+            const formattedBalance = convertCogsToBalance(balance);
 
             setAddressBalance(formattedBalance);
 

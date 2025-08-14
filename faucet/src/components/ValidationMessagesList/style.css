@@ -4,4 +4,5 @@
 
 .validation-message {
     color: var(--error-color);
+    margin-bottom: 5px;
 }

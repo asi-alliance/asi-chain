@@ -3,6 +3,7 @@ section {
   border-radius: 15px;
   flex: 1 1 300px;
   transition: var(--default-animation-duration) all;
+  line-height: 130%;
   /* border: 1px solid var(--primary-color); */
 }
 

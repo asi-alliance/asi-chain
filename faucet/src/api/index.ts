@@ -1,4 +1,4 @@
-const BASE_URL: string = "http://184.73.0.34:40470";
+import { BASE_URL } from "@utils/config";
 
 export interface IStatusResponse {
     status: string;
