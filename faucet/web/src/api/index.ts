@@ -34,11 +34,13 @@ export const faucetTokens = async (walletAddress: string): Promise<string> => {
         body: JSON.stringify({ to_address: walletAddress }),
     });
 
-    if (!response.ok) {
-        throw new Error(`Error on check deploy_id: ${response.statusText}`);
-    }
-
     const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            `Error on faucet: ${data?.details || response.statusText}`
+        );
+    }
 
     return data?.deploy_id;
 };

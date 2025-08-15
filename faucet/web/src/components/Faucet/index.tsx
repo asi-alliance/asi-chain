@@ -1,10 +1,11 @@
 import AddressBalance from "@components/AddressBalance";
 import LoaderWithLabel from "@components/LoaderWithLabel";
-import ValidationMessagesList from "@components/ValidationMessagesList";
 import { useFaucetTransactions } from "@context/FaucetTransactionsContext";
-import { TValidationMessage } from "@hooks/useAddressInput";
 import { faucetTokens, getBalance } from "@api/index";
 import { convertCogsToBalance } from "@utils/methods";
+import ValidationMessagesList, {
+    TValidationMessage,
+} from "@components/ValidationMessagesList";
 import {
     BALANCE_FAUCET_CEILING,
     FaucetCoins,

@@ -5,3 +5,7 @@
     justify-content: space-between;
     height: 50px;
 }
+
+.hash-validation-messages-block {
+    padding: 0 10px;
+}

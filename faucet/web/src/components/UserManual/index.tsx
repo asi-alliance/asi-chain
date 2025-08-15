@@ -1,11 +1,18 @@
 import { type ReactElement } from "react";
+import { USER_GUIDE_URL } from "@utils/config";
 import "./style.css";
 
 const UserManual = (): ReactElement => {
+
+    const openUserManual = (): void => {
+        window.open(USER_GUIDE_URL);
+    }
+
     return (
         <div
+            onClick={openUserManual}
             className="user-manual-entry"
-            data-tooltip="Nothing here for now"
+            data-tooltip="Faucet User Guide"
             data-flow="left"
         >
             <svg

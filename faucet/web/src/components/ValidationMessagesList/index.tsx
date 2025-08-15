@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
-import { type TValidationMessage } from "@hooks/useAddressInput";
 import "./style.css";
+
+export type TValidationMessage = string;
 
 export interface IValidationMessagesListProps {
     validationMessages: TValidationMessage[];

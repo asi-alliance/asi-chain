@@ -27,6 +27,7 @@
             "@domains/*": ["src/domains/*"],
             "@hooks/*": ["src/hooks/*"],
             "@router/*": ["src/router/*"],
+            "@sections/*": ["src/sections/*"],
             "@services/*": ["src/services/*"],
             "@utils/*": ["src/utils/*"],
             "@data/*": ["src/data/*"],
