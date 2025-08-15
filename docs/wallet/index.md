@@ -4,9 +4,39 @@
 
 The [ASI:Chain Wallet](http://184.73.0.34:3000) provides secure key management and transaction capabilities for the ASI:Chain network. 
 
-This guide covers account creation and obtaining credentials required for validator node configuration.
+This guide covers network configuration, account creation, and obtaining credentials required for validator node setup.
 
 **Access the wallet**: http://184.73.0.34:3000
+
+## Network Configuration
+
+### Step 1: Select Network Type
+The wallet supports multiple networks:
+- **Custom Network**: Configure custom RPC endpoints for ASI:Chain testnet
+- **Firefly Mainnet**: Production network (when available)
+- **Firefly Testnet**: Test network for development
+- **Local Network**: Local node testing
+
+### Step 2: Configure Custom Network
+To connect to ASI:Chain testnet, configure custom network settings via [Settings page](http://184.73.0.34:3000/#/settings):
+
+#### Validator Node Connection
+- **Host**: `54.175.6.183`
+- **gRPC Port**: `40401`
+- **HTTP Port**: `40403`
+- **Direct links**:
+  - gRPC: `54.175.6.183:40401`
+  - HTTP: `http://54.175.6.183:40403`
+
+#### Read-Only Node Connection
+- **Host**: `54.175.6.183`
+- **gRPC Port**: `40451`
+- **HTTP Port**: `40453`
+- **Direct links**:
+  - gRPC: `54.175.6.183:40451`
+  - HTTP: `http://54.175.6.183:40453`
+
+For the full list of available nodes and their endpoints, see [Network Nodes documentation](/network-configuration/network-nodes/).
 
 ## Creating Your Account
 
@@ -66,34 +96,6 @@ Access the wallet to use these features:
 - **[History](http://184.73.0.34:3000/#/history)**: Review transaction history
 - **[Deploy](http://184.73.0.34:3000/#/deploy)**: Deploy smart contracts to the network
 - **[IDE](http://184.73.0.34:3000/#/ide)**: Write and test Rholang code
-
-### Network Selection
-The wallet supports multiple networks:
-- **Custom Network**: Configure custom RPC endpoints
-- **Firefly Mainnet**: Production network (when available)
-- **Firefly Testnet**: Test network for development
-- **Local Network**: Local node testing
-
-### Custom Network Configuration
-To connect to ASI:Chain testnet, configure custom network settings via [Settings page](http://184.73.0.34:3000/#/settings):
-
-#### Validator Node Connection
-- **Host**: `54.175.6.183`
-- **gRPC Port**: `40401`
-- **HTTP Port**: `40403`
-- **Direct links**:
-  - gRPC: `54.175.6.183:40401`
-  - HTTP: `http://54.175.6.183:40403`
-
-#### Read-Only Node Connection
-- **Host**: `54.175.6.183`
-- **gRPC Port**: `40451`
-- **HTTP Port**: `40453`
-- **Direct links**:
-  - gRPC: `54.175.6.183:40451`
-  - HTTP: `http://54.175.6.183:40453`
-
-For the full list of available nodes and their endpoints, see [Network Nodes documentation](/network-configuration/network-nodes/).
 
 ## Validator Configuration
 
