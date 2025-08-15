@@ -18,6 +18,7 @@ exports.config = {
     browserName: 'Chrome',
     browserVersion: 'latest',
     'LT:Options': {
+      console: true,
       platformName: 'Windows 11',
       build: 'ASI Wallet Tests',
       name: 'Create + Import + Validate Balance',
