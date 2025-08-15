@@ -13,7 +13,7 @@ import {
 import "./style.css";
 
 const TransactionStatusChecker = (): ReactElement => {
-    const { lastTransactionHash } = useFaucetTransactions();
+    const { lastTransactionHash, setIsFlowCompleted } = useFaucetTransactions();
 
     const [validationMessages, setValidationMessages] = useState<string[]>([]);
     const [countdown, setCountdown] = useState(POLL_INTERVAL_SEC);
@@ -69,6 +69,7 @@ const TransactionStatusChecker = (): ReactElement => {
 
         setIsLoading(true);
         setValidationMessages([]);
+        setIsFlowCompleted(false);
 
         try {
             const { status, msg: errorMessage } = await getTransactionStatus(
@@ -93,6 +94,7 @@ const TransactionStatusChecker = (): ReactElement => {
 
             if (status === DeployStatuses.FINALIZED) {
                 clearTimers();
+                setIsFlowCompleted(true);
             }
         } catch (error) {
             console.error(error);
@@ -112,7 +114,7 @@ const TransactionStatusChecker = (): ReactElement => {
                 setIsLoading(false);
             }
         }
-    }, [lastTransactionHash, stopWithMessage]);
+    }, [lastTransactionHash, stopWithMessage, setIsFlowCompleted]);
 
     useEffect(() => {
         mountedRef.current = true;
