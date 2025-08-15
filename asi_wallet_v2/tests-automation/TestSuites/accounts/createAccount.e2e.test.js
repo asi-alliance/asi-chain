@@ -7,7 +7,7 @@ describe('ASI Wallet - Create → Settings → Import → Transfer → Validate'
   const ACCOUNT_2_NAME = `Test Imported ${Date.now() + 1}`;
   const ACCOUNT_PASSWORD = 'TestPass123!';
   const PRIVATE_KEY = process.env.PRIVATE_KEY;
-  const VALIDATOR_IP = '44.198.8.24';
+  const VALIDATOR_IP = '54.175.6.183';
   const TRANSFER_AMOUNT = '1';
 
   // Helper functions
@@ -108,39 +108,55 @@ describe('ASI Wallet - Create → Settings → Import → Transfer → Validate'
     await sentMsg.waitForDisplayed({ timeout: 60000 });
     console.log('Transaction sent successfully!');
 
-    // Step 9: Verify balance deduction (wait up to 2 minutes)
-    console.log('Step 9: Waiting for balance update (up to 2 minutes)...');
+// Step 9: Wait for balance deduction (up to 10 minutes with 30-second intervals)
+    console.log('Step 9: Waiting for balance update (checking every 30 seconds for up to 10 minutes)...');
     const startTime = Date.now();
     let balanceUpdated = false;
+    const maxWaitTime = 600000; // 10 minutes
+    const checkInterval = 30000; // 30 seconds
     
-    while (Date.now() - startTime < 120000 && !balanceUpdated) {
-      await browser.url(`${BASE_URL}/#/accounts`);
-      await browser.pause(2000);
-      
-      const refreshBtn = await $('//button[normalize-space()="Refresh Balances"]');
-      if (await refreshBtn.isExisting()) {
-        await refreshBtn.click();
-        await browser.pause(3000);
-      }
-      
-      const currentBalanceEl = await $(`//h3[normalize-space()="${ACCOUNT_2_NAME}"]/following-sibling::div[contains(normalize-space(),"REV")]`);
-      if (await currentBalanceEl.isExisting()) {
-        const currentBalance = parseBalance(await currentBalanceEl.getText());
-        console.log(`Current balance: ${currentBalance} REV (initial: ${initialBalance} REV)`);
+    try {
+      while (Date.now() - startTime < maxWaitTime && !balanceUpdated) {
+        // Keep session alive by getting current URL
+        const currentUrl = await browser.getUrl();
+        console.log(`[Keep-alive] Current URL: ${currentUrl}`);
         
-        if (currentBalance < initialBalance) {
-          console.log(`Balance updated! Deducted: ${(initialBalance - currentBalance).toFixed(4)} REV`);
-          expect(currentBalance).toBeLessThan(initialBalance);
-          balanceUpdated = true;
+        await browser.url(`${BASE_URL}/#/accounts`);
+        await browser.pause(3000);
+        
+        // Click refresh if available
+        const refreshBtn = await $('//button[normalize-space()="Refresh Balances"]');
+        if (await refreshBtn.isExisting()) {
+          await refreshBtn.click();
+          await browser.pause(5000);
+        }
+        
+        // Check current balance
+        const currentBalanceEl = await $(`//h3[normalize-space()="${ACCOUNT_2_NAME}"]/following-sibling::div[contains(normalize-space(),"REV")]`);
+        if (await currentBalanceEl.isExisting()) {
+          const currentBalance = parseBalance(await currentBalanceEl.getText());
+          const elapsedMinutes = Math.round((Date.now() - startTime) / 60000);
+          console.log(`[${elapsedMinutes} min] Current balance: ${currentBalance} REV (initial: ${initialBalance} REV)`);
+          
+          // Check if balance decreased (accounting for fees)
+          if (currentBalance <= initialBalance - parseFloat(TRANSFER_AMOUNT)) {
+            console.log(`✓ Balance updated! Deducted: ${(initialBalance - currentBalance).toFixed(4)} REV`);
+            balanceUpdated = true;
+          }
+        }
+        
+        if (!balanceUpdated) {
+          await browser.pause(checkInterval);
         }
       }
-      
-      if (!balanceUpdated) {
-        console.log(`Waiting... (${Math.round((Date.now() - startTime) / 1000)}s elapsed)`);
-        await browser.pause(10000); // Wait 10 seconds before next check
-      }
+    } catch (error) {
+      console.error('Error during balance check:', error.message);
+      throw error;
     }
     
+    if (!balanceUpdated) {
+      console.log(`Warning: Balance not updated after ${maxWaitTime/60000} minutes. Continuing with test...`);
+    }
     expect(balanceUpdated).toBe(true);
 
     // Step 10: Verify receiver balance (wait up to 5 minutes)

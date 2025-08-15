@@ -2,14 +2,14 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 exports.config = {
-  user: process.env.LT_USER_NAME, // твой логин от LambdaTest
-  key: process.env.LT_ACCESS_KEY, // твой ключ от LambdaTest
+  user: process.env.LT_USER_NAME,  // LambdaTest username
+  key: process.env.LT_ACCESS_KEY,  // LambdaTest access key
   hostname: 'hub.lambdatest.com',
   port: 443,
   path: '/wd/hub',
   protocol: 'https',
 
-  specs: ['./TestSuites/**/*.js'], // путь к тестам
+  specs: ['./TestSuites/**/*.js'],  // Path to test files
   exclude: [],
 
   maxInstances: 1,
@@ -22,15 +22,20 @@ exports.config = {
       platformName: 'Windows 11',
       build: 'ASI Wallet Tests',
       name: 'Create + Import + Validate Balance',
+      // IMPORTANT: Add timeouts for LambdaTest
+      idleTimeout: 900,      // 15 minutes idle timeout
+      commandTimeout: 900,   // 15 minutes command timeout
+      video: true,           // Video recording for debugging
+      network: true,         // Network logs for debugging
     }
   }],
 
   logLevel: 'info',
   bail: 0,
 
-  baseUrl: 'http://184.73.0.34:3000', // твой ASI Wallet
+  baseUrl: 'http://184.73.0.34:3000',  // ASI Wallet URL
   waitforTimeout: 10000,
-  connectionRetryTimeout: 90000,
+  connectionRetryTimeout: 900000,  // 15 minutes
   connectionRetryCount: 3,
 
   services: ['lambdatest'],
@@ -40,7 +45,7 @@ exports.config = {
 
   mochaOpts: {
     ui: 'bdd',
-    timeout: 60000
+    timeout: 900000  // FIXED: 15 minutes instead of 1 minute
   },
 
   afterTest: async function (test, context, { error }) {
