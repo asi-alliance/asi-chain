@@ -7,11 +7,12 @@ import "./style.css";
 
 const FaucetPage = (): ReactElement => {
     const [lastTransactionHash, setLastTransactionHash] = useState<string>("");
+    const [isFlowCompleted, setIsFlowCompleted] = useState<boolean>(false);
 
     return (
         <DefaultLayout>
             <FaucetTransactionsContext.Provider
-                value={{ lastTransactionHash, setLastTransactionHash }}
+                value={{ lastTransactionHash, isFlowCompleted, setLastTransactionHash, setIsFlowCompleted }}
             >
                 <div className="faucet-page">
                     <FaucetSection />
