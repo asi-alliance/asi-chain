@@ -1,6 +1,8 @@
 import { createContext, Dispatch, SetStateAction, useContext } from "react";
 
 export interface IFaucetTransactionsContextValue {
+    isFlowCompleted: boolean;
+    setIsFlowCompleted: Dispatch<SetStateAction<boolean>>;
     lastTransactionHash: string;
     setLastTransactionHash: Dispatch<SetStateAction<string>>;
 }
