@@ -4,6 +4,15 @@
 
 The MettaCycle Faucet allows you to receive test ASI tokens for development and testing purposes on the ASI:Chain network. These tokens have no real value and are exclusively for testing transactions and smart contracts.
 
+::: warning SECURITY NOTICE
+**No signature required.**  
+The faucet never asks you to sign any transaction or to enter a seed phrase/private key.  
+If a signature prompt appears, double-check that you are on the official faucet:  
+[https://asi-testnet-faucet.singularitynet.io/](https://asi-testnet-faucet.singularitynet.io/).
+:::
+
+
+
 ## How to Use
 
 ### Step 1: Enter Your Address
