@@ -3,11 +3,11 @@ import { REV_DECIMALS } from "./config";
 const POWER_BASE: number = 10;
 
 const convertCogsToBalance = (cogs: number): number => {
-    return Math.round(cogs / Math.pow(POWER_BASE, REV_DECIMALS));
+    return cogs / Math.pow(POWER_BASE, REV_DECIMALS);
 };
 
 const convertBalanceToCogs = (balance: number): number => {
-    return Math.round(balance * Math.pow(POWER_BASE, REV_DECIMALS));
+    return balance * Math.pow(POWER_BASE, REV_DECIMALS);
 };
 
 const isErrorStatus = (status: string) =>
