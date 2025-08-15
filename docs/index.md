@@ -28,6 +28,10 @@ features:
     title: Wallet
     details: Access the ASI:Chain wallet for managing your tokens and transactions
     link: http://184.73.0.34:3000
+  - icon: 💧
+    title: Faucet
+    details: Get test ASI tokens for development and testing on the network
+    link: /faucet/
   - icon: 🔍
     title: Explorer Network 1
     details: Original blockchain explorer for network data analysis and transaction monitoring

@@ -57,7 +57,14 @@ export default defineConfig({
           { text: 'View Block History', link: '/interaction-examples/block-history/' },
           { text: 'Check Balance', link: '/interaction-examples/balance-check/' },
         ]
-      }
+      },
+      {
+        text: 'Faucet',
+        collapsed: true,
+        items: [
+          { text: 'Overview', link: '/faucet/' },
+        ]
+      },
     ],
 
     socialLinks: [
