@@ -1,0 +1,7 @@
+
+services:
+  configurator:
+    image: configurator:latest
+    volumes:
+      - ./conf:/home/node/conf
+      - ./.env:/home/node/.env

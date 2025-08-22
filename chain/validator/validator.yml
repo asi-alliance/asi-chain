@@ -1,5 +1,5 @@
 x-rnode: &default-rnode
-  image: f1r3flyindustries/f1r3fly-scala-node
+  image: amamata/snet-scala-node:optimized
   user: root
   networks:
     - f1r3fly
@@ -8,6 +8,8 @@ services:
   validator:
     <<: *default-rnode
     container_name: validator
+    env_file:
+      - conf/validator.env
     environment:
       - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
       - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
@@ -16,17 +18,16 @@ services:
         "run",
         "--host=$VALIDATOR_HOST",
         "--protocol-port=40440",
-        "--discovery-port=40444",
-        "--api-port-http=40443",
         "--api-port-grpc-external=40441",
         "--api-port-grpc-internal=40442",
-        "--bootstrap=rnode://1e780e5dfbe0a3d9470a2b414f502d59402e09c2@54.175.6.183?protocol=40400&discovery=40404",
-        "--validator-public-key=$VALIDATOR_PUBLIC_KEY",
-        "--validator-private-key=$VALIDATOR_PRIVATE_KEY",
+        "--api-port-http=40443",
+        "--discovery-port=40444",
         "--api-port-admin-http=40445",
+        "--bootstrap=$BOOTSTRAP",
+        "--validator-public-key=$VALIDATOR_PUBLIC_KEY",
+        "--validator-private-key=$VALIDATOR_PRIVATE_KEY"
       ]
     ports:
-      # Setup your node's ports here
       - "40440:40440"
       - "40441:40441"
       - "40442:40442"
@@ -36,9 +37,7 @@ services:
     volumes:
       - ./conf/validator.conf:/var/lib/rnode/rnode.conf
       - ./conf/logback.xml:/var/lib/rnode/logback.xml
-      - ./data/validator:/var/lib/rnode/
-      # - ./certs/validator/node.certificate.pem:/var/lib/rnode/node.certificate.pem:ro
-      # - ./certs/validator/node.key.pem:/var/lib/rnode/node.key.pem:ro
+      - ./data:/var/lib/rnode/
 
 networks:
   f1r3fly:
