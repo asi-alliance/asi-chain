@@ -3,7 +3,8 @@
 	url = https://github.com/asi-alliance/asi-f1r3fly-node.git
 	branch = preston/rholang_rust
 
-[submodule "rust-client"]
+
+[submodule "faucet/server/rust-client"]
 	path = faucet/server/rust-client
 	url = https://github.com/singnet/rust-client.git
 	branch = main
