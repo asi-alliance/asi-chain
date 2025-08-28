@@ -7,8 +7,9 @@ describe('ASI Wallet - Create → Settings → Import → Transfer → Validate'
   const ACCOUNT_2_NAME = `Test Imported ${Date.now() + 1}`;
   const ACCOUNT_PASSWORD = 'TestPass123!';
   const PRIVATE_KEY = process.env.PRIVATE_KEY;
-  const VALIDATOR_IP = '54.175.6.183';
+  const VALIDATOR_IP = '44.198.8.24';
   const TRANSFER_AMOUNT = '1';
+  const FEE_AMOUNT = '0.002';
 
   // Helper functions
   const parseBalance = (text) => parseFloat(text.match(/([0-9]*\.?[0-9]+)\s*REV/i)?.[1] || '0');
@@ -209,7 +210,8 @@ describe('ASI Wallet - Create → Settings → Import → Transfer → Validate'
     
     await browser.url(`${BASE_URL}/#/send`);
     await $('//label[contains(.,"Recipient Address")]/following::input[1]').setValue(secondAccountAddress);
-    await $('//label[normalize-space()="Amount"]/following::input[1]').setValue(TRANSFER_AMOUNT);
+    await $('//label[normalize-space()="Amount"]/following::input[1]')
+      .setValue((parseFloat(TRANSFER_AMOUNT) - parseFloat(FEE_AMOUNT)).toString());
     await $('//button[normalize-space()="Send Transaction"]').click();
     await $('//button[normalize-space()="Confirm & Send"]').click();
     
