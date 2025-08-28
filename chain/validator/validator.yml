@@ -8,8 +8,6 @@ services:
   validator:
     <<: *default-rnode
     container_name: validator
-    env_file:
-      - conf/validator.env
     environment:
       - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
       - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
