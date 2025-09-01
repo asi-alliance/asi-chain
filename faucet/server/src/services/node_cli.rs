@@ -59,7 +59,7 @@ impl NodeCliService {
 
     pub async fn get_deploy_info(&self, id: String) -> Result<DeployCompressedInfo> {
         //TODO: specify in .env
-        let max_wait = 7;
+        let max_wait = 6;
         let check_interval = 2;
         let max_attempts = max_wait / check_interval;
 
