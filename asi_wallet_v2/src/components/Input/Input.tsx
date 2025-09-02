@@ -36,6 +36,7 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
+  min-height: 44px; /* Touch-friendly minimum */
   background: ${({ theme }) => theme.inputBg};
   border: 2px solid ${({ theme, hasError }) => (hasError ? theme.danger : 'transparent')};
   border-radius: 8px;

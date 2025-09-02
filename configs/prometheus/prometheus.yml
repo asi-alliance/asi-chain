@@ -1,0 +1,138 @@
+# ASI Chain Prometheus Configuration
+# Production monitoring for horizontal scaling
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'asi-chain-prod'
+    environment: 'production'
+
+rule_files:
+  - "rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
+
+  # ASI Chain Indexer (multiple instances)
+  - job_name: 'asi-indexer'
+    static_configs:
+      - targets: 
+        - 'indexer:9090'
+    scrape_interval: 10s
+    metrics_path: '/metrics'
+    params:
+      format: ['prometheus']
+
+  # PostgreSQL Database
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-primary:5432']
+    scrape_interval: 30s
+    
+  # Redis Cache
+  - job_name: 'redis'
+    static_configs:
+      - targets: 
+        - 'asi-redis-primary:6379'
+        - 'asi-redis-replica:6379'
+    scrape_interval: 15s
+
+  # Hasura GraphQL Engine
+  - job_name: 'hasura'
+    static_configs:
+      - targets: ['asi-hasura-primary:8080']
+    scrape_interval: 15s
+    metrics_path: '/v1alpha1/config'
+
+  # NGINX Load Balancer
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['asi-nginx-lb:80']
+    scrape_interval: 30s
+    metrics_path: '/nginx_status'
+
+  # ASI Wallet Services
+  - job_name: 'asi-wallet'
+    static_configs:
+      - targets:
+        - 'asi-wallet-1:80'
+        - 'asi-wallet-2:80'
+        - 'asi-wallet-3:80'
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # ASI Explorer Services
+  - job_name: 'asi-explorer'
+    static_configs:
+      - targets:
+        - 'asi-explorer-1:80'
+        - 'asi-explorer-2:80'
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # Docker Engine Metrics
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['host.docker.internal:9323']
+    scrape_interval: 30s
+
+  # Node Exporter (System Metrics)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+
+  # cAdvisor (Container Metrics)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 15s
+    metrics_path: '/metrics'
+
+  # BlackBox Exporter (Uptime Monitoring)
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://asi-nginx-lb/health
+        - http://asi-wallet-1/health
+        - http://asi-explorer-1/health
+        - http://asi-hasura-primary:8080/healthz
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # Custom RChain Node Metrics
+  - job_name: 'rchain-node'
+    static_configs:
+      - targets: ['host.docker.internal:40403']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+    scheme: http
+
+# Storage configuration for production
+storage:
+  tsdb:
+    retention.time: 30d
+    retention.size: 10GB
+    wal-compression: true
+
+# Performance optimizations
+scrape_configs_file: /etc/prometheus/scrape_configs/*.yml

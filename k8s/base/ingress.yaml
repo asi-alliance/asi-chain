@@ -1,0 +1,112 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: asi-chain-ingress
+  namespace: asi-chain
+  labels:
+    app.kubernetes.io/name: asi-chain-ingress
+    app.kubernetes.io/instance: asi-chain-ingress
+    app.kubernetes.io/component: load-balancer
+    app.kubernetes.io/part-of: asi-chain-platform
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/rate-limit: "1000"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - wallet.asichain.io
+    - explorer.asichain.io
+    - api.asichain.io
+    secretName: asi-chain-tls
+  rules:
+  # ASI Wallet
+  - host: wallet.asichain.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: asi-wallet
+            port:
+              number: 80
+  
+  # ASI Explorer
+  - host: explorer.asichain.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: asi-explorer
+            port:
+              number: 80
+  
+  # API and GraphQL endpoints
+  - host: api.asichain.io
+    http:
+      paths:
+      # GraphQL API
+      - path: /graphql
+        pathType: Prefix
+        backend:
+          service:
+            name: hasura
+            port:
+              number: 8080
+      # Hasura console (admin only)
+      - path: /console
+        pathType: Prefix
+        backend:
+          service:
+            name: hasura
+            port:
+              number: 8080
+      # Metrics endpoints
+      - path: /metrics
+        pathType: Prefix
+        backend:
+          service:
+            name: asi-indexer
+            port:
+              number: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress-controller
+  namespace: asi-chain
+  labels:
+    app.kubernetes.io/name: nginx-ingress
+    app.kubernetes.io/instance: nginx-ingress
+    app.kubernetes.io/component: controller
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  sessionAffinity: None
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: https
+  selector:
+    app.kubernetes.io/name: nginx-ingress
+    app.kubernetes.io/instance: nginx-ingress
+    app.kubernetes.io/component: controller

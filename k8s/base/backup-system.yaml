@@ -1,0 +1,214 @@
+# PostgreSQL Backup CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: asi-chain
+  labels:
+    app: postgres-backup
+    app.kubernetes.io/name: postgres-backup
+    app.kubernetes.io/instance: asi-chain-backup
+    app.kubernetes.io/component: backup
+    app.kubernetes.io/part-of: asi-chain-platform
+spec:
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  timeZone: "UTC"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: postgres-backup
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            fsGroup: 999
+          containers:
+          - name: postgres-backup
+            image: postgres:15-alpine
+            command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              export PGPASSWORD=$POSTGRES_PASSWORD
+              BACKUP_FILE="asichain_$(date +%Y%m%d_%H%M%S).sql"
+              echo "Starting backup: $BACKUP_FILE"
+              
+              # Create backup
+              pg_dump -h postgres-primary -U indexer -d asichain > /backup/$BACKUP_FILE
+              
+              # Compress backup
+              gzip /backup/$BACKUP_FILE
+              
+              # Upload to S3
+              aws s3 cp /backup/${BACKUP_FILE}.gz s3://$S3_BACKUP_BUCKET/postgres/$(date +%Y/%m/%d)/${BACKUP_FILE}.gz
+              
+              # Clean up local file
+              rm /backup/${BACKUP_FILE}.gz
+              
+              # Clean up old S3 backups (keep 30 days)
+              aws s3 ls s3://$S3_BACKUP_BUCKET/postgres/ --recursive | \
+                awk '$1 < "'$(date -d '30 days ago' '+%Y-%m-%d')'" {print $4}' | \
+                xargs -I {} aws s3 rm s3://$S3_BACKUP_BUCKET/{}
+              
+              echo "Backup completed successfully"
+            env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+            - name: S3_BACKUP_BUCKET
+              value: "asi-chain-backups"
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 1Gi
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          volumes:
+          - name: backup-storage
+            emptyDir:
+              sizeLimit: 10Gi
+---
+# Redis Backup CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: redis-backup
+  namespace: asi-chain
+  labels:
+    app: redis-backup
+    app.kubernetes.io/name: redis-backup
+    app.kubernetes.io/instance: asi-chain-backup
+    app.kubernetes.io/component: backup
+    app.kubernetes.io/part-of: asi-chain-platform
+spec:
+  schedule: "0 3 * * *"  # Daily at 3 AM
+  timeZone: "UTC"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: redis-backup
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            fsGroup: 999
+          containers:
+          - name: redis-backup
+            image: redis:7.2-alpine
+            command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              BACKUP_FILE="redis_$(date +%Y%m%d_%H%M%S).rdb"
+              echo "Starting Redis backup: $BACKUP_FILE"
+              
+              # Trigger Redis save
+              redis-cli -h redis-primary BGSAVE
+              
+              # Wait for save to complete
+              while [ "$(redis-cli -h redis-primary LASTSAVE)" = "$(redis-cli -h redis-primary LASTSAVE)" ]; do
+                sleep 1
+              done
+              
+              # Copy dump file
+              kubectl cp asi-chain/redis-primary:/data/dump.rdb /backup/$BACKUP_FILE
+              
+              # Compress and upload to S3
+              gzip /backup/$BACKUP_FILE
+              aws s3 cp /backup/${BACKUP_FILE}.gz s3://$S3_BACKUP_BUCKET/redis/$(date +%Y/%m/%d)/${BACKUP_FILE}.gz
+              
+              # Clean up
+              rm /backup/${BACKUP_FILE}.gz
+              
+              echo "Redis backup completed successfully"
+            env:
+            - name: S3_BACKUP_BUCKET
+              value: "asi-chain-backups"
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 512Mi
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          volumes:
+          - name: backup-storage
+            emptyDir:
+              sizeLimit: 5Gi
+---
+# Velero Backup Schedule for Kubernetes resources
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: asi-chain-daily-backup
+  namespace: velero
+  labels:
+    app: velero-backup
+    app.kubernetes.io/name: velero-backup
+    app.kubernetes.io/instance: asi-chain-backup
+    app.kubernetes.io/component: backup
+spec:
+  schedule: "0 1 * * *"  # Daily at 1 AM
+  template:
+    includedNamespaces:
+    - asi-chain
+    storageLocation: default
+    volumeSnapshotLocations:
+    - default
+    ttl: 720h  # 30 days
+    metadata:
+      labels:
+        backup-type: daily
+        environment: production
+---
+# Weekly full backup
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: asi-chain-weekly-backup
+  namespace: velero
+  labels:
+    app: velero-backup
+    backup-type: weekly
+spec:
+  schedule: "0 0 * * 0"  # Weekly on Sunday at midnight
+  template:
+    includedNamespaces:
+    - asi-chain
+    - kube-system
+    storageLocation: default
+    volumeSnapshotLocations:
+    - default
+    ttl: 2160h  # 90 days
+    metadata:
+      labels:
+        backup-type: weekly
+        environment: production
+    includeClusterResources: true

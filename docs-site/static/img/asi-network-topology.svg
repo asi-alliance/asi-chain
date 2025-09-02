@@ -1,0 +1,308 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#7FD67A;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#7FD67A;stop-opacity:0" />
+    </radialGradient>
+    <linearGradient id="dataFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#A8E6A3;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#C4F0C1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7FD67A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Dark tech background -->
+  <rect width="800" height="600" fill="#0a0f14"/>
+  <defs>
+    <pattern id="techGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1a2028" stroke-width="0.5" opacity="0.4"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#techGrid)"/>
+  
+  <!-- Core Network Nodes -->
+  <!-- Bootstrap Node -->
+  <g id="bootstrap" transform="translate(400, 100)">
+    <circle r="40" fill="url(#nodeGlow)">
+      <animate attributeName="r" values="35;45;35" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="25" fill="#7FD67A"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#000" font-weight="bold">BOOT</text>
+    <text y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#7FD67A" font-weight="bold">Bootstrap Node</text>
+    <text y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#A8E6A3">Network Discovery</text>
+  </g>
+  
+  <!-- Validator Nodes -->
+  <g id="validator1" transform="translate(200, 200)">
+    <circle r="30" fill="url(#nodeGlow)" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="1s" fill="freeze"/>
+      <animate attributeName="r" values="25;35;25" dur="3s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="20" fill="#A8E6A3" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="1s" fill="freeze"/>
+    </circle>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#000" font-weight="bold" opacity="0">
+      VAL1
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="1s" fill="freeze"/>
+    </text>
+    <text y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#A8E6A3" opacity="0">
+      Validator
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="1s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <g id="validator2" transform="translate(600, 200)">
+    <circle r="30" fill="url(#nodeGlow)" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="1.5s" fill="freeze"/>
+      <animate attributeName="r" values="25;35;25" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="20" fill="#A8E6A3" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="1.5s" fill="freeze"/>
+    </circle>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#000" font-weight="bold" opacity="0">
+      VAL2
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="1.5s" fill="freeze"/>
+    </text>
+    <text y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#A8E6A3" opacity="0">
+      Validator
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="1.5s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <g id="validator3" transform="translate(300, 350)">
+    <circle r="30" fill="url(#nodeGlow)" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="2s" fill="freeze"/>
+      <animate attributeName="r" values="25;35;25" dur="3s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="20" fill="#A8E6A3" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="2s" fill="freeze"/>
+    </circle>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#000" font-weight="bold" opacity="0">
+      VAL3
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="2s" fill="freeze"/>
+    </text>
+    <text y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#A8E6A3" opacity="0">
+      Validator
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="2s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <g id="validator4" transform="translate(500, 350)">
+    <circle r="30" fill="url(#nodeGlow)" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="2.5s" fill="freeze"/>
+      <animate attributeName="r" values="25;35;25" dur="3s" begin="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="20" fill="#A8E6A3" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="2.5s" fill="freeze"/>
+    </circle>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#000" font-weight="bold" opacity="0">
+      VAL4
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="2.5s" fill="freeze"/>
+    </text>
+    <text y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#A8E6A3" opacity="0">
+      Validator
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="2.5s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <!-- Observer Nodes -->
+  <g id="observer1" transform="translate(100, 300)">
+    <circle r="25" fill="url(#nodeGlow)" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3s" fill="freeze"/>
+      <animate attributeName="r" values="20;30;20" dur="4s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="15" fill="#C4F0C1" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3s" fill="freeze"/>
+    </circle>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#000" font-weight="bold" opacity="0">
+      OBS
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3s" fill="freeze"/>
+    </text>
+    <text y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#C4F0C1" opacity="0">
+      Observer
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <g id="observer2" transform="translate(700, 300)">
+    <circle r="25" fill="url(#nodeGlow)" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3.5s" fill="freeze"/>
+      <animate attributeName="r" values="20;30;20" dur="4s" begin="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="15" fill="#C4F0C1" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3.5s" fill="freeze"/>
+    </circle>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#000" font-weight="bold" opacity="0">
+      OBS
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3.5s" fill="freeze"/>
+    </text>
+    <text y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#C4F0C1" opacity="0">
+      Observer
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3.5s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <!-- Client Node -->
+  <g id="client" transform="translate(400, 450)">
+    <circle r="20" fill="url(#nodeGlow)" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="4s" fill="freeze"/>
+      <animate attributeName="r" values="15;25;15" dur="3s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="12" fill="#7FD67A" opacity="0.7" opacity_base="0">
+      <animate attributeName="opacity" values="0;0.7" dur="1s" begin="4s" fill="freeze"/>
+    </circle>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#000" font-weight="bold" opacity="0">
+      CLI
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="4s" fill="freeze"/>
+    </text>
+    <text y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#7FD67A" opacity="0">
+      Client
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="4s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <!-- Network Connections -->
+  <g stroke="url(#dataFlow)" stroke-width="2" fill="none" opacity="0.6">
+    <!-- Bootstrap to Validators -->
+    <path d="M 370 125 L 220 180" opacity="0">
+      <animate attributeName="opacity" values="0;0.8;0.4" dur="2s" begin="1s" fill="freeze"/>
+    </path>
+    <path d="M 430 125 L 580 180" opacity="0">
+      <animate attributeName="opacity" values="0;0.8;0.4" dur="2s" begin="1.5s" fill="freeze"/>
+    </path>
+    <path d="M 380 135 L 320 335" opacity="0">
+      <animate attributeName="opacity" values="0;0.8;0.4" dur="2s" begin="2s" fill="freeze"/>
+    </path>
+    <path d="M 420 135 L 480 335" opacity="0">
+      <animate attributeName="opacity" values="0;0.8;0.4" dur="2s" begin="2.5s" fill="freeze"/>
+    </path>
+    
+    <!-- Inter-validator connections -->
+    <path d="M 220 220 L 280 330" opacity="0">
+      <animate attributeName="opacity" values="0;0.6;0.3" dur="1.5s" begin="3s" fill="freeze"/>
+    </path>
+    <path d="M 580 220 L 520 330" opacity="0">
+      <animate attributeName="opacity" values="0;0.6;0.3" dur="1.5s" begin="3s" fill="freeze"/>
+    </path>
+    <path d="M 230 200 L 570 200" opacity="0">
+      <animate attributeName="opacity" values="0;0.6;0.3" dur="1.5s" begin="3.2s" fill="freeze"/>
+    </path>
+    <path d="M 320 350 L 480 350" opacity="0">
+      <animate attributeName="opacity" values="0;0.6;0.3" dur="1.5s" begin="3.2s" fill="freeze"/>
+    </path>
+    
+    <!-- Observer connections -->
+    <path d="M 125 300 L 180 220" opacity="0" stroke="#C4F0C1">
+      <animate attributeName="opacity" values="0;0.5" dur="1s" begin="3s" fill="freeze"/>
+    </path>
+    <path d="M 675 300 L 620 220" opacity="0" stroke="#C4F0C1">
+      <animate attributeName="opacity" values="0;0.5" dur="1s" begin="3.5s" fill="freeze"/>
+    </path>
+    
+    <!-- Client connections -->
+    <path d="M 400 430 L 400 140" opacity="0" stroke="#7FD67A" stroke-dasharray="3,3">
+      <animate attributeName="opacity" values="0;0.7" dur="1s" begin="4s" fill="freeze"/>
+      <animate attributeName="stroke-dashoffset" values="0;-6" dur="1s" begin="4s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Data packets animation -->
+  <g fill="#7FD67A">
+    <!-- Packet 1: Bootstrap to Val1 -->
+    <circle r="3" opacity="0">
+      <animateMotion dur="2s" begin="5s" repeatCount="indefinite">
+        <mpath href="#path1"/>
+      </animateMotion>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" begin="5s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Packet 2: Val1 to Val3 -->
+    <circle r="3" fill="#A8E6A3" opacity="0">
+      <animateMotion dur="1.5s" begin="6s" repeatCount="indefinite">
+        <mpath href="#path2"/>
+      </animateMotion>
+      <animate attributeName="opacity" values="0;1;1;0" dur="1.5s" begin="6s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Packet 3: Client to Bootstrap -->
+    <circle r="3" fill="#C4F0C1" opacity="0">
+      <animateMotion dur="1s" begin="7s" repeatCount="indefinite">
+        <mpath href="#path3"/>
+      </animateMotion>
+      <animate attributeName="opacity" values="0;1;1;0" dur="1s" begin="7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Hidden paths for animation -->
+  <defs>
+    <path id="path1" d="M 370 125 L 220 180" fill="none"/>
+    <path id="path2" d="M 220 220 L 280 330" fill="none"/>
+    <path id="path3" d="M 400 430 L 400 140" fill="none"/>
+  </defs>
+  
+  <!-- Network Stats Panel -->
+  <g transform="translate(50, 480)">
+    <rect width="200" height="80" rx="6" fill="#1a1a1a" stroke="#7FD67A" stroke-width="1" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="5s" fill="freeze"/>
+    </rect>
+    <text x="100" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7FD67A" font-weight="bold" opacity="0">
+      Network Statistics
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="5s" fill="freeze"/>
+    </text>
+    <text x="10" y="40" font-family="Arial, sans-serif" font-size="8" fill="#A8E6A3" opacity="0">
+      • 1 Bootstrap Node
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="5.5s" fill="freeze"/>
+    </text>
+    <text x="10" y="55" font-family="Arial, sans-serif" font-size="8" fill="#A8E6A3" opacity="0">
+      • 4 Validator Nodes
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="6s" fill="freeze"/>
+    </text>
+    <text x="10" y="70" font-family="Arial, sans-serif" font-size="8" fill="#A8E6A3" opacity="0">
+      • 2 Observer Nodes • 1 Client
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="6.5s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <!-- Protocol Info Panel -->
+  <g transform="translate(550, 480)">
+    <rect width="200" height="80" rx="6" fill="#1a1a1a" stroke="#A8E6A3" stroke-width="1" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="5s" fill="freeze"/>
+    </rect>
+    <text x="100" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#A8E6A3" font-weight="bold" opacity="0">
+      Network Protocol
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="5s" fill="freeze"/>
+    </text>
+    <text x="10" y="40" font-family="Arial, sans-serif" font-size="8" fill="#C4F0C1" opacity="0">
+      • gRPC Communication
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="5.5s" fill="freeze"/>
+    </text>
+    <text x="10" y="55" font-family="Arial, sans-serif" font-size="8" fill="#C4F0C1" opacity="0">
+      • Kademlia Discovery
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="6s" fill="freeze"/>
+    </text>
+    <text x="10" y="70" font-family="Arial, sans-serif" font-size="8" fill="#C4F0C1" opacity="0">
+      • TLS Encryption
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="6.5s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="url(#dataFlow)">
+    ASI Chain Network Topology
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="400" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#A8E6A3">
+    Decentralized Node Architecture
+  </text>
+  
+  <!-- Live indicator -->
+  <g transform="translate(20, 20)">
+    <circle r="5" fill="#7FD67A">
+      <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="15" y="5" font-family="Arial, sans-serif" font-size="10" fill="#7FD67A">
+      Live Network • 8 Active Nodes
+    </text>
+  </g>
+</svg>

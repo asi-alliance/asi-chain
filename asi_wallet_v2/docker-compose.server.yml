@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  asi-wallet:
+    build: .
+    container_name: asi-wallet-v2
+    ports:
+      - "3000:80"
+    environment:
+      # WalletConnect Project ID
+      - REACT_APP_WALLETCONNECT_PROJECT_ID=4c8ec18817ffbbce4b824f14928d0f8b
+      
+      # ASI Chain Network Configuration (Server endpoints)
+      # Using validator1 for transactions (port 40413)
+      - REACT_APP_FIREFLY_MAINNET_URL=http://18.142.221.192:40413
+      - REACT_APP_FIREFLY_MAINNET_READONLY_URL=http://18.142.221.192:40453
+      - REACT_APP_FIREFLY_GRAPHQL_URL=http://18.142.221.192:8080/v1/graphql
+      
+      # Same for testnet (using same server)
+      - REACT_APP_FIREFLY_TESTNET_URL=http://18.142.221.192:40413
+      - REACT_APP_FIREFLY_TESTNET_READONLY_URL=http://18.142.221.192:40453
+      
+      # Local will use localhost from user's perspective
+      - REACT_APP_FIREFLY_LOCAL_URL=http://localhost:40413
+      - REACT_APP_FIREFLY_LOCAL_READONLY_URL=http://localhost:40453
+      - REACT_APP_FIREFLY_LOCAL_GRAPHQL_URL=http://localhost:8080/v1/graphql
+    
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    restart: unless-stopped
+    
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

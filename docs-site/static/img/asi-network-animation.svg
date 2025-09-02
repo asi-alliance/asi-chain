@@ -1,0 +1,123 @@
+<svg width="600" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="asiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7FD67A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C4F0C1;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="200" fill="#ffffff"/>
+  
+  <!-- Network nodes -->
+  <g id="network">
+    <!-- Center node (ASI Chain) -->
+    <circle cx="300" cy="100" r="25" fill="url(#asiGradient)" filter="url(#glow)">
+      <animate attributeName="r" values="25;28;25" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="300" y="105" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-weight="600" font-size="12">ASI</text>
+    
+    <!-- Validator nodes -->
+    <g id="validators">
+      <!-- Validator 1 -->
+      <circle cx="200" cy="50" r="20" fill="#A8E6A3" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;1;0.9" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <text x="200" y="54" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-size="10">V1</text>
+      
+      <!-- Validator 2 -->
+      <circle cx="400" cy="50" r="20" fill="#A8E6A3" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;1;0.9" dur="3s" begin="0.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="400" y="54" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-size="10">V2</text>
+      
+      <!-- Validator 3 -->
+      <circle cx="200" cy="150" r="20" fill="#A8E6A3" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;1;0.9" dur="3s" begin="1s" repeatCount="indefinite"/>
+      </circle>
+      <text x="200" y="154" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-size="10">V3</text>
+      
+      <!-- Validator 4 -->
+      <circle cx="400" cy="150" r="20" fill="#A8E6A3" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;1;0.9" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="400" y="154" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-size="10">V4</text>
+    </g>
+    
+    <!-- Alliance member nodes -->
+    <g id="alliance">
+      <!-- Fetch.ai -->
+      <circle cx="100" cy="100" r="15" fill="#C4F0C1" opacity="0.8"/>
+      <text x="100" y="104" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-size="8">FET</text>
+      
+      <!-- SingularityNET -->
+      <circle cx="500" cy="100" r="15" fill="#C4F0C1" opacity="0.8"/>
+      <text x="500" y="104" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-size="8">AGIX</text>
+      
+      <!-- Ocean Protocol -->
+      <circle cx="300" cy="30" r="15" fill="#C4F0C1" opacity="0.8"/>
+      <text x="300" y="34" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-size="8">OCEAN</text>
+      
+      <!-- CUDOS -->
+      <circle cx="300" cy="170" r="15" fill="#C4F0C1" opacity="0.8"/>
+      <text x="300" y="174" text-anchor="middle" fill="#1A1A1A" font-family="Inter, sans-serif" font-size="8">CUDOS</text>
+    </g>
+    
+    <!-- Connection lines -->
+    <g id="connections" stroke="#7FD67A" stroke-width="1.5" fill="none" opacity="0.4">
+      <!-- Center to validators -->
+      <line x1="300" y1="100" x2="200" y2="50">
+        <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="300" y1="100" x2="400" y2="50">
+        <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+      </line>
+      <line x1="300" y1="100" x2="200" y2="150">
+        <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" begin="1s" repeatCount="indefinite"/>
+      </line>
+      <line x1="300" y1="100" x2="400" y2="150">
+        <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+      </line>
+      
+      <!-- Center to alliance -->
+      <line x1="300" y1="100" x2="100" y2="100" stroke-dasharray="5,5">
+        <animate attributeName="stroke-dashoffset" values="0;10" dur="1s" repeatCount="indefinite"/>
+      </line>
+      <line x1="300" y1="100" x2="500" y2="100" stroke-dasharray="5,5">
+        <animate attributeName="stroke-dashoffset" values="0;10" dur="1s" repeatCount="indefinite"/>
+      </line>
+      <line x1="300" y1="100" x2="300" y2="30" stroke-dasharray="5,5">
+        <animate attributeName="stroke-dashoffset" values="0;10" dur="1s" repeatCount="indefinite"/>
+      </line>
+      <line x1="300" y1="100" x2="300" y2="170" stroke-dasharray="5,5">
+        <animate attributeName="stroke-dashoffset" values="0;10" dur="1s" repeatCount="indefinite"/>
+      </line>
+    </g>
+    
+    <!-- Data flow particles -->
+    <g id="particles">
+      <circle r="2" fill="#7FD67A">
+        <animateMotion dur="3s" repeatCount="indefinite">
+          <mpath href="#path1"/>
+        </animateMotion>
+      </circle>
+      <circle r="2" fill="#A8E6A3">
+        <animateMotion dur="3s" begin="1s" repeatCount="indefinite">
+          <mpath href="#path2"/>
+        </animateMotion>
+      </circle>
+    </g>
+    
+    <!-- Paths for particles -->
+    <path id="path1" d="M 300 100 Q 250 75 200 50" fill="none"/>
+    <path id="path2" d="M 300 100 Q 350 75 400 50" fill="none"/>
+  </g>
+</svg>

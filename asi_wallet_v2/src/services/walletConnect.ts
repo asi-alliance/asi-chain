@@ -4,6 +4,7 @@ import { SessionTypes, SignClientTypes, ProposalTypes } from '@walletconnect/typ
 import { getSdkError } from '@walletconnect/utils';
 import { buildApprovedNamespaces } from '@walletconnect/utils';
 import { SecureStorage } from './secureStorage';
+import { env } from '../utils/env';
 
 export interface WalletConnectSession {
   topic: string;
@@ -35,7 +36,7 @@ class WalletConnectService {
   private initialized = false;
   private initializing = false;
   private initializationPromise: Promise<void> | null = null;
-  private projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID';
+  private projectId = env.WALLETCONNECT_PROJECT_ID;
   private relayUrl = 'wss://relay.walletconnect.com';
 
   async initialize(): Promise<void> {
@@ -79,7 +80,7 @@ class WalletConnectService {
         core,
         metadata: {
           name: 'ASI Wallet',
-          description: 'ASI Wallet - A modern wallet for the Firefly network',
+          description: 'ASI Wallet - A modern wallet for the ASI Chain network',
           url: window.location.origin,  // Use actual origin instead of hardcoded URL
           icons: ['https://asiwallet.app/logo192.png'],
         },
@@ -413,8 +414,3 @@ class WalletConnectService {
 }
 
 export const walletConnectService = new WalletConnectService();
-
-// Expose for debugging (remove in production)
-if (typeof window !== 'undefined') {
-  (window as any).walletConnectService = walletConnectService;
-}

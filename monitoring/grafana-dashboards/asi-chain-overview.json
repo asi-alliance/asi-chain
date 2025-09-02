@@ -1,0 +1,255 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "asi-chain-overview",
+    "title": "ASI Chain - Testnet Overview",
+    "tags": ["asi-chain", "blockchain", "testnet"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "10s",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+        "type": "stat",
+        "title": "Current Block Height",
+        "targets": [
+          {
+            "expr": "max(asi_chain_block_height)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null }
+              ]
+            },
+            "unit": "none",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+        "type": "stat",
+        "title": "Active Validators",
+        "targets": [
+          {
+            "expr": "count(up{job=\"validators\"}==1)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 2 },
+                { "color": "green", "value": 4 }
+              ]
+            },
+            "unit": "none",
+            "max": 4
+          }
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+        "type": "stat",
+        "title": "Transactions Per Second",
+        "targets": [
+          {
+            "expr": "rate(asi_chain_transactions_total[1m])",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 100 },
+                { "color": "green", "value": 500 }
+              ]
+            },
+            "unit": "ops",
+            "decimals": 2
+          }
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+        "type": "stat",
+        "title": "Network Uptime",
+        "targets": [
+          {
+            "expr": "(time() - asi_chain_start_time) / 3600",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null }
+              ]
+            },
+            "unit": "h",
+            "decimals": 1
+          }
+        }
+      },
+      {
+        "id": 5,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+        "type": "graph",
+        "title": "Block Production Rate",
+        "targets": [
+          {
+            "expr": "rate(asi_chain_block_height[5m])*60",
+            "legendFormat": "Blocks/min",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Blocks per minute" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 6,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+        "type": "graph",
+        "title": "Transaction Throughput",
+        "targets": [
+          {
+            "expr": "rate(asi_chain_transactions_total[1m])",
+            "legendFormat": "TPS",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(asi_chain_transactions_failed[1m])",
+            "legendFormat": "Failed TPS",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          { "format": "ops", "label": "Transactions per second" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 7,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+        "type": "graph",
+        "title": "RPC Latency",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(rpc_request_duration_seconds_bucket[5m]))*1000",
+            "legendFormat": "p50",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(rpc_request_duration_seconds_bucket[5m]))*1000",
+            "legendFormat": "p95",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(rpc_request_duration_seconds_bucket[5m]))*1000",
+            "legendFormat": "p99",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Latency (ms)" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 8,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+        "type": "graph",
+        "title": "API Response Times",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"api\"}[5m]))*1000",
+            "legendFormat": "{{handler}} p95",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Response time (ms)" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 9,
+        "gridPos": { "h": 6, "w": 8, "x": 0, "y": 20 },
+        "type": "stat",
+        "title": "Total ASI Supply",
+        "targets": [
+          {
+            "expr": "asi_chain_token_total_supply / 1e18",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 10,
+        "gridPos": { "h": 6, "w": 8, "x": 8, "y": 20 },
+        "type": "stat",
+        "title": "Staked ASI",
+        "targets": [
+          {
+            "expr": "asi_chain_token_staked / 1e18",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0
+          }
+        }
+      },
+      {
+        "id": 11,
+        "gridPos": { "h": 6, "w": 8, "x": 16, "y": 20 },
+        "type": "stat",
+        "title": "Active Wallets",
+        "targets": [
+          {
+            "expr": "asi_chain_active_wallets",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0
+          }
+        }
+      }
+    ]
+  }
+}

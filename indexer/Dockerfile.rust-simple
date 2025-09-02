@@ -1,0 +1,60 @@
+# Simple Dockerfile for Rust CLI indexer with pre-compiled binary
+FROM python:3.11-slim as builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Runtime stage
+FROM python:3.11-slim
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -u 1000 indexer
+
+WORKDIR /app
+
+# Copy Python packages from builder
+COPY --from=builder /root/.local /home/indexer/.local
+
+# Copy indexer source code
+COPY . .
+
+# Copy the pre-compiled Linux rust CLI binary
+COPY node_cli_linux /usr/local/bin/node_cli
+RUN chmod +x /usr/local/bin/node_cli
+
+# Set ownership
+RUN chown -R indexer:indexer /app /home/indexer/.local
+
+# Switch to non-root user
+USER indexer
+
+# Set Python path
+ENV PYTHONPATH=/app
+ENV PATH="/home/indexer/.local/bin:${PATH}"
+ENV RUST_CLI_PATH=/usr/local/bin/node_cli
+
+# Expose monitoring port
+EXPOSE 9090
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:9090/health || exit 1
+
+# Run the indexer
+ENV PYTHONUNBUFFERED=1
+CMD ["python", "-m", "src.main"]

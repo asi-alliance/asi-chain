@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  asi-wallet:
+    build: .
+    container_name: asi-wallet-v2
+    ports:
+      - "3000:80"
+    environment:
+      # WalletConnect Project ID
+      - REACT_APP_WALLETCONNECT_PROJECT_ID=4c8ec18817ffbbce4b824f14928d0f8b
+      
+      # RChain Network Configuration - Using Docker network
+      - REACT_APP_RCHAIN_HTTP_URL=http://rnode.readonly:40403
+      - REACT_APP_RCHAIN_GRPC_URL=http://rnode.bootstrap:40401
+      - REACT_APP_RCHAIN_READONLY_URL=http://rnode.readonly:40403
+      
+      # Network name
+      - REACT_APP_NETWORK_NAME=ASI Chain Testnet
+    
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    restart: unless-stopped
+    
+    # Connect to RChain Docker network
+    networks:
+      - asi-chain-net
+
+# Connect to existing RChain network
+networks:
+  asi-chain-net:
+    external: true
+    name: asi-chain-net

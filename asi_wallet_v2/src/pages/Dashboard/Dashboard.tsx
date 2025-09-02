@@ -12,15 +12,18 @@ import {
   TransactionApprovalModal, 
   ConnectedDApps 
 } from 'components/WalletConnect';
+import { SendIcon, ReceiveIcon, AccountsIcon, ContractIcon, IDEIcon, ClipboardIcon, WalletConnectIcon } from 'components/Icons';
 
 const DashboardContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 32px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 769px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
   }
 `;
 
@@ -103,27 +106,67 @@ const ActionButtons = styled.div`
 
 const QuickActions = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-top: 24px;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 16px;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (min-width: 769px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-top: 24px;
+  }
 `;
 
 const ActionCard = styled(Card)`
   cursor: pointer;
   transition: transform 0.2s ease;
+  overflow: hidden;
+  min-height: 100px;
+  
+  /* Touch feedback for mobile */
+  &:active {
+    transform: scale(0.98);
+  }
 
-  &:hover {
-    transform: translateY(-2px);
+  @media (min-width: 769px) {
+    &:hover {
+      transform: translateY(-2px);
+    }
+    
+    &:active {
+      transform: translateY(-2px);
+    }
+  }
+
+  p {
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0;
+    color: ${({ theme }) => theme.text.secondary};
   }
 `;
 
-const NetworkStatusBar = styled.div<{ connected: boolean }>`
+const ActionCardTitle = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.text.primary};
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const NetworkStatusBar = styled.div<{ $connected: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: ${({ connected, theme }) =>
-    connected ? theme.success + '20' : theme.danger + '20'};
+  background: ${({ $connected, theme }) =>
+    $connected ? theme.success + '20' : theme.danger + '20'};
   border-radius: 8px;
   margin-bottom: 16px;
 `;
@@ -138,12 +181,12 @@ const ErrorMessage = styled.div`
   border: 1px solid ${({ theme }) => theme.danger};
 `;
 
-const StatusDot = styled.div<{ connected: boolean }>`
+const StatusDot = styled.div<{ $connected: boolean }>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${({ connected, theme }) => 
-    connected ? theme.success : theme.danger};
+  background: ${({ $connected, theme }) => 
+    $connected ? theme.success : theme.danger};
 `;
 
 const LoadingSkeleton = styled.div<{ height?: string }>`
@@ -326,8 +369,8 @@ export const Dashboard: React.FC = () => {
           <strong>WalletConnect Error:</strong> {wcError}
         </ErrorMessage>
       )}
-      <NetworkStatusBar connected={networkStatus === 'connected'}>
-        <StatusDot connected={networkStatus === 'connected'} />
+      <NetworkStatusBar $connected={networkStatus === 'connected'}>
+        <StatusDot $connected={networkStatus === 'connected'} />
         <NetworkInfo>
           <span>{selectedNetwork.name}</span>
           <span>•</span>
@@ -409,7 +452,10 @@ export const Dashboard: React.FC = () => {
       <QuickActions>
         <ActionCard onClick={() => navigate('/send')}>
           <CardHeader>
-            <CardTitle>📤 Send REV</CardTitle>
+            <ActionCardTitle>
+              <SendIcon size={20} />
+              Send REV
+            </ActionCardTitle>
           </CardHeader>
           <CardContent>
             <p>Send REV tokens to another address</p>
@@ -418,7 +464,10 @@ export const Dashboard: React.FC = () => {
 
         <ActionCard onClick={() => navigate('/receive')}>
           <CardHeader>
-            <CardTitle>📥 Receive REV</CardTitle>
+            <ActionCardTitle>
+              <ReceiveIcon size={20} />
+              Receive REV
+            </ActionCardTitle>
           </CardHeader>
           <CardContent>
             <p>Get your address to receive REV tokens</p>
@@ -427,7 +476,10 @@ export const Dashboard: React.FC = () => {
 
         <ActionCard onClick={() => navigate('/accounts')}>
           <CardHeader>
-            <CardTitle>👥 Manage Accounts</CardTitle>
+            <ActionCardTitle>
+              <AccountsIcon size={20} />
+              Manage Accounts
+            </ActionCardTitle>
           </CardHeader>
           <CardContent>
             <p>Create, import, or switch between accounts</p>
@@ -436,7 +488,10 @@ export const Dashboard: React.FC = () => {
 
         <ActionCard onClick={() => navigate('/deploy')}>
           <CardHeader>
-            <CardTitle>📝 Deploy Contract</CardTitle>
+            <ActionCardTitle>
+              <ContractIcon size={20} />
+              Deploy Contract
+            </ActionCardTitle>
           </CardHeader>
           <CardContent>
             <p>Deploy custom Rholang contracts</p>
@@ -445,7 +500,10 @@ export const Dashboard: React.FC = () => {
 
         <ActionCard onClick={() => navigate('/ide')}>
           <CardHeader>
-            <CardTitle>🔧 IDE</CardTitle>
+            <ActionCardTitle>
+              <IDEIcon size={20} />
+              IDE
+            </ActionCardTitle>
           </CardHeader>
           <CardContent>
             <p>Develop and test Rholang contracts</p>
@@ -454,7 +512,10 @@ export const Dashboard: React.FC = () => {
 
         <ActionCard onClick={() => navigate('/history')}>
           <CardHeader>
-            <CardTitle>📋 Transaction History</CardTitle>
+            <ActionCardTitle>
+              <ClipboardIcon size={20} />
+              Transaction History
+            </ActionCardTitle>
           </CardHeader>
           <CardContent>
             <p>View and export transaction history</p>
@@ -463,7 +524,10 @@ export const Dashboard: React.FC = () => {
 
         <ActionCard onClick={() => setShowWalletConnectModal(true)}>
           <CardHeader>
-            <CardTitle>🔗 WalletConnect</CardTitle>
+            <ActionCardTitle>
+              <WalletConnectIcon size={20} />
+              WalletConnect
+            </ActionCardTitle>
           </CardHeader>
           <CardContent>
             <p>Connect to dApps using WalletConnect</p>

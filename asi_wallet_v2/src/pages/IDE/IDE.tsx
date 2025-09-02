@@ -7,6 +7,7 @@ import * as monaco from 'monaco-editor';
 import { RootState } from 'store';
 import { RChainService } from 'services/rchain';
 import { Button, PasswordModal, DeploymentConfirmationModal } from 'components';
+import { FileIcon, FolderIcon, FolderOpenIcon, PlusIcon, DownloadIcon, ChevronRightIcon, ChevronDownIcon, SuccessIcon, ErrorIcon, PendingIcon } from 'components/Icons';
 import { registerRholangLanguage, RHOLANG_LANGUAGE_ID } from './rholangLanguage';
 import IDEStorageService, { IDEItem, IDEFile, IDEFolder } from 'services/ideStorage';
 import { SecureStorage } from 'services/secureStorage';
@@ -103,7 +104,8 @@ const TreeItem = styled.div<{ depth: number; active?: boolean }>`
 `;
 
 const TreeIcon = styled.span`
-  font-size: 16px;
+  display: flex;
+  align-items: center;
   user-select: none;
 `;
 
@@ -209,6 +211,9 @@ const ConsoleEntry = styled.div<{ type?: 'info' | 'error' | 'success' }>`
     type === 'error' ? theme.danger :
     type === 'success' ? theme.success :
     theme.text.secondary};
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
 `;
 
 const DeploySettings = styled.div`
@@ -575,7 +580,7 @@ export const IDE: React.FC = () => {
         const result = await rchain.waitForDeployResult(deployId);
         
         if (result.status === 'completed') {
-          addConsoleMessage('success', `✅ ${result.message}`);
+          addConsoleMessage('success', `[SUCCESS] ${result.message}`);
           if (result.blockHash) {
             addConsoleMessage('info', `Block Hash: ${result.blockHash}`);
           }
@@ -590,19 +595,19 @@ export const IDE: React.FC = () => {
             gasCost: result.cost?.toString()
           });
         } else if (result.status === 'errored') {
-          addConsoleMessage('error', `❌ Deploy execution failed: ${result.error}`);
+          addConsoleMessage('error', `[ERROR] Deploy execution failed: ${result.error}`);
           TransactionHistoryService.updateTransaction(historyTx.id, {
             status: 'failed'
           });
         } else if (result.status === 'system_error') {
-          addConsoleMessage('error', `❌ System error: ${result.error}`);
+          addConsoleMessage('error', `[ERROR] System error: ${result.error}`);
           TransactionHistoryService.updateTransaction(historyTx.id, {
             status: 'failed'
           });
         }
       } catch (resultError) {
         console.log('Could not fetch deploy result:', resultError);
-        addConsoleMessage('info', '⏳ Deploy submitted successfully. It may still be processing or pending block inclusion.');
+        addConsoleMessage('info', '[PENDING] Deploy submitted successfully. It may still be processing or pending block inclusion.');
       }
     } catch (error: any) {
       addConsoleMessage('error', `Deploy failed: ${error.message}`);
@@ -655,7 +660,7 @@ export const IDE: React.FC = () => {
         const result = await rchain.waitForDeployResult(deployId);
         
         if (result.status === 'completed') {
-          addConsoleMessage('success', `✅ ${result.message}`);
+          addConsoleMessage('success', `[SUCCESS] ${result.message}`);
           if (result.blockHash) {
             addConsoleMessage('info', `Block Hash: ${result.blockHash}`);
           }
@@ -670,19 +675,19 @@ export const IDE: React.FC = () => {
             gasCost: result.cost?.toString()
           });
         } else if (result.status === 'errored') {
-          addConsoleMessage('error', `❌ Deploy execution failed: ${result.error}`);
+          addConsoleMessage('error', `[ERROR] Deploy execution failed: ${result.error}`);
           TransactionHistoryService.updateTransaction(historyTx.id, {
             status: 'failed'
           });
         } else if (result.status === 'system_error') {
-          addConsoleMessage('error', `❌ System error: ${result.error}`);
+          addConsoleMessage('error', `[ERROR] System error: ${result.error}`);
           TransactionHistoryService.updateTransaction(historyTx.id, {
             status: 'failed'
           });
         }
       } catch (resultError) {
         console.log('Could not fetch deploy result:', resultError);
-        addConsoleMessage('info', '⏳ Deploy submitted successfully. It may still be processing or pending block inclusion.');
+        addConsoleMessage('info', '[PENDING] Deploy submitted successfully. It may still be processing or pending block inclusion.');
       }
     } catch (error: any) {
       addConsoleMessage('error', `Deploy failed: ${error.message}`);
@@ -757,7 +762,10 @@ export const IDE: React.FC = () => {
               setContextMenu({ x: e.clientX, y: e.clientY, item: folder });
             }}
           >
-            <TreeIcon>{expandedFolders.has(folder.id) ? '📂' : '📁'}</TreeIcon>
+            <TreeIcon>
+              {expandedFolders.has(folder.id) ? <ChevronDownIcon size={14} /> : <ChevronRightIcon size={14} />}
+              {expandedFolders.has(folder.id) ? <FolderOpenIcon size={16} /> : <FolderIcon size={16} />}
+            </TreeIcon>
             {renamingId === folder.id ? (
               <input
                 value={newName}
@@ -796,7 +804,7 @@ export const IDE: React.FC = () => {
             setContextMenu({ x: e.clientX, y: e.clientY, item: file });
           }}
         >
-          <TreeIcon>📄</TreeIcon>
+          <TreeIcon><FileIcon size={16} /></TreeIcon>
           {renamingId === file.id ? (
             <input
               value={newName}
@@ -896,13 +904,13 @@ export const IDE: React.FC = () => {
             Files
             <ToolbarActions>
               <Button size="small" variant="ghost" onClick={() => handleNewFile()} title="New File">
-                📄
+                <PlusIcon size={14} />
               </Button>
               <Button size="small" variant="ghost" onClick={() => handleNewFolder()} title="New Folder">
-                📁
+                <FolderIcon size={14} />
               </Button>
               <Button size="small" variant="ghost" onClick={() => fileInputRef.current?.click()} title="Import File">
-                📥
+                <DownloadIcon size={14} />
               </Button>
             </ToolbarActions>
           </ExplorerHeader>
@@ -963,7 +971,10 @@ export const IDE: React.FC = () => {
         <OutputContent>
           {consoleMessages.map(msg => (
             <ConsoleEntry key={msg.id} type={msg.type}>
-              [{msg.timestamp.toLocaleTimeString()}] {msg.message}
+              {msg.type === 'success' && <SuccessIcon size={14} />}
+              {msg.type === 'error' && <ErrorIcon size={14} />}
+              {msg.type === 'info' && <PendingIcon size={14} />}
+              <span>[{msg.timestamp.toLocaleTimeString()}] {msg.message}</span>
             </ConsoleEntry>
           ))}
           {consoleMessages.length === 0 && (

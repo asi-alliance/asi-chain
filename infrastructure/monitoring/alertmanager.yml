@@ -1,0 +1,104 @@
+global:
+  resolve_timeout: 5m
+  smtp_from: 'alerts@asi-chain.com'
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_auth_username: 'alerts@asi-chain.com'
+  smtp_auth_password: '${SMTP_PASSWORD}'
+  slack_api_url: '${SLACK_WEBHOOK_URL}'
+
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 12h
+  receiver: 'default-receiver'
+  
+  routes:
+    # Critical alerts - immediate notification
+    - match:
+        severity: critical
+      receiver: 'critical-receiver'
+      group_wait: 0s
+      repeat_interval: 5m
+      
+    # High priority alerts
+    - match:
+        severity: high
+      receiver: 'high-priority-receiver'
+      group_wait: 30s
+      repeat_interval: 1h
+      
+    # Validator specific alerts
+    - match:
+        service: validator
+      receiver: 'validator-team'
+      group_wait: 1m
+      repeat_interval: 30m
+      
+    # Performance alerts
+    - match_re:
+        alertname: '^(HighLatency|HighCPU|HighMemory|LowDiskSpace)$'
+      receiver: 'performance-team'
+      group_wait: 5m
+      repeat_interval: 2h
+
+receivers:
+  - name: 'default-receiver'
+    email_configs:
+      - to: 'team@asi-chain.com'
+        send_resolved: true
+    slack_configs:
+      - channel: '#alerts'
+        title: 'ASI Chain Alert'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
+        
+  - name: 'critical-receiver'
+    email_configs:
+      - to: 'oncall@asi-chain.com'
+        send_resolved: true
+        headers:
+          Priority: 'Urgent'
+    slack_configs:
+      - channel: '#critical-alerts'
+        color: 'danger'
+        title: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY}'
+        severity: 'critical'
+        
+  - name: 'high-priority-receiver'
+    email_configs:
+      - to: 'devops@asi-chain.com'
+        send_resolved: true
+    slack_configs:
+      - channel: '#high-priority'
+        color: 'warning'
+        title: '⚠️ HIGH: {{ .GroupLabels.alertname }}'
+        
+  - name: 'validator-team'
+    email_configs:
+      - to: 'validators@asi-chain.com'
+    slack_configs:
+      - channel: '#validator-alerts'
+        title: 'Validator Alert: {{ .GroupLabels.alertname }}'
+        
+  - name: 'performance-team'
+    email_configs:
+      - to: 'performance@asi-chain.com'
+    slack_configs:
+      - channel: '#performance'
+        title: 'Performance Issue: {{ .GroupLabels.alertname }}'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'cluster', 'service']
+    
+  - source_match:
+      alertname: 'NodeDown'
+    target_match:
+      alertname: 'ServiceDown'
+    equal: ['instance']

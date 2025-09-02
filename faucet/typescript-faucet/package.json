@@ -1,0 +1,58 @@
+{
+  "name": "asi-chain-typescript-faucet",
+  "version": "1.0.0",
+  "description": "ASI Chain RChain-compatible faucet built with TypeScript, based on proven wallet implementation",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
+    "watch": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "asi-chain",
+    "rchain",
+    "f1r3fly",
+    "faucet",
+    "blockchain",
+    "typescript"
+  ],
+  "author": "ASI Chain",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "sqlite3": "^5.1.6",
+    "axios": "^1.6.0",
+    "elliptic": "^6.5.4",
+    "js-sha3": "^0.9.3",
+    "blakejs": "^1.2.1",
+    "bs58": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/elliptic": "^6.4.18",
+    "@types/bs58": "^4.0.4",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

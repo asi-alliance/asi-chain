@@ -1,0 +1,35 @@
+<svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Official ASI Alliance Logo - Black -->
+  <g fill="#000000">
+    <!-- Main symbol - interconnected nodes forming ASI pattern -->
+    <g transform="translate(20, 20)">
+      <!-- Center circle -->
+      <circle cx="20" cy="20" r="4" fill="#000000"/>
+      
+      <!-- Top and bottom nodes -->
+      <circle cx="20" cy="5" r="7" fill="#000000"/>
+      <circle cx="20" cy="35" r="7" fill="#000000"/>
+      
+      <!-- Left and right nodes -->  
+      <circle cx="5" cy="20" r="7" fill="#000000"/>
+      <circle cx="35" cy="20" r="7" fill="#000000"/>
+      
+      <!-- Corner connector nodes -->
+      <circle cx="8" cy="8" r="5" fill="#000000"/>
+      <circle cx="32" cy="8" r="5" fill="#000000"/>
+      <circle cx="8" cy="32" r="5" fill="#000000"/>
+      <circle cx="32" cy="32" r="5" fill="#000000"/>
+    </g>
+    
+    <!-- Text: Artificial Superintelligence Alliance -->
+    <text x="80" y="30" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="400" fill="#000000">
+      Artificial
+    </text>
+    <text x="80" y="50" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="400" fill="#000000">
+      Superintelligence
+    </text>
+    <text x="80" y="70" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="400" fill="#000000">
+      Alliance
+    </text>
+  </g>
+</svg>

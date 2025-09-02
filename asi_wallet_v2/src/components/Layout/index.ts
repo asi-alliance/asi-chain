@@ -1,1 +1,1 @@
-export { Layout } from './Layout';
+export { MobileLayout as Layout } from './MobileLayout';

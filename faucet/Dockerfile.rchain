@@ -1,0 +1,41 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies needed for cryptography packages
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements_rchain.txt .
+RUN pip install --no-cache-dir -r requirements_rchain.txt
+
+# Copy application
+COPY rchain_faucet.py .
+
+# Create non-root user
+RUN useradd -m -u 1000 faucet && \
+    chown -R faucet:faucet /app
+
+USER faucet
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:5000/health || exit 1
+
+EXPOSE 5000
+
+# Environment variables (can be overridden)
+ENV FAUCET_PRIVATE_KEY=""
+ENV VALIDATOR_URL="http://18.142.221.192:40413"
+ENV READONLY_URL="http://18.142.221.192:40453"
+ENV GRAPHQL_URL="http://18.142.221.192:8080/v1/graphql"
+ENV FAUCET_AMOUNT="100"
+ENV DATABASE_PATH="/app/faucet.db"
+ENV PHLO_LIMIT="500000"
+ENV PHLO_PRICE="1"
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--threads", "4", "rchain_faucet:app"]

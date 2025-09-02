@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { RootState } from 'store';
 import { toggleTheme } from 'store/themeSlice';
 import { selectNetwork } from 'store/walletSlice';
+import { SunIcon, MoonIcon } from 'components/Icons';
 import { logout } from 'store/authSlice';
 import { AccountSwitcher } from 'components/AccountSwitcher';
 
@@ -87,6 +88,9 @@ const ThemeToggle = styled.button`
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background: ${({ theme }) => theme.primary};
@@ -190,8 +194,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </option>
             ))}
           </NetworkSelector>
-          <ThemeToggle onClick={handleThemeToggle}>
-            {darkMode ? '☀️' : '🌙'}
+          <ThemeToggle onClick={handleThemeToggle} title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+            {darkMode ? <SunIcon size={18} /> : <MoonIcon size={18} />}
           </ThemeToggle>
           {isAuthenticated && (
             <LogoutButton onClick={handleLogout}>

@@ -1,0 +1,62 @@
+# ASI Chain Grafana Datasources Configuration
+apiVersion: 1
+
+datasources:
+  # Prometheus - Main metrics datasource
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://asi-prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      httpMethod: POST
+      queryTimeout: 60s
+      timeInterval: 15s
+      exemplarTraceIdDestinations:
+        - name: trace_id
+          datasourceUid: jaeger_uid
+
+  # PostgreSQL - Database metrics and queries
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    url: postgres-primary:5432
+    database: asichain
+    user: indexer
+    secureJsonData:
+      password: ${DATABASE_PASSWORD}
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 100
+      maxIdleConns: 100
+      connMaxLifetime: 14400
+
+  # Redis - Cache metrics
+  - name: Redis
+    type: redis-datasource
+    access: proxy
+    url: redis://asi-redis-primary:6379
+    jsonData:
+      client: standalone
+      poolSize: 5
+      timeout: 10s
+      pingInterval: 0s
+      pipelineWindow: 0s
+
+  # Loki - Log aggregation (optional)
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    jsonData:
+      maxLines: 1000
+      derivedFields:
+        - datasourceUid: jaeger_uid
+          matcherRegex: "trace_id=(\\w+)"
+          name: TraceID
+          url: "$${__value.raw}"
+
+deleteDatasources:
+  - name: TestData DB
+    orgId: 1

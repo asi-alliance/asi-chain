@@ -1,0 +1,159 @@
+<svg width="800" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blockGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7FD67A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A8E6A3;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="chainGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#C4F0C1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7FD67A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="300" fill="#0f1419"/>
+  
+  <!-- Blockchain Animation -->
+  <g id="blockchain">
+    <!-- Block 1 (Genesis) -->
+    <g id="block1" transform="translate(50, 120)">
+      <rect width="80" height="60" rx="8" fill="url(#blockGradient)" stroke="#7FD67A" stroke-width="2"/>
+      <text x="40" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#000">Genesis</text>
+      <text x="40" y="35" text-anchor="middle" font-family="monospace" font-size="6" fill="#000">Block #0</text>
+      <text x="40" y="45" text-anchor="middle" font-family="monospace" font-size="6" fill="#000">Hash: 0x00...</text>
+      <circle cx="40" cy="5" r="3" fill="#7FD67A">
+        <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- Block 2 -->
+    <g id="block2" transform="translate(180, 120)" opacity="0">
+      <rect width="80" height="60" rx="8" fill="url(#blockGradient)" stroke="#7FD67A" stroke-width="2"/>
+      <text x="40" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#000">Deploy</text>
+      <text x="40" y="35" text-anchor="middle" font-family="monospace" font-size="6" fill="#000">Block #1</text>
+      <text x="40" y="45" text-anchor="middle" font-family="monospace" font-size="6" fill="#000">Hash: 0xab...</text>
+      <circle cx="40" cy="5" r="3" fill="#7FD67A">
+        <animate attributeName="opacity" values="1;0.5;1" dur="2s" begin="1s" repeatCount="indefinite"/>
+      </circle>
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="3s" fill="freeze"/>
+    </g>
+    
+    <!-- Block 3 -->
+    <g id="block3" transform="translate(310, 120)" opacity="0">
+      <rect width="80" height="60" rx="8" fill="url(#blockGradient)" stroke="#7FD67A" stroke-width="2"/>
+      <text x="40" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#000">Execute</text>
+      <text x="40" y="35" text-anchor="middle" font-family="monospace" font-size="6" fill="#000">Block #2</text>
+      <text x="40" y="45" text-anchor="middle" font-family="monospace" font-size="6" fill="#000">Hash: 0xcd...</text>
+      <circle cx="40" cy="5" r="3" fill="#7FD67A">
+        <animate attributeName="opacity" values="1;0.5;1" dur="2s" begin="2s" repeatCount="indefinite"/>
+      </circle>
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="6s" fill="freeze"/>
+    </g>
+    
+    <!-- Block 4 -->
+    <g id="block4" transform="translate(440, 120)" opacity="0">
+      <rect width="80" height="60" rx="8" fill="url(#blockGradient)" stroke="#7FD67A" stroke-width="2"/>
+      <text x="40" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#000">Finalize</text>
+      <text x="40" y="35" text-anchor="middle" font-family="monospace" font-size="6" fill="#000">Block #3</text>
+      <text x="40" y="45" text-anchor="middle" font-family="monospace" font-size="6" fill="#000">Hash: 0xef...</text>
+      <circle cx="40" cy="5" r="3" fill="#7FD67A">
+        <animate attributeName="opacity" values="1;0.5;1" dur="2s" begin="3s" repeatCount="indefinite"/>
+      </circle>
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="9s" fill="freeze"/>
+    </g>
+    
+    <!-- New Block Being Created -->
+    <g id="newblock" transform="translate(570, 120)" opacity="0">
+      <rect width="80" height="60" rx="8" fill="none" stroke="#7FD67A" stroke-width="2" stroke-dasharray="5,5">
+        <animate attributeName="stroke-dashoffset" values="0;-10" dur="1s" repeatCount="indefinite"/>
+      </rect>
+      <text x="40" y="20" text-anchor="middle" font-family="monospace" font-size="8" fill="#7FD67A">Mining...</text>
+      <text x="40" y="35" text-anchor="middle" font-family="monospace" font-size="6" fill="#7FD67A">Block #4</text>
+      <text x="40" y="45" text-anchor="middle" font-family="monospace" font-size="6" fill="#7FD67A">30s Block Time</text>
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="12s" fill="freeze"/>
+    </g>
+  </g>
+  
+  <!-- Chain Connections -->
+  <g stroke="url(#chainGradient)" stroke-width="3" fill="none">
+    <!-- Connection 1-2 -->
+    <path d="M 130 150 L 180 150" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" begin="3s"/>
+    </path>
+    
+    <!-- Connection 2-3 -->
+    <path d="M 260 150 L 310 150" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="6s" fill="freeze"/>
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" begin="6s"/>
+    </path>
+    
+    <!-- Connection 3-4 -->
+    <path d="M 390 150 L 440 150" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="9s" fill="freeze"/>
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" begin="9s"/>
+    </path>
+    
+    <!-- Connection 4-New -->
+    <path d="M 520 150 L 570 150" opacity="0" stroke-dasharray="5,5">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="12s" fill="freeze"/>
+      <animate attributeName="stroke-dashoffset" values="0;-10" dur="1s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Transaction Pool -->
+  <g id="txpool" transform="translate(650, 50)">
+    <rect width="120" height="80" rx="8" fill="#1a1a1a" stroke="#7FD67A" stroke-width="1"/>
+    <text x="60" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7FD67A">Transaction Pool</text>
+    
+    <!-- Floating transactions -->
+    <g id="tx1">
+      <circle cx="30" cy="35" r="4" fill="#A8E6A3">
+        <animate attributeName="cy" values="35;30;35" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="30" y="40" text-anchor="middle" font-family="monospace" font-size="6" fill="#A8E6A3">Tx1</text>
+    </g>
+    
+    <g id="tx2">
+      <circle cx="60" cy="45" r="4" fill="#A8E6A3">
+        <animate attributeName="cy" values="45;40;45" dur="2.5s" begin="0.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="60" y="50" text-anchor="middle" font-family="monospace" font-size="6" fill="#A8E6A3">Tx2</text>
+    </g>
+    
+    <g id="tx3">
+      <circle cx="90" cy="35" r="4" fill="#A8E6A3">
+        <animate attributeName="cy" values="35;30;35" dur="3s" begin="1s" repeatCount="indefinite"/>
+      </circle>
+      <text x="90" y="40" text-anchor="middle" font-family="monospace" font-size="6" fill="#A8E6A3">Tx3</text>
+    </g>
+  </g>
+  
+  <!-- Title and Stats -->
+  <text x="400" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="url(#chainGradient)">
+    ASI Chain Blockchain
+  </text>
+  
+  <g transform="translate(50, 220)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="12" fill="#7FD67A">
+      ⏱️ Block Time: 30 seconds
+    </text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="12" fill="#7FD67A">
+      🔗 Consensus: CBC Casper PoS
+    </text>
+    <text x="0" y="40" font-family="Arial, sans-serif" font-size="12" fill="#7FD67A">
+      🌐 Network: 7 Active Nodes
+    </text>
+  </g>
+  
+  <!-- Progress indicator -->
+  <g transform="translate(500, 220)">
+    <rect width="200" height="4" rx="2" fill="#333"/>
+    <rect width="0" height="4" rx="2" fill="#7FD67A">
+      <animate attributeName="width" values="0;200" dur="15s" repeatCount="indefinite"/>
+    </rect>
+    <text x="100" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#7FD67A">
+      Next Block in Progress
+    </text>
+  </g>
+</svg>

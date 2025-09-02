@@ -1,0 +1,1 @@
+export { default as QRScannerModal } from './QRScannerModal';

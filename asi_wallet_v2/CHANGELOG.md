@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2025-08-21
+
+### Added
+- Type declarations for `speakeasy` and `validator` modules in `src/types/modules.d.ts`
+- Missing static methods in SecureStorage service (`setItem`, `getItem`, `removeItem`)
+- Comprehensive deployment guide (DEPLOYMENT_GUIDE.md)
+- Docker deployment configuration improvements
+
+### Changed
+- Updated installation instructions to use `npm install --legacy-peer-deps`
+- Modified `config-overrides.js` to include proper webpack polyfills for `process/browser`
+- Updated styled-components theme typing to include nested `colors` structure
+- Changed QRCode import to use named export from `react-qr-code`
+
+### Fixed
+- **Critical**: Webpack module resolution error for `process/browser`
+- TypeScript compilation errors in styled-components theme
+- Missing type declarations causing build failures
+- QRCode component import error
+- SecureStorage service missing static method implementations
+
+### Removed
+- Unused `rateLimiter.ts` file (backend code in frontend directory)
+
+## [2.2.0] - 2025-07-15
+
 ### Added
 - Comprehensive testing framework with Jest and React Testing Library
 - Test suites for critical components (Dashboard, Send, Settings)

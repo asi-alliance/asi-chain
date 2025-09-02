@@ -1,0 +1,87 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: 'prometheus'
+
+  # Node Exporter for system metrics
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          instance: 'aws-lightsail'
+
+  # cAdvisor for container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          instance: 'docker-containers'
+
+  # F1R3FLY Blockchain Nodes
+  - job_name: 'f1r3fly-bootstrap'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['rnode.bootstrap:40404']
+        labels:
+          node_type: 'bootstrap'
+          validator: 'false'
+
+  - job_name: 'f1r3fly-validator1'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['rnode.validator1:40404']
+        labels:
+          node_type: 'validator'
+          validator_id: '1'
+
+  - job_name: 'f1r3fly-validator2'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['rnode.validator2:40404']
+        labels:
+          node_type: 'validator'
+          validator_id: '2'
+
+  - job_name: 'f1r3fly-validator3'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['rnode.validator3:40404']
+        labels:
+          node_type: 'validator'
+          validator_id: '3'
+
+  - job_name: 'f1r3fly-validator4'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['rnode.validator4:40404']
+        labels:
+          node_type: 'validator'
+          validator_id: '4'
+          bonded: 'false'
+
+  - job_name: 'f1r3fly-observer'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['rnode.readonly:40402']
+        labels:
+          node_type: 'observer'
+          validator: 'false'
+
+  # F1R3FLY Blockchain Metrics Exporter
+  - job_name: 'f1r3fly-blockchain-metrics'
+    static_configs:
+      - targets: ['172.17.0.1:9091']
+        labels:
+          service: 'blockchain-exporter'
+          type: 'custom-metrics'
+
+# Alert rules (optional)
+rule_files:
+  - /etc/prometheus/alerts.yml

@@ -4,6 +4,8 @@ import { Account } from 'types/wallet';
 export interface SecureAccount extends Omit<Account, 'privateKey'> {
   encryptedPrivateKey?: string;
   privateKey?: never; // Ensure privateKey is never stored
+  derivationPath?: string;
+  isHardwareWallet?: boolean;
 }
 
 export interface SecureStorageData {
@@ -341,5 +343,67 @@ export class SecureStorage {
 
   async getKeys(): Promise<string[]> {
     return Object.keys(localStorage);
+  }
+
+  /**
+   * Static methods for general storage operations
+   */
+  static async setItem(key: string, value: string): Promise<void> {
+    localStorage.setItem(hashValue(key), value);
+  }
+
+  static async getItem(key: string): Promise<string | null> {
+    return localStorage.getItem(hashValue(key));
+  }
+
+  static async removeItem(key: string): Promise<void> {
+    localStorage.removeItem(hashValue(key));
+  }
+
+  /**
+   * Store encrypted account (alternative method name)
+   */
+  static async storeEncryptedAccount(account: SecureAccount): Promise<void> {
+    const accounts = this.getEncryptedAccounts();
+    const existingIndex = accounts.findIndex(a => a.id === account.id || a.address === account.address);
+    
+    if (existingIndex >= 0) {
+      accounts[existingIndex] = account;
+    } else {
+      accounts.push(account);
+    }
+    
+    this.saveEncryptedAccounts(accounts);
+  }
+
+  /**
+   * Save WalletConnect data
+   */
+  static saveWalletConnectData(data: any): void {
+    localStorage.setItem(this.WALLET_CONNECT_KEY, JSON.stringify(data));
+  }
+
+  /**
+   * Get WalletConnect data
+   */
+  static getWalletConnectData(): any {
+    const data = localStorage.getItem(this.WALLET_CONNECT_KEY);
+    return data ? JSON.parse(data) : null;
+  }
+
+  /**
+   * Clear all WalletConnect data
+   */
+  static clearWalletConnectData(): void {
+    localStorage.removeItem(this.WALLET_CONNECT_KEY);
+  }
+
+  /**
+   * Clear all storage
+   */
+  static clearAll(): void {
+    localStorage.removeItem(this.STORAGE_KEY);
+    localStorage.removeItem(this.WALLET_CONNECT_KEY);
+    this.clearSession();
   }
 }

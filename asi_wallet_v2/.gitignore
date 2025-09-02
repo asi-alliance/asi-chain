@@ -1,1 +1,26 @@
+# Dependencies
 node_modules
+
+# Test and debug files
+debug-*.js
+test-*.js
+test-*.html
+*-test.*
+*.test.*
+clear-all-wc.js
+fix-walletconnect-*.js
+reset-walletconnect.sh
+
+# Coverage reports
+/coverage
+
+# Logs
+*.log
+
+# Build artifacts
+/build
+
+# Temporary files
+temp/
+*.tmp
+*.bak

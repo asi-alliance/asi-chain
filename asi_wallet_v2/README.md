@@ -19,6 +19,19 @@ Quick links:
 - **[WalletConnect](../docs/WALLET.md#walletconnect-integration)** - dApp connectivity
 - **[Development](../docs/WALLET.md#development)** - Contributing guide
 
+## 🐳 Docker Quick Start
+
+Run the wallet instantly with Docker:
+
+```bash
+# Start the wallet
+docker-compose up -d
+
+# Access at http://localhost:3000
+```
+
+See [DOCKER_README.md](./DOCKER_README.md) for detailed Docker deployment instructions.
+
 ## 🚀 Key Features
 
 ### 100% Client-Side Architecture
@@ -78,12 +91,12 @@ Quick links:
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/F1R3FLY-io/f1r3fly/
-cd f1r3fly/asi-chain/asi_wallet_v2
+# Clone the repository (GitLab)
+git clone https://gitlab.com/asi-build/asi-chain.git
+cd asi-chain/asi_wallet_v2
 
-# Install dependencies (~1,900+ packages)
-npm install
+# Install dependencies with legacy peer deps flag
+npm install --legacy-peer-deps
 
 # Set up environment variables
 cp .env.example .env
@@ -93,6 +106,8 @@ cp .env.example .env
 # Start development server
 npm start
 ```
+
+> **Important**: Use `npm install --legacy-peer-deps` to handle peer dependency conflicts
 
 The wallet will be available at [http://localhost:3000](http://localhost:3000).
 
@@ -130,7 +145,16 @@ The production build will be in the `build/` directory, ready for deployment to 
 - Test thoroughly with your specific RChain network configuration
 - Generate your own WalletConnect Project ID for production use
 
-### Recent Updates (July 2025)
+### Recent Updates (August 2025)
+- **Fixed**: Webpack module resolution for `process/browser` polyfill
+- **Fixed**: TypeScript theme typing with styled-components
+- **Fixed**: QRCode import to use named export from react-qr-code
+- **Added**: Missing SecureStorage static methods for storage operations
+- **Added**: Type declarations for speakeasy and validator modules
+- **Removed**: Unused backend code (rateLimiter.ts) from frontend
+- **Updated**: Installation instructions to use `--legacy-peer-deps`
+
+### Previous Updates (July 2025)
 - **Fixed**: Network settings persistence issue (#12) - Custom networks now save correctly
 - **Added**: Comprehensive test suite with 62.88% store coverage
 - **Improved**: Build configuration to exclude test files from production
@@ -365,7 +389,9 @@ This project is licensed under the MIT License.
 ### Installation Issues
 - **Memory error during build**: `export NODE_OPTIONS=--max_old_space_size=4096`
 - **Port already in use**: Kill the process using port 3000 or use `PORT=3001 npm start`
-- **Dependencies won't install**: Delete `node_modules` and `package-lock.json`, then retry
+- **Dependencies won't install**: Delete `node_modules` and `package-lock.json`, then retry with `npm install --legacy-peer-deps`
+- **Module resolution errors**: Ensure `config-overrides.js` has proper webpack polyfills
+- **TypeScript errors**: Check `src/types/modules.d.ts` for missing type declarations
 
 ### Runtime Issues
 - **Blank screen**: Check browser console for errors, ensure JavaScript is enabled

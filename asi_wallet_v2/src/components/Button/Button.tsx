@@ -45,21 +45,24 @@ const ButtonBase = styled.button<ButtonProps>`
     switch (size) {
       case 'small':
         return css`
-          padding: 8px 16px;
+          padding: 10px 16px;
           font-size: 14px;
           line-height: 22px;
+          min-height: 40px; /* Touch-friendly minimum */
         `;
       case 'large':
         return css`
           padding: 16px 32px;
           font-size: 18px;
           line-height: 26px;
+          min-height: 52px;
         `;
       default:
         return css`
           padding: 12px 24px;
           font-size: 16px;
           line-height: 24px;
+          min-height: 44px; /* Touch-friendly minimum */
         `;
     }
   }}

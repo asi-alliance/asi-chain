@@ -1,0 +1,274 @@
+groups:
+  # Validator Node Alerts
+  - name: validator_alerts
+    interval: 30s
+    rules:
+      - alert: ValidatorNodeDown
+        expr: up{job="validators"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: validator
+        annotations:
+          summary: "Validator node {{ $labels.instance }} is down"
+          description: "Validator {{ $labels.instance }} has been down for more than 1 minute."
+          
+      - alert: ValidatorOutOfSync
+        expr: eth_syncing{job="validators"} == 1
+        for: 10m
+        labels:
+          severity: high
+          service: validator
+        annotations:
+          summary: "Validator {{ $labels.instance }} is out of sync"
+          description: "Validator {{ $labels.instance }} has been syncing for more than 10 minutes."
+          
+      - alert: ValidatorHighLatency
+        expr: eth_block_processing_time_seconds{job="validators"} > 3
+        for: 5m
+        labels:
+          severity: warning
+          service: validator
+        annotations:
+          summary: "High block processing time on {{ $labels.instance }}"
+          description: "Block processing is taking > 3 seconds on {{ $labels.instance }}."
+          
+      - alert: ValidatorLowPeerCount
+        expr: p2p_peer_count{job="validators"} < 3
+        for: 5m
+        labels:
+          severity: warning
+          service: validator
+        annotations:
+          summary: "Low peer count on {{ $labels.instance }}"
+          description: "Validator {{ $labels.instance }} has less than 3 peers."
+          
+      - alert: ValidatorMissedBlocks
+        expr: rate(eth_missed_blocks_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: high
+          service: validator
+        annotations:
+          summary: "Validator {{ $labels.instance }} missing blocks"
+          description: "Validator {{ $labels.instance }} is missing more than 10% of blocks."
+
+  # Blockchain Network Alerts
+  - name: blockchain_alerts
+    interval: 30s
+    rules:
+      - alert: ChainHalted
+        expr: increase(eth_chain_head_block[5m]) == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: blockchain
+        annotations:
+          summary: "Blockchain has halted - no new blocks"
+          description: "No new blocks have been produced in the last 5 minutes."
+          
+      - alert: ChainReorg
+        expr: eth_chain_reorg_total > 0
+        for: 1m
+        labels:
+          severity: high
+          service: blockchain
+        annotations:
+          summary: "Chain reorganization detected"
+          description: "A blockchain reorganization has occurred."
+          
+      - alert: HighGasPrice
+        expr: eth_gas_price_wei > 100000000000
+        for: 10m
+        labels:
+          severity: warning
+          service: blockchain
+        annotations:
+          summary: "Gas price is abnormally high"
+          description: "Gas price has been above 100 Gwei for 10 minutes."
+          
+      - alert: LowTPS
+        expr: rate(eth_transactions_total[5m]) < 10
+        for: 10m
+        labels:
+          severity: warning
+          service: blockchain
+        annotations:
+          summary: "Transaction throughput is low"
+          description: "TPS has been below 10 for the last 10 minutes."
+          
+      - alert: HighTPS
+        expr: rate(eth_transactions_total[1m]) > 1500
+        for: 5m
+        labels:
+          severity: warning
+          service: blockchain
+        annotations:
+          summary: "Transaction throughput is very high"
+          description: "TPS has been above 1500 for 5 minutes - potential spam attack."
+
+  # System Resource Alerts
+  - name: system_alerts
+    interval: 30s
+    rules:
+      - alert: HighCPUUsage
+        expr: (100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80
+        for: 10m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage has been above 80% for 10 minutes on {{ $labels.instance }}."
+          
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 10m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 90% on {{ $labels.instance }}."
+          
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.1
+        for: 5m
+        labels:
+          severity: high
+          service: system
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Less than 10% disk space remaining on {{ $labels.instance }}."
+          
+      - alert: HighDiskIO
+        expr: rate(node_disk_io_time_seconds_total[5m]) > 0.9
+        for: 10m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High disk I/O on {{ $labels.instance }}"
+          description: "Disk I/O has been above 90% for 10 minutes on {{ $labels.instance }}."
+
+  # Service Availability Alerts
+  - name: service_alerts
+    interval: 30s
+    rules:
+      - alert: ExplorerDown
+        expr: up{job="explorer"} == 0
+        for: 2m
+        labels:
+          severity: high
+          service: explorer
+        annotations:
+          summary: "Block Explorer is down"
+          description: "The Block Explorer service has been down for 2 minutes."
+          
+      - alert: IndexerDown
+        expr: up{job="indexer"} == 0
+        for: 2m
+        labels:
+          severity: high
+          service: indexer
+        annotations:
+          summary: "Indexer service is down"
+          description: "The Indexer service has been down for 2 minutes."
+          
+      - alert: DatabaseDown
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL database has been down for 1 minute."
+          
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 2m
+        labels:
+          severity: high
+          service: cache
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis cache service has been down for 2 minutes."
+          
+      - alert: LoadBalancerDown
+        expr: up{job="haproxy"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: loadbalancer
+        annotations:
+          summary: "Load balancer is down"
+          description: "HAProxy load balancer has been down for 1 minute."
+
+  # API Performance Alerts
+  - name: api_alerts
+    interval: 30s
+    rules:
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.95, http_request_duration_seconds_bucket) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: api
+        annotations:
+          summary: "High API latency detected"
+          description: "95th percentile API latency is above 1 second."
+          
+      - alert: HighAPIErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: high
+          service: api
+        annotations:
+          summary: "High API error rate"
+          description: "API error rate is above 5%."
+          
+      - alert: APIRateLimitExceeded
+        expr: rate(rate_limit_exceeded_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: api
+        annotations:
+          summary: "API rate limits being exceeded"
+          description: "More than 10 rate limit violations per minute."
+
+  # Security Alerts
+  - name: security_alerts
+    interval: 30s
+    rules:
+      - alert: UnauthorizedAccessAttempt
+        expr: rate(unauthorized_access_attempts_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: high
+          service: security
+        annotations:
+          summary: "Multiple unauthorized access attempts detected"
+          description: "More than 10 unauthorized access attempts per minute."
+          
+      - alert: SuspiciousTransactionPattern
+        expr: rate(suspicious_transactions_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: high
+          service: security
+        annotations:
+          summary: "Suspicious transaction pattern detected"
+          description: "Unusual transaction patterns detected - possible attack."
+          
+      - alert: SSLCertificateExpiry
+        expr: ssl_cert_expiry_days < 30
+        for: 1h
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate will expire in {{ $value }} days."

@@ -1,0 +1,370 @@
+version: '3.8'
+
+services:
+  # Validator Node 1
+  validator-1:
+    image: ethereum/client-go:latest
+    container_name: asi-validator-1
+    hostname: validator-1
+    ports:
+      - "30303:30303"
+      - "30303:30303/udp"
+      - "8545:8545"
+      - "8546:8546"
+      - "8547:8547"
+    volumes:
+      - validator1-data:/root/.ethereum
+      - ./genesis.json:/genesis.json:ro
+      - ./keystore/validator1:/keystore:ro
+    environment:
+      - VALIDATOR_ADDRESS=0x1234567890123456789012345678901234567891
+      - NETWORK_ID=42161
+      - BLOCK_TIME=2
+      - GAS_LIMIT=30000000
+    command: |
+      --networkid 42161
+      --syncmode full
+      --gcmode archive
+      --datadir /root/.ethereum
+      --port 30303
+      --http
+      --http.addr 0.0.0.0
+      --http.port 8545
+      --http.api eth,net,web3,debug,miner,personal,txpool,admin
+      --http.corsdomain "*"
+      --ws
+      --ws.addr 0.0.0.0
+      --ws.port 8546
+      --ws.api eth,net,web3,debug,miner,personal,txpool,admin
+      --ws.origins "*"
+      --mine
+      --miner.threads 2
+      --miner.gasprice 20000000000
+      --unlock 0x1234567890123456789012345678901234567891
+      --password /keystore/password.txt
+      --allow-insecure-unlock
+      --metrics
+      --metrics.addr 0.0.0.0
+      --metrics.port 6060
+      --pprof
+      --pprof.addr 0.0.0.0
+      --bootnodes "enode://abcd1234@validator-2:30303,enode://efgh5678@validator-3:30303,enode://ijkl9012@validator-4:30303"
+    networks:
+      - asi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "geth", "attach", "http://localhost:8545", "--exec", "eth.blockNumber"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Validator Node 2
+  validator-2:
+    image: ethereum/client-go:latest
+    container_name: asi-validator-2
+    hostname: validator-2
+    ports:
+      - "30304:30303"
+      - "30304:30303/udp"
+      - "8555:8545"
+      - "8556:8546"
+      - "8557:8547"
+    volumes:
+      - validator2-data:/root/.ethereum
+      - ./genesis.json:/genesis.json:ro
+      - ./keystore/validator2:/keystore:ro
+    environment:
+      - VALIDATOR_ADDRESS=0x1234567890123456789012345678901234567892
+      - NETWORK_ID=42161
+      - BLOCK_TIME=2
+      - GAS_LIMIT=30000000
+    command: |
+      --networkid 42161
+      --syncmode full
+      --gcmode archive
+      --datadir /root/.ethereum
+      --port 30303
+      --http
+      --http.addr 0.0.0.0
+      --http.port 8545
+      --http.api eth,net,web3,debug,miner,personal,txpool,admin
+      --http.corsdomain "*"
+      --ws
+      --ws.addr 0.0.0.0
+      --ws.port 8546
+      --ws.api eth,net,web3,debug,miner,personal,txpool,admin
+      --ws.origins "*"
+      --mine
+      --miner.threads 2
+      --miner.gasprice 20000000000
+      --unlock 0x1234567890123456789012345678901234567892
+      --password /keystore/password.txt
+      --allow-insecure-unlock
+      --metrics
+      --metrics.addr 0.0.0.0
+      --metrics.port 6060
+      --pprof
+      --pprof.addr 0.0.0.0
+      --bootnodes "enode://abcd1234@validator-1:30303,enode://efgh5678@validator-3:30303,enode://ijkl9012@validator-4:30303"
+    networks:
+      - asi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "geth", "attach", "http://localhost:8545", "--exec", "eth.blockNumber"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Validator Node 3
+  validator-3:
+    image: ethereum/client-go:latest
+    container_name: asi-validator-3
+    hostname: validator-3
+    ports:
+      - "30305:30303"
+      - "30305:30303/udp"
+      - "8565:8545"
+      - "8566:8546"
+      - "8567:8547"
+    volumes:
+      - validator3-data:/root/.ethereum
+      - ./genesis.json:/genesis.json:ro
+      - ./keystore/validator3:/keystore:ro
+    environment:
+      - VALIDATOR_ADDRESS=0x1234567890123456789012345678901234567893
+      - NETWORK_ID=42161
+      - BLOCK_TIME=2
+      - GAS_LIMIT=30000000
+    command: |
+      --networkid 42161
+      --syncmode full
+      --gcmode archive
+      --datadir /root/.ethereum
+      --port 30303
+      --http
+      --http.addr 0.0.0.0
+      --http.port 8545
+      --http.api eth,net,web3,debug,miner,personal,txpool,admin
+      --http.corsdomain "*"
+      --ws
+      --ws.addr 0.0.0.0
+      --ws.port 8546
+      --ws.api eth,net,web3,debug,miner,personal,txpool,admin
+      --ws.origins "*"
+      --mine
+      --miner.threads 2
+      --miner.gasprice 20000000000
+      --unlock 0x1234567890123456789012345678901234567893
+      --password /keystore/password.txt
+      --allow-insecure-unlock
+      --metrics
+      --metrics.addr 0.0.0.0
+      --metrics.port 6060
+      --pprof
+      --pprof.addr 0.0.0.0
+      --bootnodes "enode://abcd1234@validator-1:30303,enode://efgh5678@validator-2:30303,enode://ijkl9012@validator-4:30303"
+    networks:
+      - asi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "geth", "attach", "http://localhost:8545", "--exec", "eth.blockNumber"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Validator Node 4
+  validator-4:
+    image: ethereum/client-go:latest
+    container_name: asi-validator-4
+    hostname: validator-4
+    ports:
+      - "30306:30303"
+      - "30306:30303/udp"
+      - "8575:8545"
+      - "8576:8546"
+      - "8577:8547"
+    volumes:
+      - validator4-data:/root/.ethereum
+      - ./genesis.json:/genesis.json:ro
+      - ./keystore/validator4:/keystore:ro
+    environment:
+      - VALIDATOR_ADDRESS=0x1234567890123456789012345678901234567894
+      - NETWORK_ID=42161
+      - BLOCK_TIME=2
+      - GAS_LIMIT=30000000
+    command: |
+      --networkid 42161
+      --syncmode full
+      --gcmode archive
+      --datadir /root/.ethereum
+      --port 30303
+      --http
+      --http.addr 0.0.0.0
+      --http.port 8545
+      --http.api eth,net,web3,debug,miner,personal,txpool,admin
+      --http.corsdomain "*"
+      --ws
+      --ws.addr 0.0.0.0
+      --ws.port 8546
+      --ws.api eth,net,web3,debug,miner,personal,txpool,admin
+      --ws.origins "*"
+      --mine
+      --miner.threads 2
+      --miner.gasprice 20000000000
+      --unlock 0x1234567890123456789012345678901234567894
+      --password /keystore/password.txt
+      --allow-insecure-unlock
+      --metrics
+      --metrics.addr 0.0.0.0
+      --metrics.port 6060
+      --pprof
+      --pprof.addr 0.0.0.0
+      --bootnodes "enode://abcd1234@validator-1:30303,enode://efgh5678@validator-2:30303,enode://ijkl9012@validator-3:30303"
+    networks:
+      - asi-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "geth", "attach", "http://localhost:8545", "--exec", "eth.blockNumber"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Load Balancer (HAProxy)
+  load-balancer:
+    image: haproxy:2.8-alpine
+    container_name: asi-load-balancer
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8404:8404"  # HAProxy stats
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./ssl:/etc/ssl/certs:ro
+    networks:
+      - asi-network
+    depends_on:
+      - validator-1
+      - validator-2
+      - validator-3
+      - validator-4
+    restart: unless-stopped
+
+  # Monitoring - Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: asi-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - asi-network
+    restart: unless-stopped
+
+  # Monitoring - Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: asi-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=asi-chain-2024
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    networks:
+      - asi-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # Blockchain Explorer
+  explorer:
+    build:
+      context: ../../explorer
+      dockerfile: Dockerfile
+    container_name: asi-explorer
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_RPC_URL=http://load-balancer/rpc
+      - REACT_APP_WS_URL=ws://load-balancer/ws
+    networks:
+      - asi-network
+    depends_on:
+      - load-balancer
+    restart: unless-stopped
+
+  # Indexer Service
+  indexer:
+    build:
+      context: ../../indexer
+      dockerfile: Dockerfile
+    container_name: asi-indexer
+    environment:
+      - RPC_URL=http://load-balancer/rpc
+      - DATABASE_URL=postgresql://asichain:asichain@postgres:5432/asichain
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - asi-network
+    depends_on:
+      - postgres
+      - redis
+      - load-balancer
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: asi-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=asichain
+      - POSTGRES_PASSWORD=asichain-secure-2024
+      - POSTGRES_DB=asichain
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - asi-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: asi-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --requirepass asichain-redis-2024
+    networks:
+      - asi-network
+    restart: unless-stopped
+
+networks:
+  asi-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  validator1-data:
+  validator2-data:
+  validator3-data:
+  validator4-data:
+  prometheus-data:
+  grafana-data:
+  postgres-data:
+  redis-data:

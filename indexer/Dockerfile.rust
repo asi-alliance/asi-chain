@@ -1,0 +1,73 @@
+# Multi-stage build for Rust CLI indexer
+FROM python:3.11-slim as builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Runtime stage
+FROM python:3.11-slim
+
+# Install runtime dependencies including Rust
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    curl \
+    git \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Clone and build rust-client
+WORKDIR /tmp
+RUN git clone https://github.com/F1R3FLY-io/rust-client.git && \
+    cd rust-client && \
+    cargo build --release && \
+    cp target/release/node_cli /usr/local/bin/ && \
+    cd .. && \
+    rm -rf rust-client
+
+# Create non-root user
+RUN useradd -m -u 1000 indexer
+
+WORKDIR /app
+
+# Copy Python packages from builder
+COPY --from=builder /root/.local /home/indexer/.local
+
+# Copy indexer source code
+COPY . .
+
+# Set ownership
+RUN chown -R indexer:indexer /app /home/indexer/.local
+
+# Switch to non-root user
+USER indexer
+
+# Set Python path
+ENV PYTHONPATH=/app
+ENV PATH="/home/indexer/.local/bin:${PATH}"
+ENV RUST_CLI_PATH=/usr/local/bin/node_cli
+
+# Expose monitoring port
+EXPOSE 9090
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:9090/health || exit 1
+
+# Run the indexer
+CMD ["python", "-m", "src.main"]

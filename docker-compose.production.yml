@@ -1,0 +1,367 @@
+# ASI Chain Production Infrastructure
+# Horizontal scaling with Redis caching, load balancing, and monitoring
+version: '3.8'
+
+services:
+  # ===== CACHING LAYER =====
+  redis-primary:
+    image: redis:7.2-alpine
+    container_name: asi-redis-primary
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_primary_data:/data
+      - ./configs/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+
+  redis-replica:
+    image: redis:7.2-alpine
+    container_name: asi-redis-replica
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_replica_data:/data
+      - ./configs/redis/redis-replica.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    depends_on:
+      - redis-primary
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+
+  # ===== DATABASE LAYER =====
+  postgres-primary:
+    image: postgres:15-alpine
+    container_name: asi-postgres-primary
+    environment:
+      POSTGRES_DB: asichain
+      POSTGRES_USER: indexer
+      POSTGRES_PASSWORD_FILE: /run/secrets/database_password
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+      - ./configs/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./configs/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - ./indexer/migrations:/docker-entrypoint-initdb.d
+      - secrets-volume:/run/secrets
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U indexer -d asichain"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+
+  # ===== INDEXER SERVICES (SCALED) =====
+  indexer:
+    build: ./indexer
+    environment:
+      NODE_URL: ${NODE_URL:-http://host.docker.internal:40453}
+      REDIS_URL: redis://asi-redis-primary:6379
+      DATABASE_URL_FILE: /run/secrets/database_url
+      CACHE_TTL: 300
+      BATCH_SIZE: 100
+      ENABLE_METRICS: "true"
+      LOG_LEVEL: INFO
+    volumes:
+      - secrets-volume:/run/secrets
+    depends_on:
+      - postgres-primary
+      - redis-primary
+    ports:
+      - "9090-9092:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+
+  # ===== HASURA WITH REDIS CACHING =====
+  hasura:
+    image: hasura/graphql-engine:v2.36.0
+    container_name: asi-hasura-primary
+    ports:
+      - "8080:8080"
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL_FILE: /run/secrets/database_url
+      HASURA_GRAPHQL_REDIS_URL: redis://asi-redis-primary:6379
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET_FILE: /run/secrets/hasura_admin_secret
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "public"
+      HASURA_GRAPHQL_QUERY_PLAN_CACHE_SIZE: 1000
+      HASURA_GRAPHQL_ENABLE_QUERY_CACHING: "true"
+      HASURA_GRAPHQL_CACHE_SIZE: "100MB"
+      HASURA_GRAPHQL_LIVE_QUERIES_MULTIPLEXED_REFETCH_INTERVAL: "1000"
+      HASURA_GRAPHQL_LIVE_QUERIES_MULTIPLEXED_BATCH_SIZE: "100"
+      HASURA_GRAPHQL_CORS_DOMAIN_FILE: /run/secrets/cors_origins
+    volumes:
+      - secrets-volume:/run/secrets
+    depends_on:
+      - postgres-primary
+      - redis-primary
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+
+  # ===== LOAD BALANCER =====
+  nginx-lb:
+    image: nginx:1.25-alpine
+    container_name: asi-nginx-lb
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./configs/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./configs/nginx/conf.d:/etc/nginx/conf.d
+      - ./configs/ssl:/etc/nginx/ssl
+    depends_on:
+      - asi-wallet-1
+      - asi-wallet-2
+      - asi-wallet-3
+      - asi-explorer-1
+      - asi-explorer-2
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  # ===== WALLET SERVICES (SCALED) =====
+  asi-wallet-1:
+    build: ./asi_wallet_v2
+    container_name: asi-wallet-1
+    environment:
+      REACT_APP_WALLETCONNECT_PROJECT_ID: 4c8ec18817ffbbce4b824f14928d0f8b
+      REACT_APP_RCHAIN_HTTP_URL: http://rnode.readonly:40403
+      REACT_APP_RCHAIN_GRPC_URL: http://rnode.bootstrap:40401
+      REACT_APP_RCHAIN_READONLY_URL: http://rnode.readonly:40403
+      REACT_APP_NETWORK_NAME: ASI Chain Testnet
+      REACT_APP_CACHE_ENABLED: "true"
+      REACT_APP_REDIS_URL: redis://asi-redis-primary:6379
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+      - asi-chain-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  asi-wallet-2:
+    build: ./asi_wallet_v2
+    container_name: asi-wallet-2
+    environment:
+      REACT_APP_WALLETCONNECT_PROJECT_ID: 4c8ec18817ffbbce4b824f14928d0f8b
+      REACT_APP_RCHAIN_HTTP_URL: http://rnode.readonly:40403
+      REACT_APP_RCHAIN_GRPC_URL: http://rnode.bootstrap:40401
+      REACT_APP_RCHAIN_READONLY_URL: http://rnode.readonly:40403
+      REACT_APP_NETWORK_NAME: ASI Chain Testnet
+      REACT_APP_CACHE_ENABLED: "true"
+      REACT_APP_REDIS_URL: redis://asi-redis-primary:6379
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+      - asi-chain-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  asi-wallet-3:
+    build: ./asi_wallet_v2
+    container_name: asi-wallet-3
+    environment:
+      REACT_APP_WALLETCONNECT_PROJECT_ID: 4c8ec18817ffbbce4b824f14928d0f8b
+      REACT_APP_RCHAIN_HTTP_URL: http://rnode.readonly:40403
+      REACT_APP_RCHAIN_GRPC_URL: http://rnode.bootstrap:40401
+      REACT_APP_RCHAIN_READONLY_URL: http://rnode.readonly:40403
+      REACT_APP_NETWORK_NAME: ASI Chain Testnet
+      REACT_APP_CACHE_ENABLED: "true"
+      REACT_APP_REDIS_URL: redis://asi-redis-primary:6379
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+      - asi-chain-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  # ===== EXPLORER SERVICES (SCALED) =====
+  asi-explorer-1:
+    build: ./explorer
+    container_name: asi-explorer-1
+    environment:
+      REACT_APP_GRAPHQL_URL: http://asi-nginx-lb/graphql
+      REACT_APP_GRAPHQL_WS_URL: ws://asi-nginx-lb/graphql
+      REACT_APP_HASURA_ADMIN_SECRET_FILE: /run/secrets/hasura_admin_secret
+      REACT_APP_RCHAIN_NODE_URL: http://localhost:40453
+      REACT_APP_ENVIRONMENT: production
+      REACT_APP_CACHE_ENABLED: "true"
+      REACT_APP_REDIS_URL: redis://asi-redis-primary:6379
+    volumes:
+      - secrets-volume:/run/secrets
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  asi-explorer-2:
+    build: ./explorer
+    container_name: asi-explorer-2
+    environment:
+      REACT_APP_GRAPHQL_URL: http://asi-nginx-lb/graphql
+      REACT_APP_GRAPHQL_WS_URL: ws://asi-nginx-lb/graphql
+      REACT_APP_HASURA_ADMIN_SECRET_FILE: /run/secrets/hasura_admin_secret
+      REACT_APP_RCHAIN_NODE_URL: http://localhost:40453
+      REACT_APP_ENVIRONMENT: production
+      REACT_APP_CACHE_ENABLED: "true"
+      REACT_APP_REDIS_URL: redis://asi-redis-primary:6379
+    volumes:
+      - secrets-volume:/run/secrets
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  # ===== MONITORING STACK =====
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: asi-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=30d'
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+
+  grafana:
+    image: grafana/grafana:10.1.0
+    container_name: asi-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin_password
+      GF_INSTALL_PLUGINS: redis-datasource,postgres-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./configs/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./configs/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - secrets-volume:/run/secrets
+    restart: unless-stopped
+    networks:
+      - asi-production-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  # ===== SECRETS INITIALIZATION =====
+  secrets-init:
+    image: amazon/aws-cli:latest
+    container_name: asi-secrets-init
+    volumes:
+      - ./security/secrets-management/docker-secrets-init.sh:/docker-secrets-init.sh
+      - secrets-volume:/secrets
+    environment:
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_SECRET_PREFIX=${AWS_SECRET_PREFIX:-asi-chain}
+    command: ["/bin/bash", "/docker-secrets-init.sh"]
+    restart: "no"
+    networks:
+      - asi-production-net
+
+networks:
+  asi-production-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  asi-chain-net:
+    external: true
+    name: asi-chain-net
+
+volumes:
+  redis_primary_data:
+  redis_replica_data:
+  postgres_primary_data:
+  prometheus_data:
+  grafana_data:
+  secrets-volume:

@@ -1,0 +1,104 @@
+# Vertical Pod Autoscaler configurations for automatic resource optimization
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: asi-wallet-vpa
+  namespace: asi-chain
+  labels:
+    app: asi-wallet
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: asi-wallet
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: asi-wallet
+      minAllowed:
+        cpu: 50m
+        memory: 128Mi
+      maxAllowed:
+        cpu: 1
+        memory: 1Gi
+      controlledResources: ["cpu", "memory"]
+      controlledValues: RequestsAndLimits
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: asi-explorer-vpa
+  namespace: asi-chain
+  labels:
+    app: asi-explorer
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: asi-explorer
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: asi-explorer
+      minAllowed:
+        cpu: 50m
+        memory: 128Mi
+      maxAllowed:
+        cpu: 1
+        memory: 1Gi
+      controlledResources: ["cpu", "memory"]
+      controlledValues: RequestsAndLimits
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: asi-indexer-vpa
+  namespace: asi-chain
+  labels:
+    app: asi-indexer
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: asi-indexer
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: asi-indexer
+      minAllowed:
+        cpu: 100m
+        memory: 256Mi
+      maxAllowed:
+        cpu: 2
+        memory: 2Gi
+      controlledResources: ["cpu", "memory"]
+      controlledValues: RequestsAndLimits
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: hasura-vpa
+  namespace: asi-chain
+  labels:
+    app: hasura
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hasura
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: hasura
+      minAllowed:
+        cpu: 250m
+        memory: 512Mi
+      maxAllowed:
+        cpu: 4
+        memory: 4Gi
+      controlledResources: ["cpu", "memory"]
+      controlledValues: RequestsAndLimits

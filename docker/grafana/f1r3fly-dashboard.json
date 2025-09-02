@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "f1r3fly-main",
+    "title": "F1R3FLY Blockchain Monitoring",
+    "tags": ["f1r3fly", "blockchain"],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "type": "stat",
+        "title": "Containers Running",
+        "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "count(container_last_seen{name=~\"rnode.*\"})",
+          "legendFormat": "Containers"
+        }]
+      },
+      {
+        "id": 2,
+        "type": "gauge",
+        "title": "CPU Usage",
+        "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU %"
+        }]
+      },
+      {
+        "id": 3,
+        "type": "gauge",
+        "title": "Memory Usage",
+        "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+          "legendFormat": "Memory %"
+        }]
+      },
+      {
+        "id": 4,
+        "type": "stat",
+        "title": "Disk Usage",
+        "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100)",
+          "legendFormat": "Disk %"
+        }]
+      }
+    ]
+  },
+  "overwrite": true
+}

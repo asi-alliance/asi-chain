@@ -1,0 +1,66 @@
+name: Deploy ASI Chain Docs
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+    types: [ closed ]
+
+jobs:
+  deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: 'package-lock.json'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build documentation
+      run: npm run build
+      
+    - name: Create deployment archive
+      run: |
+        cd build
+        tar -czf ../docs-build.tar.gz .
+        
+    - name: Deploy to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        username: ${{ secrets.DEPLOY_USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        source: "docs-build.tar.gz"
+        target: "/tmp/"
+        
+    - name: Extract and deploy on server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        username: ${{ secrets.DEPLOY_USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        script: |
+          sudo rm -rf /var/www/html/*
+          sudo tar -xzf /tmp/docs-build.tar.gz -C /var/www/html/
+          sudo systemctl reload nginx
+          echo "🚀 ASI Chain Docs deployed successfully!"
+          
+    - name: Cleanup
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        username: ${{ secrets.DEPLOY_USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        script: |
+          rm -f /tmp/docs-build.tar.gz
+          echo "✅ Cleanup completed"

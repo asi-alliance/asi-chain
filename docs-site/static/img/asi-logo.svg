@@ -1,0 +1,15 @@
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- ASI Chain Logo -->
+  <g fill="none">
+    <!-- Logo Mark -->
+    <circle cx="20" cy="20" r="16" fill="#7FD67A" opacity="0.9"/>
+    <circle cx="20" cy="20" r="12" fill="#A8E6A3" opacity="0.7"/>
+    <circle cx="20" cy="20" r="8" fill="#C4F0C1" opacity="0.5"/>
+    <circle cx="20" cy="20" r="4" fill="#7FD67A"/>
+    
+    <!-- Text -->
+    <text x="45" y="26" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" fill="#1A1A1A">
+      ASI Chain
+    </text>
+  </g>
+</svg>

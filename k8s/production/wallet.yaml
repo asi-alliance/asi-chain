@@ -1,0 +1,167 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wallet
+  namespace: asi-chain
+  labels:
+    app: wallet
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wallet
+  template:
+    metadata:
+      labels:
+        app: wallet
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: wallet
+        image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/asi-wallet:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3000"
+        - name: RPC_URL
+          value: "http://rpc-service:8545"
+        - name: WS_URL
+          value: "ws://ws-service:8546"
+        - name: CHAIN_ID
+          value: "42161"
+        - name: NETWORK_NAME
+          value: "ASI Testnet"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: url
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: jwt-secret
+        - name: ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: encryption-key
+        - name: WALLETCONNECT_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: walletconnect-project-id
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: wallet-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wallet-config
+  namespace: asi-chain
+data:
+  config.json: |
+    {
+      "features": {
+        "biometric": true,
+        "hardwareWallet": true,
+        "walletConnect": true,
+        "multiSig": true,
+        "twoFactor": true
+      },
+      "networks": [
+        {
+          "chainId": 42161,
+          "name": "ASI Testnet",
+          "rpcUrl": "https://rpc.testnet.asi-chain.io",
+          "wsUrl": "wss://ws.testnet.asi-chain.io",
+          "explorerUrl": "https://explorer.testnet.asi-chain.io",
+          "faucetUrl": "https://faucet.testnet.asi-chain.io"
+        }
+      ],
+      "tokens": [
+        {
+          "symbol": "ASI",
+          "name": "ASI Chain Token",
+          "decimals": 18,
+          "address": "0x0000000000000000000000000000000000000000"
+        }
+      ]
+    }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: wallet-hpa
+  namespace: asi-chain
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: wallet
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: wallet-pdb
+  namespace: asi-chain
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: wallet

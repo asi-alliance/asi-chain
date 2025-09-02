@@ -1,0 +1,171 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="codeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7FD67A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A8E6A3;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="processGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#C4F0C1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7FD67A;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="executionGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#7FD67A;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#7FD67A;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="#0a0f14"/>
+  <defs>
+    <pattern id="codeGrid" width="15" height="15" patternUnits="userSpaceOnUse">
+      <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#1a2028" stroke-width="0.5" opacity="0.2"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="400" fill="url(#codeGrid)"/>
+  
+  <!-- Contract Code Window -->
+  <g id="codeWindow" transform="translate(50, 50)">
+    <rect width="220" height="150" rx="8" fill="#1e1e1e" stroke="#7FD67A" stroke-width="2"/>
+    <rect width="220" height="25" rx="8 8 0 0" fill="url(#codeGradient)"/>
+    <text x="110" y="18" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#000" font-weight="bold">
+      smart_contract.rho
+    </text>
+    
+    <!-- Code lines with typing animation -->
+    <g font-family="monospace" font-size="8" fill="#7FD67A">
+      <text x="10" y="45" opacity="0">
+        contract deploy(@"transfer", return) = {
+        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1s" fill="freeze"/>
+      </text>
+      <text x="10" y="60" opacity="0">
+          for(@amount &lt;- @"balance") {
+        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2s" fill="freeze"/>
+      </text>
+      <text x="10" y="75" opacity="0">
+            @"balance"!(amount - 100) |
+        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+      </text>
+      <text x="10" y="90" opacity="0">
+            return!("success")
+        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4s" fill="freeze"/>
+      </text>
+      <text x="10" y="105" opacity="0">
+          }
+        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="5s" fill="freeze"/>
+      </text>
+      <text x="10" y="120" opacity="0">
+        }
+        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="6s" fill="freeze"/>
+      </text>
+    </g>
+    
+    <!-- Cursor blinking -->
+    <rect x="30" y="128" width="2" height="10" fill="#7FD67A" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" dur="1s" begin="6s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  
+  <!-- RSpace Tuple Space -->
+  <g id="rspace" transform="translate(320, 50)">
+    <rect width="230" height="150" rx="8" fill="#1a1a1a" stroke="#A8E6A3" stroke-width="2"/>
+    <text x="115" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#A8E6A3" font-weight="bold">
+      RSpace Tuple Space
+    </text>
+    
+    <!-- Channels -->
+    <g id="channels">
+      <circle cx="60" cy="60" r="15" fill="url(#executionGlow)" opacity="0">
+        <animate attributeName="opacity" values="0;1" dur="1s" begin="7s" fill="freeze"/>
+      </circle>
+      <text x="60" y="65" text-anchor="middle" font-family="monospace" font-size="8" fill="#A8E6A3" opacity="0">
+        @"balance"
+        <animate attributeName="opacity" values="0;1" dur="1s" begin="7s" fill="freeze"/>
+      </text>
+      
+      <circle cx="170" cy="60" r="15" fill="url(#executionGlow)" opacity="0">
+        <animate attributeName="opacity" values="0;1" dur="1s" begin="8s" fill="freeze"/>
+      </circle>
+      <text x="170" y="65" text-anchor="middle" font-family="monospace" font-size="8" fill="#A8E6A3" opacity="0">
+        @"transfer"
+        <animate attributeName="opacity" values="0;1" dur="1s" begin="8s" fill="freeze"/>
+      </text>
+      
+      <!-- Data flow arrows -->
+      <path d="M 80 60 L 150 60" stroke="#7FD67A" stroke-width="2" fill="none" opacity="0" marker-end="url(#arrowhead)">
+        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="9s" fill="freeze"/>
+      </path>
+    </g>
+    
+    <!-- Process execution -->
+    <g transform="translate(60, 90)">
+      <rect width="110" height="40" rx="4" fill="url(#processGradient)" opacity="0">
+        <animate attributeName="opacity" values="0;1" dur="1s" begin="9s" fill="freeze"/>
+      </rect>
+      <text x="55" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#000" opacity="0">
+        Process Executing
+        <animate attributeName="opacity" values="0;1" dur="1s" begin="9s" fill="freeze"/>
+      </text>
+      <text x="55" y="28" text-anchor="middle" font-family="monospace" font-size="6" fill="#000" opacity="0">
+        Concurrent Par(||)
+        <animate attributeName="opacity" values="0;1" dur="1s" begin="9s" fill="freeze"/>
+      </text>
+    </g>
+  </g>
+  
+  <!-- Execution Flow -->
+  <g stroke="#7FD67A" stroke-width="2" fill="none">
+    <path d="M 270 125 L 320 125" opacity="0" marker-end="url(#arrowhead)">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="6.5s" fill="freeze"/>
+    </path>
+  </g>
+  
+  <!-- Result Output -->
+  <g id="output" transform="translate(200, 250)">
+    <rect width="200" height="80" rx="8" fill="#2a2a2a" stroke="#C4F0C1" stroke-width="2" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="10s" fill="freeze"/>
+    </rect>
+    <text x="100" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#C4F0C1" font-weight="bold" opacity="0">
+      Execution Result
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="10s" fill="freeze"/>
+    </text>
+    <text x="100" y="40" text-anchor="middle" font-family="monospace" font-size="8" fill="#A8E6A3" opacity="0">
+      @"balance"!(900)
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="11s" fill="freeze"/>
+    </text>
+    <text x="100" y="55" text-anchor="middle" font-family="monospace" font-size="8" fill="#A8E6A3" opacity="0">
+      return!("success")
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="11s" fill="freeze"/>
+    </text>
+  </g>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7FD67A"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="300" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="url(#codeGradient)">
+    Rholang Smart Contract Execution
+  </text>
+  
+  <!-- Status indicators -->
+  <g transform="translate(50, 350)">
+    <circle r="4" fill="#7FD67A" opacity="0">
+      <animate attributeName="opacity" values="0;1;0.3;1" dur="2s" begin="10s" repeatCount="indefinite"/>
+    </circle>
+    <text x="15" y="5" font-family="Arial, sans-serif" font-size="10" fill="#7FD67A">Contract Deployed</text>
+    
+    <circle cx="150" cy="0" r="4" fill="#A8E6A3" opacity="0">
+      <animate attributeName="opacity" values="0;1;0.3;1" dur="2s" begin="11s" repeatCount="indefinite"/>
+    </circle>
+    <text x="165" y="5" font-family="Arial, sans-serif" font-size="10" fill="#A8E6A3">Process Concurrent</text>
+    
+    <circle cx="300" cy="0" r="4" fill="#C4F0C1" opacity="0">
+      <animate attributeName="opacity" values="0;1;0.3;1" dur="2s" begin="12s" repeatCount="indefinite"/>
+    </circle>
+    <text x="315" y="5" font-family="Arial, sans-serif" font-size="10" fill="#C4F0C1">Execution Complete</text>
+  </g>
+</svg>

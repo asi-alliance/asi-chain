@@ -8,22 +8,25 @@ const defaultNetworks: Network[] = [
   {
     id: 'custom',
     name: 'Custom Network',
-    url: 'http://localhost:40403',
-    readOnlyUrl: 'http://localhost:40453',
+    url: 'http://18.142.221.192:40413',
+    readOnlyUrl: 'http://18.142.221.192:40453',
+    graphqlUrl: 'http://18.142.221.192:8080/v1/graphql',
     shardId: 'root',
   },
   {
     id: 'mainnet',
-    name: 'Firefly Mainnet',
-    url: process.env.REACT_APP_FIREFLY_MAINNET_URL || 'https://146.235.215.215:443',
-    readOnlyUrl: process.env.REACT_APP_FIREFLY_MAINNET_READONLY_URL || 'https://146.235.215.215:443',
+    name: 'Mainnet',
+    url: process.env.REACT_APP_FIREFLY_MAINNET_URL || 'http://18.142.221.192:40413',
+    readOnlyUrl: process.env.REACT_APP_FIREFLY_MAINNET_READONLY_URL || 'http://18.142.221.192:40453',
+    graphqlUrl: process.env.REACT_APP_FIREFLY_GRAPHQL_URL || 'http://18.142.221.192:8080/v1/graphql',
     shardId: '',
   },
   {
     id: 'testnet',
-    name: 'Firefly Testnet',
-    url: process.env.REACT_APP_FIREFLY_TESTNET_URL || 'https://testnet6.rchain.coop:443',
-    readOnlyUrl: process.env.REACT_APP_FIREFLY_TESTNET_READONLY_URL || 'https://testnet6.rchain.coop:443',
+    name: 'Testnet',
+    url: process.env.REACT_APP_FIREFLY_TESTNET_URL || 'http://18.142.221.192:40413',
+    readOnlyUrl: process.env.REACT_APP_FIREFLY_TESTNET_READONLY_URL || 'http://18.142.221.192:40453',
+    graphqlUrl: process.env.REACT_APP_FIREFLY_GRAPHQL_URL || 'http://18.142.221.192:8080/v1/graphql',
     shardId: 'testnet6',
   },
   {
@@ -32,6 +35,7 @@ const defaultNetworks: Network[] = [
     url: process.env.REACT_APP_FIREFLY_LOCAL_URL || 'http://localhost:40403',
     readOnlyUrl: process.env.REACT_APP_FIREFLY_LOCAL_READONLY_URL || 'http://localhost:40453',
     adminUrl: process.env.REACT_APP_FIREFLY_LOCAL_ADMIN_URL || 'http://localhost:40405',
+    graphqlUrl: process.env.REACT_APP_FIREFLY_LOCAL_GRAPHQL_URL || 'http://localhost:8080/v1/graphql',
     shardId: 'root',
   },
 ];
@@ -134,7 +138,7 @@ const initialState: WalletState = createInitialState();
 export const fetchBalance = createAsyncThunk(
   'wallet/fetchBalance',
   async ({ account, network }: { account: Account; network: Network }) => {
-    const rchain = new RChainService(network.url, network.readOnlyUrl, network.adminUrl, network.shardId);
+    const rchain = new RChainService(network.url, network.readOnlyUrl, network.adminUrl, network.shardId, network.graphqlUrl);
     const atomicBalance = await rchain.getBalance(account.revAddress);
     
     // Convert from atomic units to REV (divide by 100000000)
@@ -178,7 +182,7 @@ export const sendTransaction = createAsyncThunk(
       throw new Error('Account is locked. Please provide password or unlock account first.');
     }
     
-    const rchain = new RChainService(network.url, network.readOnlyUrl, network.adminUrl, network.shardId);
+    const rchain = new RChainService(network.url, network.readOnlyUrl, network.adminUrl, network.shardId, network.graphqlUrl);
     
     // Convert amount to atomic units (REV has 8 decimal places)
     const atomicAmount = Math.floor(parseFloat(amount) * 100000000).toString();
@@ -207,8 +211,8 @@ export const sendTransaction = createAsyncThunk(
       network: network.name
     });
     
-    // Try to wait for confirmation (non-blocking)
-    rchain.waitForDeployResult(deployId, 10).then(result => {
+    // Try to wait for confirmation (non-blocking) - wait up to 2 minutes
+    rchain.waitForDeployResult(deployId, 24).then(result => {
       if (result.status === 'completed') {
         TransactionHistoryService.updateTransaction(historyTx.id, {
           status: 'confirmed',
@@ -232,14 +236,26 @@ const walletSlice = createSlice({
   name: 'wallet',
   initialState,
   reducers: {
-    // Sync accounts from auth state
+    // Sync accounts from auth state - MERGE instead of replace
     syncAccounts: (state, action: PayloadAction<Account[]>) => {
-      state.accounts = action.payload.map(acc => ({
+      const newAccounts = action.payload.map(acc => ({
         ...acc,
         privateKey: undefined, // Never store private keys in wallet state
       }));
       
-      // Update selected account if it exists in new accounts
+      // Merge new accounts with existing ones
+      newAccounts.forEach(newAccount => {
+        const existingIndex = state.accounts.findIndex(a => a.id === newAccount.id);
+        if (existingIndex >= 0) {
+          // Update existing account
+          state.accounts[existingIndex] = newAccount;
+        } else {
+          // Add new account
+          state.accounts.push(newAccount);
+        }
+      });
+      
+      // Update selected account if it exists in accounts
       if (state.selectedAccount) {
         const updated = state.accounts.find(a => a.id === state.selectedAccount!.id);
         if (updated) {
@@ -255,6 +271,8 @@ const walletSlice = createSlice({
       const account = state.accounts.find(a => a.id === action.payload);
       if (account) {
         state.selectedAccount = account;
+        // Save selected account ID to localStorage for persistence
+        localStorage.setItem('selectedAccountId', action.payload);
       }
     },
     selectNetwork: (state, action: PayloadAction<string>) => {
@@ -322,6 +340,29 @@ const walletSlice = createSlice({
         state.selectedNetwork = loadedNetworks.find(n => n.id === 'custom') || loadedNetworks[0];
       }
     },
+    loadAccountsFromStorage: (state) => {
+      // Load accounts from SecureStorage
+      try {
+        const encryptedAccounts = SecureStorage.getEncryptedAccounts();
+        const accounts = encryptedAccounts.map(acc => ({
+          ...acc,
+          privateKey: undefined, // Never store private keys in Redux state
+        } as Account));
+        
+        state.accounts = accounts;
+        
+        // If there's a selected account ID in localStorage, restore it
+        const selectedAccountId = localStorage.getItem('selectedAccountId');
+        if (selectedAccountId && accounts.length > 0) {
+          const selectedAccount = accounts.find(a => a.id === selectedAccountId);
+          state.selectedAccount = selectedAccount || accounts[0];
+        } else if (accounts.length > 0) {
+          state.selectedAccount = accounts[0];
+        }
+      } catch (error) {
+        console.error('Failed to load accounts from storage:', error);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -367,6 +408,7 @@ export const {
   updateNetwork,
   addNetwork,
   loadNetworksFromStorage,
+  loadAccountsFromStorage,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

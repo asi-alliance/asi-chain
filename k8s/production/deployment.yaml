@@ -1,0 +1,447 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: asi-chain
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: asi-chain-config
+  namespace: asi-chain
+data:
+  network-id: "42161"
+  block-time: "2"
+  gas-limit: "30000000"
+  rpc-port: "8545"
+  ws-port: "8546"
+  p2p-port: "30303"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: asi-chain-secrets
+  namespace: asi-chain
+type: Opaque
+data:
+  postgres-password: YXNpY2hhaW4tc2VjdXJlLTIwMjQ= # base64 encoded
+  redis-password: YXNpY2hhaW4tcmVkaXMtMjAyNA== # base64 encoded
+  jwt-secret: YXNpY2hhaW4tand0LXNlY3JldC0yMDI0 # base64 encoded
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: validator
+  namespace: asi-chain
+spec:
+  serviceName: validator
+  replicas: 4
+  selector:
+    matchLabels:
+      app: validator
+  template:
+    metadata:
+      labels:
+        app: validator
+    spec:
+      containers:
+      - name: geth
+        image: ethereum/client-go:latest
+        ports:
+        - containerPort: 8545
+          name: rpc
+        - containerPort: 8546
+          name: ws
+        - containerPort: 30303
+          name: p2p
+        - containerPort: 6060
+          name: metrics
+        env:
+        - name: NETWORK_ID
+          valueFrom:
+            configMapKeyRef:
+              name: asi-chain-config
+              key: network-id
+        volumeMounts:
+        - name: data
+          mountPath: /root/.ethereum
+        - name: genesis
+          mountPath: /genesis.json
+          subPath: genesis.json
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "2"
+          limits:
+            memory: "8Gi"
+            cpu: "4"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8545
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8545
+          initialDelaySeconds: 30
+          periodSeconds: 10
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 500Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: validator
+  namespace: asi-chain
+spec:
+  selector:
+    app: validator
+  clusterIP: None
+  ports:
+  - port: 8545
+    name: rpc
+  - port: 8546
+    name: ws
+  - port: 30303
+    name: p2p
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: explorer
+  namespace: asi-chain
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: explorer
+  template:
+    metadata:
+      labels:
+        app: explorer
+    spec:
+      containers:
+      - name: explorer
+        image: ghcr.io/asi-alliance/asi-chain-explorer:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: RPC_URL
+          value: "http://validator:8545"
+        - name: WS_URL
+          value: "ws://validator:8546"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: explorer
+  namespace: asi-chain
+spec:
+  selector:
+    app: explorer
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: indexer
+  namespace: asi-chain
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: indexer
+  template:
+    metadata:
+      labels:
+        app: indexer
+    spec:
+      containers:
+      - name: indexer
+        image: ghcr.io/asi-alliance/asi-chain-indexer:latest
+        env:
+        - name: RPC_URL
+          value: "http://validator:8545"
+        - name: DATABASE_URL
+          value: "postgresql://asichain:$(POSTGRES_PASSWORD)@postgres:5432/asichain"
+        - name: REDIS_URL
+          value: "redis://:$(REDIS_PASSWORD)@redis:6379"
+        envFrom:
+        - secretRef:
+            name: asi-chain-secrets
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wallet-api
+  namespace: asi-chain
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wallet-api
+  template:
+    metadata:
+      labels:
+        app: wallet-api
+    spec:
+      containers:
+      - name: wallet
+        image: ghcr.io/asi-alliance/asi-chain-wallet:latest
+        ports:
+        - containerPort: 3002
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: RPC_URL
+          value: "http://validator:8545"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: asi-chain-secrets
+              key: jwt-secret
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wallet-api
+  namespace: asi-chain
+spec:
+  selector:
+    app: wallet-api
+  ports:
+  - port: 80
+    targetPort: 3002
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: asi-chain
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "asichain"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: asi-chain-secrets
+              key: postgres-password
+        - name: POSTGRES_DB
+          value: "asichain"
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: fast-ssd
+      resources:
+        requests:
+          storage: 100Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: asi-chain
+spec:
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: asi-chain
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        command:
+        - redis-server
+        - --appendonly
+        - "yes"
+        - --requirepass
+        - $(REDIS_PASSWORD)
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: asi-chain-secrets
+              key: redis-password
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: asi-chain
+spec:
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: asi-chain-ingress
+  namespace: asi-chain
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - api.asi-chain.com
+    - explorer.asi-chain.com
+    - wallet.asi-chain.com
+    secretName: asi-chain-tls
+  rules:
+  - host: api.asi-chain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: validator
+            port:
+              number: 8545
+  - host: explorer.asi-chain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: explorer
+            port:
+              number: 80
+  - host: wallet.asi-chain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wallet-api
+            port:
+              number: 80
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: explorer-hpa
+  namespace: asi-chain
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: explorer
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: validator-pdb
+  namespace: asi-chain
+spec:
+  minAvailable: 3
+  selector:
+    matchLabels:
+      app: validator

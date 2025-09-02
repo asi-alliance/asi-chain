@@ -1,0 +1,139 @@
+community:
+  label: Community
+  permalink: /community
+  description: ASI Chain community content and initiatives
+
+contributors:
+  label: Contributors
+  permalink: /contributors
+  description: Community contributors and their work
+
+spotlight:
+  label: Spotlight
+  permalink: /spotlight
+  description: Featured community members and projects
+
+august-2025:
+  label: August 2025
+  permalink: /august-2025
+  description: Content from August 2025
+
+partnerships:
+  label: Partnerships
+  permalink: /partnerships
+  description: Strategic partnerships and ecosystem integrations
+
+ecosystem:
+  label: Ecosystem
+  permalink: /ecosystem
+  description: ASI Chain ecosystem development and growth
+
+integrations:
+  label: Integrations
+  permalink: /integrations
+  description: Platform integrations and technical partnerships
+
+announcements:
+  label: Announcements
+  permalink: /announcements
+  description: Official announcements and updates
+
+governance:
+  label: Governance
+  permalink: /governance
+  description: ASI Chain governance and decision making
+
+dao:
+  label: DAO
+  permalink: /dao
+  description: Decentralized autonomous organization content
+
+participation:
+  label: Participation
+  permalink: /participation
+  description: Community participation and engagement
+
+democracy:
+  label: Democracy
+  permalink: /democracy
+  description: Democratic processes and community voting
+
+features:
+  label: Features
+  permalink: /features
+  description: Platform features and development
+
+development:
+  label: Development
+  permalink: /development
+  description: Development process and technical content
+
+feedback:
+  label: Feedback
+  permalink: /feedback
+  description: Community feedback and input
+
+innovation:
+  label: Innovation
+  permalink: /innovation
+  description: Innovation and new technologies
+
+ambassador:
+  label: Ambassador
+  permalink: /ambassador
+  description: ASI Chain Ambassador Program
+
+global:
+  label: Global
+  permalink: /global
+  description: Global initiatives and worldwide content
+
+program:
+  label: Program
+  permalink: /program
+  description: Official programs and initiatives
+
+outreach:
+  label: Outreach
+  permalink: /outreach
+  description: Community outreach and education
+
+production:
+  label: Production
+  permalink: /production
+  description: Production readiness and deployment
+
+milestone:
+  label: Milestone
+  permalink: /milestone
+  description: Project milestones and achievements
+
+testnet:
+  label: Testnet
+  permalink: /testnet
+  description: Testnet related content
+
+security:
+  label: Security
+  permalink: /security
+  description: Security features and updates
+
+wallet:
+  label: Wallet
+  permalink: /wallet
+  description: ASI Wallet features and updates
+
+explorer:
+  label: Explorer
+  permalink: /explorer
+  description: Blockchain Explorer features
+
+infrastructure:
+  label: Infrastructure
+  permalink: /infrastructure
+  description: Infrastructure and deployment content
+
+aws:
+  label: AWS
+  permalink: /aws
+  description: Amazon Web Services deployment and infrastructure
