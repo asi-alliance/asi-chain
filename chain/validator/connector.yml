@@ -1,11 +1,8 @@
+name: validator
+# Will be deprecated soon as far as merged to validator.yml
 
 services:
   connector:
     image: 533793137436.dkr.ecr.us-east-1.amazonaws.com/asi-chain/validator-connector:v0.0.1
-    environment:
-      - FAUCET_API_URL=https://asi-testnet-faucet.singularitynet.io/api
-      - BOOTSTRAP_PUBLIC_GRPC_PORT=40401
-      - OBSERVER_INTERNAL_GRPC_PORT=40452
-      - STAKE=100000000
-    volumes:
-      - ./.env:/app/.env
+    env_file: .env
+    restart: no
