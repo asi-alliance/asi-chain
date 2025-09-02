@@ -1,29 +1,33 @@
 #!/bin/bash
 
-ENV_FILE="/app/.env"
-ENV_LIST=""
 FAUCET_REQUEST_LIMIT=2
 BALANCE_REQUEST_LIMIT=300
 BALANCE_REQUEST_DELAY=1
 VALIDATOR_CHECK_LIMIT=10
 VALIDATOR_CHECK_DELAY=60
 
-# Read variables from env file
-while IFS='=' read -r KEY VALUE; do
-  # Skip comments and empty lines
-  if [[ -n "$KEY" && "$KEY" != \#* ]]; then
-    export "$KEY"="$VALUE"
-    if ! echo "$ENV_LIST" | grep -q "$KEY"; then
-      ENV_LIST="$ENV_LIST $KEY"
-    fi
-    echo "Found env $KEY=$VALUE"
-  fi
-done < $ENV_FILE
-
 # Get shard host from validator url
 # ! We assume here that shard includes bootstrap, validators and observer on the same host
 SHARD_HOST=$(echo $BOOTSTRAP | cut -d"@" -f2 | cut -d"?" -f1)
 echo "Shard Host: $SHARD_HOST"
+
+# Define function to check validator bonding status
+is_validator_bonded() {
+  local CMD_OUT=$(cargo run -q -- validator-status -k "$VALIDATOR_PUBLIC_KEY" -H "$SHARD_HOST" -p "$OBSERVER_INTERNAL_GRPC_PORT")
+  if echo "$CMD_OUT" | grep "Bonded:" | grep -q "Yes" && \
+     echo "$CMD_OUT" | grep "Active:" | grep -q "Yes"; then
+    echo "$CMD_OUT"
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Preliminary check if validator is already bonded
+if is_validator_bonded; then
+  echo "Validator is already bonded"
+  exit 0
+fi
 
 # Check Wallet balance and top up from faucet if needed
 BALANCE=$(curl -s $FAUCET_API_URL/balance/$VALIDATOR_ADDRESS | jq '.["balance"] | tonumber')
@@ -70,19 +74,8 @@ fi
 
 cd /app/rust-client
 
-check_validator_status() {
-  local CMD_OUT=$(cargo run -q -- validator-status -k "$VALIDATOR_PUBLIC_KEY" -H "$SHARD_HOST" -p "$OBSERVER_INTERNAL_GRPC_PORT")
-  if echo "$CMD_OUT" | grep "Bonded:" | grep -q "Yes" && \
-     echo "$CMD_OUT" | grep "Active:" | grep -q "Yes"; then
-    echo "$CMD_OUT"
-    return 0
-  else
-    return 1
-  fi
-}
-
 # Check validator status and bond validator to the shard if needed
-if check_validator_status; then
+if is_validator_bonded; then
   echo "Validator bonded successfully"
   exit 0
 else
@@ -101,7 +94,7 @@ while [[ $LIMIT_I -gt 0 ]]; do
   echo "Waiting Validator to be bonded ($LIMIT_I)..."
   ((LIMIT_I--))
   sleep $VALIDATOR_CHECK_DELAY
-  if check_validator_status; then
+  if is_validator_bonded; then
     echo "Validator bonded successfully"
     exit 0
   fi
