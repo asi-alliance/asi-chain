@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
@@ -11,10 +11,10 @@ const ConfigSection = styled.div`
 `;
 
 const ConfigTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: ${({ theme }) => theme.text.primary};
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: ${({ theme }) => theme.text.primary};
 `;
 
 const FormRow = styled.div`
@@ -92,28 +92,34 @@ const InfoBox = styled.div`
 export const CustomNetworkConfig: React.FC = () => {
   const dispatch = useDispatch();
   const { networks, selectedNetwork } = useSelector((state: RootState) => state.wallet);
-  
+
   // State for custom network configuration
+  const [networkName, setNetworkName] = useState('Custom Network');
   const [validatorHost, setValidatorHost] = useState('localhost');
   const [validatorHttpPort, setValidatorHttpPort] = useState('40403');
   const [validatorGrpcPort, setValidatorGrpcPort] = useState('40401');
-  
+
   const [readOnlyHost, setReadOnlyHost] = useState('localhost');
   const [readOnlyHttpPort, setReadOnlyHttpPort] = useState('40453');
   const [readOnlyGrpcPort, setReadOnlyGrpcPort] = useState('40451');
-  
+
   const [isEditing, setIsEditing] = useState(false);
 
   // Find or create custom network
-  const customNetwork = networks.find(n => n.id === 'custom') || {
-    id: 'custom',
-    name: 'Custom Network',
-    url: 'http://localhost:40403',
-    readOnlyUrl: 'http://localhost:40453',
-  };
+  const customNetwork = useMemo(() =>
+      networks.find(n => n.id === 'custom') || {
+        id: 'custom',
+        name: 'Custom Network',
+        url: 'http://localhost:40403',
+        readOnlyUrl: 'http://localhost:40453',
+      }, [networks]
+  );
 
   // Load current custom network settings on mount
   useEffect(() => {
+    // Load network name
+    setNetworkName(customNetwork.name || 'Custom Network');
+
     if (customNetwork.url) {
       try {
         const validatorUrl = new URL(customNetwork.url);
@@ -123,7 +129,7 @@ export const CustomNetworkConfig: React.FC = () => {
         // Default values already set
       }
     }
-    
+
     if (customNetwork.readOnlyUrl) {
       try {
         const readOnlyUrl = new URL(customNetwork.readOnlyUrl);
@@ -138,11 +144,11 @@ export const CustomNetworkConfig: React.FC = () => {
   const handleSave = () => {
     const updatedNetwork: Network = {
       id: 'custom',
-      name: 'Custom Network',
+      name: networkName.trim() || 'Custom Network',
       url: `http://${validatorHost}:${validatorHttpPort}`,
       readOnlyUrl: `http://${readOnlyHost}:${readOnlyHttpPort}`,
     };
-    
+
     dispatch(updateNetwork(updatedNetwork));
     setIsEditing(false);
   };
@@ -163,7 +169,7 @@ export const CustomNetworkConfig: React.FC = () => {
     <Card>
       <CardHeader>
         <CardTitle>
-          Custom Network Configuration
+          {networkName} Configuration
           {selectedNetwork.id === 'custom' && (
             <span style={{ fontSize: '12px', marginLeft: '8px', color: '#4caf50' }}>
               (Active)
@@ -175,15 +181,32 @@ export const CustomNetworkConfig: React.FC = () => {
         <InfoBox>
           <h4>🔧 Custom Network Setup</h4>
           <p>
-            Configure custom validator and read-only nodes for local development or private networks. 
+            Configure custom validator and read-only nodes for local development or private networks.
             This matches the F1R3Wallet custom network configuration.
           </p>
         </InfoBox>
 
+        {/* Network Name Configuration */}
+        <ConfigSection>
+          <ConfigTitle>Network Name</ConfigTitle>
+          <FormRow>
+            <FormGroup>
+              <Label>Network Name:</Label>
+              <Input
+                value={networkName}
+                onChange={(e) => setNetworkName(e.target.value)}
+                placeholder="Custom Network"
+                disabled={!isEditing}
+              />
+            </FormGroup>
+            <div />
+          </FormRow>
+        </ConfigSection>
+
         {/* Validator Node Configuration */}
         <ConfigSection>
           <ConfigTitle>Custom network - validator node</ConfigTitle>
-          
+
           <FormRow>
             <FormGroup>
               <Label>IP/Domain:</Label>
@@ -204,7 +227,7 @@ export const CustomNetworkConfig: React.FC = () => {
               />
             </FormGroup>
           </FormRow>
-          
+
           <FormRow>
             <FormGroup>
               <Label>HTTP Port:</Label>
@@ -217,7 +240,7 @@ export const CustomNetworkConfig: React.FC = () => {
             </FormGroup>
             <div />
           </FormRow>
-          
+
           <DirectLinks>
             <LinkTitle>Direct links:</LinkTitle>
             <Link onClick={() => window.open(`${validatorHttpUrl}/status`, '_blank')}>
@@ -232,7 +255,7 @@ export const CustomNetworkConfig: React.FC = () => {
         {/* Read-only Node Configuration */}
         <ConfigSection>
           <ConfigTitle>Custom network - read-only node</ConfigTitle>
-          
+
           <FormRow>
             <FormGroup>
               <Label>IP/Domain:</Label>
@@ -253,7 +276,7 @@ export const CustomNetworkConfig: React.FC = () => {
               />
             </FormGroup>
           </FormRow>
-          
+
           <FormRow>
             <FormGroup>
               <Label>HTTP Port:</Label>
@@ -266,7 +289,7 @@ export const CustomNetworkConfig: React.FC = () => {
             </FormGroup>
             <div />
           </FormRow>
-          
+
           <DirectLinks>
             <LinkTitle>Direct links:</LinkTitle>
             <Link onClick={() => window.open(`${readOnlyHttpUrl}/status`, '_blank')}>
