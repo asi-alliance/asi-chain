@@ -9,64 +9,102 @@ import { PasswordSetup } from 'components/PasswordSetup';
 import { WarningIcon } from 'components/Icons';
 
 const AccountsContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
+    max-width: 800px;
+    margin: 0 auto;
 `;
 
 const AccountsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
 `;
 
 const AccountCard = styled(Card)<{ isSelected: boolean }>`
-  border: 2px solid ${({ isSelected, theme }) => (isSelected ? theme.primary : theme.border)};
-  cursor: pointer;
-  transition: all 0.2s ease;
+    border: 2px solid ${({ isSelected, theme }) => (isSelected ? theme.primary : theme.border)};
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-  &:hover {
-    border-color: ${({ theme }) => theme.primary};
-    transform: translateY(-2px);
-  }
+    &:hover {
+        border-color: ${({ theme }) => theme.primary};
+        transform: translateY(-2px);
+    }
 `;
 
 const AccountHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 `;
 
 const AccountName = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.text.primary};
-  margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.text.primary};
+    margin: 0;
 `;
 
 const AccountBalance = styled.div`
-  font-size: 16px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.primary};
+    font-size: 16px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.primary};
 `;
 
-const AccountAddress = styled.div`
-  font-family: monospace;
-  font-size: 12px;
-  color: ${({ theme }) => theme.text.secondary};
-  margin-bottom: 16px;
-  word-break: break-all;
+const AddressContainer = styled.div`
+    margin-bottom: 12px;
+`;
+
+const AddressRow = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+`;
+
+const AddressLabel = styled.span`
+    font-size: 11px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.text.tertiary};
+    min-width: 40px;
+`;
+
+const AddressValue = styled.span`
+    font-family: monospace;
+    font-size: 11px;
+    color: ${({ theme }) => theme.text.secondary};
+    flex: 1;
+    word-break: break-all;
+`;
+
+const CopyButton = styled.button`
+    padding: 4px 8px;
+    background: ${({ theme }) => theme.primary};
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+        opacity: 0.9;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
 `;
 
 const AccountActions = styled.div`
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
 `;
 
 const CreateAccountSection = styled.div`
-  margin-bottom: 32px;
+    margin-bottom: 32px;
 `;
 
 const ImportAccountSection = styled.div`
@@ -131,12 +169,13 @@ export const Accounts: React.FC = () => {
   const [importName, setImportName] = useState('');
   const [importValue, setImportValue] = useState('');
   const [importType, setImportType] = useState<'private' | 'public' | 'eth' | 'rev'>('private');
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
   // Load all accounts from storage on mount
   useEffect(() => {
     dispatch(loadAccountsFromStorage() as any);
   }, [dispatch]);
-  
+
   // Sync unlocked accounts to wallet state (update existing accounts with unlocked data)
   useEffect(() => {
     if (unlockedAccounts.length > 0) {
@@ -183,16 +222,16 @@ export const Accounts: React.FC = () => {
 
   const handlePasswordSet = async (password: string) => {
     if (pendingAccountName) {
-      const resultAction = await dispatch(createAccountWithPassword({ 
-        name: pendingAccountName, 
-        password 
+      const resultAction = await dispatch(createAccountWithPassword({
+        name: pendingAccountName,
+        password
       }) as any);
-      
+
       if (createAccountWithPassword.fulfilled.match(resultAction)) {
         // Sync the new account to wallet state
         dispatch(syncAccounts([resultAction.payload.account]));
       }
-      
+
       setNewAccountName('');
       setPendingAccountName('');
       setShowPasswordSetup(false);
@@ -201,12 +240,12 @@ export const Accounts: React.FC = () => {
         ...pendingImport,
         password
       }) as any);
-      
+
       if (importAccountWithPassword.fulfilled.match(resultAction)) {
         // Sync the new account to wallet state
         dispatch(syncAccounts([resultAction.payload.account]));
       }
-      
+
       setImportName('');
       setImportValue('');
       setPendingImport(null);
@@ -259,6 +298,48 @@ export const Accounts: React.FC = () => {
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 10)}...${address.slice(-8)}`;
+  };
+
+  const handleCopyAddress = async (address: string, addressType: string) => {
+    const addressKey = `${addressType}-${address}`;
+    try {
+      // Check if clipboard API is available
+      if (!navigator.clipboard || !navigator.clipboard.writeText) {
+        throw new Error('Clipboard API not supported');
+      }
+
+      // Try modern clipboard API first
+      await navigator.clipboard.writeText(address);
+      setCopiedAddress(addressKey);
+      setTimeout(() => setCopiedAddress(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy with clipboard API:', err);
+
+      // Fallback to legacy method
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = address;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (successful) {
+          setCopiedAddress(addressKey);
+          setTimeout(() => setCopiedAddress(null), 2000);
+        } else {
+          throw new Error('Legacy copy method failed');
+        }
+      } catch (fallbackErr) {
+        console.error('Fallback copy method failed:', fallbackErr);
+        // Could show a toast notification here if available
+      }
+    }
   };
 
   const getImportPlaceholder = () => {
@@ -327,7 +408,7 @@ export const Accounts: React.FC = () => {
                 <WarningMessage>
                   <span className="icon"><WarningIcon size={16} color="currentColor" /></span>
                   <span>
-                    You have existing accounts. Creating a new account will not automatically log you in. 
+                    You have existing accounts. Creating a new account will not automatically log you in.
                     You'll need to unlock your existing accounts with your password.
                   </span>
                 </WarningMessage>
@@ -359,7 +440,7 @@ export const Accounts: React.FC = () => {
                 <WarningMessage>
                   <span className="icon"><WarningIcon size={16} color="currentColor" /></span>
                   <span>
-                    You have existing accounts. Importing a new account will not automatically log you in. 
+                    You have existing accounts. Importing a new account will not automatically log you in.
                     You'll need to unlock your existing accounts with your password.
                   </span>
                 </WarningMessage>
@@ -370,7 +451,7 @@ export const Accounts: React.FC = () => {
                 onChange={(e) => setImportName(e.target.value)}
                 placeholder="Enter account name"
               />
-              
+
               <ImportTypeSelector
                 value={importType}
                 onChange={(e) => setImportType(e.target.value as any)}
@@ -387,7 +468,7 @@ export const Accounts: React.FC = () => {
                 placeholder={getImportPlaceholder()}
                 type={importType === 'private' ? 'password' : 'text'}
               />
-              
+
               <Button
                 onClick={handleImportAccount}
                 disabled={!importName.trim() || !importValue.trim()}
@@ -429,11 +510,34 @@ export const Accounts: React.FC = () => {
                       <AccountName>{account.name}</AccountName>
                       <AccountBalance>{parseFloat(account.balance).toFixed(2)} REV</AccountBalance>
                     </AccountHeader>
-                    
-                    <AccountAddress>
-                      {formatAddress(account.revAddress)}
-                    </AccountAddress>
-                    
+
+                    <AddressContainer>
+                      <AddressRow>
+                        <AddressLabel>REV:</AddressLabel>
+                        <AddressValue>{formatAddress(account.revAddress)}</AddressValue>
+                        <CopyButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopyAddress(account.revAddress, 'rev');
+                          }}
+                        >
+                          {copiedAddress === `rev-${account.revAddress}` ? 'Copied!' : 'Copy'}
+                        </CopyButton>
+                      </AddressRow>
+                      <AddressRow>
+                        <AddressLabel>ETH:</AddressLabel>
+                        <AddressValue>{formatAddress(account.ethAddress)}</AddressValue>
+                        <CopyButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopyAddress(account.ethAddress, 'eth');
+                          }}
+                        >
+                          {copiedAddress === `eth-${account.ethAddress}` ? 'Copied!' : 'Copy'}
+                        </CopyButton>
+                      </AddressRow>
+                    </AddressContainer>
+
                     <AccountActions>
                       {selectedAccount?.id === account.id && (
                         <span style={{ fontSize: '12px', color: '#7ED321', fontWeight: '600' }}>
