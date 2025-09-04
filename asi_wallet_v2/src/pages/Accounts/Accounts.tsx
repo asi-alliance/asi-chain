@@ -51,50 +51,12 @@ const AccountBalance = styled.div`
     color: ${({ theme }) => theme.primary};
 `;
 
-const AddressContainer = styled.div`
-    margin-bottom: 12px;
-`;
-
-const AddressRow = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-`;
-
-const AddressLabel = styled.span`
-    font-size: 11px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.text.tertiary};
-    min-width: 40px;
-`;
-
-const AddressValue = styled.span`
+const AccountAddress = styled.div`
     font-family: monospace;
-    font-size: 11px;
+    font-size: 12px;
     color: ${({ theme }) => theme.text.secondary};
-    flex: 1;
+    margin-bottom: 16px;
     word-break: break-all;
-`;
-
-const CopyButton = styled.button`
-    padding: 4px 8px;
-    background: ${({ theme }) => theme.primary};
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-
-    &:hover {
-        opacity: 0.9;
-    }
-
-    &:active {
-        transform: scale(0.98);
-    }
 `;
 
 const AccountActions = styled.div`
@@ -108,47 +70,59 @@ const CreateAccountSection = styled.div`
 `;
 
 const ImportAccountSection = styled.div`
-  margin-bottom: 32px;
+    margin-bottom: 32px;
 `;
 
 const FormContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 const ImportTypeSelector = styled.select`
-  padding: 12px 16px;
-  border: 2px solid ${({ theme }) => theme.border};
-  border-radius: 8px;
-  background: ${({ theme }) => theme.surface};
-  color: ${({ theme }) => theme.text.primary};
-  font-size: 16px;
-  margin-bottom: 16px;
-  width: 100%;
+    padding: 12px 16px;
+    border: 2px solid ${({ theme }) => theme.border};
+    border-radius: 8px;
+    background: ${({ theme }) => theme.surface};
+    color: ${({ theme }) => theme.text.primary};
+    font-size: 16px;
+    margin-bottom: 16px;
+    width: 100%;
 `;
 
 const WarningMessage = styled.div`
-  background: ${({ theme }) => `${theme.warning}20`};
-  border: 1px solid ${({ theme }) => `${theme.warning}40`};
-  color: ${({ theme }) => theme.warning};
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  
-  .icon {
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
+    background: ${({ theme }) => `${theme.warning}20`};
+    border: 1px solid ${({ theme }) => `${theme.warning}40`};
+    color: ${({ theme }) => theme.warning};
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    .icon {
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+`;
+
+const SuccessMessage = styled.div`
+    background: ${({ theme }) => `${theme.success}20`};
+    border: 1px solid ${({ theme }) => `${theme.success}40`};
+    color: ${({ theme }) => theme.success};
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
 `;
 
 export const Accounts: React.FC = () => {
@@ -169,7 +143,7 @@ export const Accounts: React.FC = () => {
   const [importName, setImportName] = useState('');
   const [importValue, setImportValue] = useState('');
   const [importType, setImportType] = useState<'private' | 'public' | 'eth' | 'rev'>('private');
-  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Load all accounts from storage on mount
   useEffect(() => {
@@ -230,6 +204,9 @@ export const Accounts: React.FC = () => {
       if (createAccountWithPassword.fulfilled.match(resultAction)) {
         // Sync the new account to wallet state
         dispatch(syncAccounts([resultAction.payload.account]));
+        // Show success message
+        setSuccessMessage(`Account "${pendingAccountName}" created successfully!`);
+        setTimeout(() => setSuccessMessage(''), 5000);
       }
 
       setNewAccountName('');
@@ -244,6 +221,9 @@ export const Accounts: React.FC = () => {
       if (importAccountWithPassword.fulfilled.match(resultAction)) {
         // Sync the new account to wallet state
         dispatch(syncAccounts([resultAction.payload.account]));
+        // Show success message
+        setSuccessMessage(`Account "${pendingImport.name}" imported successfully!`);
+        setTimeout(() => setSuccessMessage(''), 5000);
       }
 
       setImportName('');
@@ -274,6 +254,9 @@ export const Accounts: React.FC = () => {
           if (importAccountWithPassword.fulfilled.match(resultAction)) {
             // Sync the new account to wallet state
             dispatch(syncAccounts([resultAction.payload.account]));
+            // Show success message
+            setSuccessMessage(`Account "${importName.trim()}" imported successfully!`);
+            setTimeout(() => setSuccessMessage(''), 5000);
           }
         });
         setImportName('');
@@ -298,48 +281,6 @@ export const Accounts: React.FC = () => {
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 10)}...${address.slice(-8)}`;
-  };
-
-  const handleCopyAddress = async (address: string, addressType: string) => {
-    const addressKey = `${addressType}-${address}`;
-    try {
-      // Check if clipboard API is available
-      if (!navigator.clipboard || !navigator.clipboard.writeText) {
-        throw new Error('Clipboard API not supported');
-      }
-
-      // Try modern clipboard API first
-      await navigator.clipboard.writeText(address);
-      setCopiedAddress(addressKey);
-      setTimeout(() => setCopiedAddress(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy with clipboard API:', err);
-
-      // Fallback to legacy method
-      try {
-        const textArea = document.createElement('textarea');
-        textArea.value = address;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-
-        if (successful) {
-          setCopiedAddress(addressKey);
-          setTimeout(() => setCopiedAddress(null), 2000);
-        } else {
-          throw new Error('Legacy copy method failed');
-        }
-      } catch (fallbackErr) {
-        console.error('Fallback copy method failed:', fallbackErr);
-        // Could show a toast notification here if available
-      }
-    }
   };
 
   const getImportPlaceholder = () => {
@@ -397,6 +338,82 @@ export const Accounts: React.FC = () => {
 
   return (
     <AccountsContainer>
+      {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
+
+      {/* Show accounts first if they exist */}
+      {accounts.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Accounts ({accounts.length})</CardTitle>
+            <Button
+              variant="ghost"
+              size="small"
+              onClick={handleRefreshBalances}
+              loading={isLoading}
+            >
+              Refresh Balances
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <AccountsGrid>
+              {accounts.map((account) => {
+                const isUnlocked = unlockedAccounts.some(a => a.id === account.id);
+                return (
+                  <AccountCard
+                    key={account.id}
+                    isSelected={selectedAccount?.id === account.id}
+                    onClick={() => handleSelectAccount(account.id)}
+                  >
+                    <AccountHeader>
+                      <AccountName>{account.name}</AccountName>
+                      <AccountBalance>{parseFloat(account.balance).toFixed(2)} REV</AccountBalance>
+                    </AccountHeader>
+
+                    <AccountAddress>
+                      {formatAddress(account.revAddress)}
+                    </AccountAddress>
+
+                    <AccountActions>
+                      {selectedAccount?.id === account.id && (
+                        <span style={{ fontSize: '12px', color: '#7ED321', fontWeight: '600' }}>
+                          SELECTED
+                        </span>
+                      )}
+                      {isUnlocked && (
+                        <span style={{ fontSize: '12px', color: '#4A90E2', fontWeight: '600', marginLeft: '8px' }}>
+                          UNLOCKED
+                        </span>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleExportKeyfile(account.id);
+                        }}
+                      >
+                        Export
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveAccount(account.id);
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </AccountActions>
+                  </AccountCard>
+                );
+              })}
+            </AccountsGrid>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Show create/import sections */}
       <FormContainer>
         <CreateAccountSection>
           <Card>
@@ -481,102 +498,17 @@ export const Accounts: React.FC = () => {
         </ImportAccountSection>
       </FormContainer>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Accounts ({accounts.length})</CardTitle>
-          <Button
-            variant="ghost"
-            size="small"
-            onClick={handleRefreshBalances}
-            loading={isLoading}
-          >
-            Refresh Balances
-          </Button>
-        </CardHeader>
-        <CardContent>
-          {accounts.length === 0 ? (
+      {/* Show message when no accounts exist */}
+      {accounts.length === 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Accounts (0)</CardTitle>
+          </CardHeader>
+          <CardContent>
             <p>No accounts found. Create or import an account to get started.</p>
-          ) : (
-            <AccountsGrid>
-              {accounts.map((account) => {
-                const isUnlocked = unlockedAccounts.some(a => a.id === account.id);
-                return (
-                  <AccountCard
-                    key={account.id}
-                    isSelected={selectedAccount?.id === account.id}
-                    onClick={() => handleSelectAccount(account.id)}
-                  >
-                    <AccountHeader>
-                      <AccountName>{account.name}</AccountName>
-                      <AccountBalance>{parseFloat(account.balance).toFixed(2)} REV</AccountBalance>
-                    </AccountHeader>
-
-                    <AddressContainer>
-                      <AddressRow>
-                        <AddressLabel>REV:</AddressLabel>
-                        <AddressValue>{formatAddress(account.revAddress)}</AddressValue>
-                        <CopyButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCopyAddress(account.revAddress, 'rev');
-                          }}
-                        >
-                          {copiedAddress === `rev-${account.revAddress}` ? 'Copied!' : 'Copy'}
-                        </CopyButton>
-                      </AddressRow>
-                      <AddressRow>
-                        <AddressLabel>ETH:</AddressLabel>
-                        <AddressValue>{formatAddress(account.ethAddress)}</AddressValue>
-                        <CopyButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCopyAddress(account.ethAddress, 'eth');
-                          }}
-                        >
-                          {copiedAddress === `eth-${account.ethAddress}` ? 'Copied!' : 'Copy'}
-                        </CopyButton>
-                      </AddressRow>
-                    </AddressContainer>
-
-                    <AccountActions>
-                      {selectedAccount?.id === account.id && (
-                        <span style={{ fontSize: '12px', color: '#7ED321', fontWeight: '600' }}>
-                          SELECTED
-                        </span>
-                      )}
-                      {isUnlocked && (
-                        <span style={{ fontSize: '12px', color: '#4A90E2', fontWeight: '600', marginLeft: '8px' }}>
-                          UNLOCKED
-                        </span>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleExportKeyfile(account.id);
-                        }}
-                      >
-                        Export
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveAccount(account.id);
-                        }}
-                      >
-                        Remove
-                      </Button>
-                    </AccountActions>
-                  </AccountCard>
-                );
-              })}
-            </AccountsGrid>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </AccountsContainer>
   );
 };
