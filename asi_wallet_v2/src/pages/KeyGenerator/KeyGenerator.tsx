@@ -4,27 +4,27 @@ import { generateKeyPair, importPrivateKey } from 'utils/crypto';
 import { Card, CardHeader, CardTitle, CardContent, Button, Input } from 'components';
 
 const KeyGeneratorContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
+    max-width: 800px;
+    margin: 0 auto;
 `;
 
 const Section = styled.div`
-  margin-bottom: 32px;
+    margin-bottom: 32px;
 `;
 
 const KeyDisplay = styled.div`
-  margin-top: 24px;
-  padding: 20px;
-  background: ${({ theme }) => theme.surface};
-  border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.border};
+    margin-top: 24px;
+    padding: 20px;
+    background: ${({ theme }) => theme.surface};
+    border-radius: 8px;
+    border: 1px solid ${({ theme }) => theme.border};
 `;
 
 const KeyField = styled.div`
-  margin-bottom: 16px;
-  &:last-child {
-    margin-bottom: 0;
-  }
+    margin-bottom: 16px;
+    &:last-child {
+        margin-bottom: 0;
+    }
 `;
 
 const KeyLabel = styled.label`
@@ -86,11 +86,11 @@ const ActionButtons = styled.div`
 `;
 
 const ErrorMessage = styled.div`
-  background: ${({ theme }) => theme.danger};
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+    background: ${({ theme }) => theme.danger};
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
 `;
 
 const InfoBox = styled.div`
@@ -141,20 +141,20 @@ export const KeyGenerator: React.FC = () => {
   const handleImport = () => {
     setError('');
     setGeneratedKeys(null);
-    
+
     try {
       if (!importKey.trim()) {
         throw new Error('Please enter a private key');
       }
-      
+
       // Remove 0x prefix if present
       const cleanKey = importKey.trim().replace(/^0x/, '');
-      
+
       // Validate hex format
       if (!/^[0-9a-fA-F]{64}$/.test(cleanKey)) {
         throw new Error('Private key must be 64 hexadecimal characters');
       }
-      
+
       const keys = importPrivateKey(cleanKey);
       setImportedKeys(keys);
       setImportKey('');
@@ -165,24 +165,57 @@ export const KeyGenerator: React.FC = () => {
 
   const handleCopy = async (value: string, field: string) => {
     try {
+      // Check if clipboard API is available
+      if (!navigator.clipboard || !navigator.clipboard.writeText) {
+        throw new Error('Clipboard API not supported');
+      }
+
+      // Try modern clipboard API first
       await navigator.clipboard.writeText(value);
       setCopiedField(field);
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error('Failed to copy with clipboard API:', err);
+
+      // Fallback to legacy method
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = value;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (successful) {
+          setCopiedField(field);
+          setTimeout(() => setCopiedField(null), 2000);
+        } else {
+          throw new Error('Legacy copy method failed');
+        }
+      } catch (fallbackErr) {
+        console.error('Fallback copy method failed:', fallbackErr);
+        // Show error to user
+        setError('Failed to copy to clipboard. Please copy manually.');
+        setTimeout(() => setError(''), 3000);
+      }
     }
   };
 
   const renderKeyDisplay = (keys: GeneratedKeys, title: string) => (
     <KeyDisplay>
       <h3 style={{ marginTop: 0, marginBottom: 20 }}>{title}</h3>
-      
+
       <KeyField>
         <KeyLabel>Private Key (Keep Secret!)</KeyLabel>
         <KeyValue>
-          <KeyText 
-            value={keys.privateKey} 
-            readOnly 
+          <KeyText
+            value={keys.privateKey}
+            readOnly
             onClick={(e) => e.currentTarget.select()}
           />
           <CopyButton onClick={() => handleCopy(keys.privateKey, 'private')}>
@@ -194,9 +227,9 @@ export const KeyGenerator: React.FC = () => {
       <KeyField>
         <KeyLabel>Public Key</KeyLabel>
         <KeyValue>
-          <KeyText 
-            value={keys.publicKey} 
-            readOnly 
+          <KeyText
+            value={keys.publicKey}
+            readOnly
             onClick={(e) => e.currentTarget.select()}
           />
           <CopyButton onClick={() => handleCopy(keys.publicKey, 'public')}>
@@ -208,9 +241,9 @@ export const KeyGenerator: React.FC = () => {
       <KeyField>
         <KeyLabel>Ethereum Address</KeyLabel>
         <KeyValue>
-          <KeyText 
-            value={keys.ethAddress} 
-            readOnly 
+          <KeyText
+            value={keys.ethAddress}
+            readOnly
             onClick={(e) => e.currentTarget.select()}
           />
           <CopyButton onClick={() => handleCopy(keys.ethAddress, 'eth')}>
@@ -222,9 +255,9 @@ export const KeyGenerator: React.FC = () => {
       <KeyField>
         <KeyLabel>REV Address</KeyLabel>
         <KeyValue>
-          <KeyText 
-            value={keys.revAddress} 
-            readOnly 
+          <KeyText
+            value={keys.revAddress}
+            readOnly
             onClick={(e) => e.currentTarget.select()}
           />
           <CopyButton onClick={() => handleCopy(keys.revAddress, 'rev')}>
@@ -238,12 +271,12 @@ export const KeyGenerator: React.FC = () => {
   return (
     <KeyGeneratorContainer>
       <h2>Key Generator</h2>
-      
+
       <InfoBox>
         <h4>About Keys</h4>
         <p>
-          Generate new keypairs or derive addresses from existing private keys. 
-          The ETH address is compatible with MetaMask and all Ethereum wallets. 
+          Generate new keypairs or derive addresses from existing private keys.
+          The ETH address is compatible with MetaMask and all Ethereum wallets.
           The REV address is specific to the RChain network.
         </p>
       </InfoBox>
@@ -257,13 +290,13 @@ export const KeyGenerator: React.FC = () => {
             <p style={{ marginBottom: 20 }}>
               Generate a completely new random keypair. Make sure to save your private key securely!
             </p>
-            
+
             {error && !importKey && <ErrorMessage>{error}</ErrorMessage>}
-            
+
             <Button onClick={handleGenerateNew} variant="primary">
               Generate New Keypair
             </Button>
-            
+
             {generatedKeys && renderKeyDisplay(generatedKeys, 'Generated Keys')}
           </CardContent>
         </Card>
@@ -278,9 +311,9 @@ export const KeyGenerator: React.FC = () => {
             <p style={{ marginBottom: 20 }}>
               Enter a 64-character hexadecimal private key to derive its public key and addresses.
             </p>
-            
+
             {error && <ErrorMessage>{error}</ErrorMessage>}
-            
+
             <ActionButtons>
               <Input
                 value={importKey}
@@ -292,7 +325,7 @@ export const KeyGenerator: React.FC = () => {
                 Import
               </Button>
             </ActionButtons>
-            
+
             {importedKeys && renderKeyDisplay(importedKeys, 'Imported Key Details')}
           </CardContent>
         </Card>
