@@ -62,6 +62,62 @@ const AccountAddress = styled.div`
     word-break: break-all;
 `;
 
+const AddressContainer = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+`;
+
+const AddressText = styled.div`
+    font-family: monospace;
+    font-size: 12px;
+    color: ${({ theme }) => theme.text.secondary};
+    word-break: break-all;
+    flex: 1;
+`;
+
+const CopyButton = styled.button`
+    background: ${({ theme }) => theme.success};
+    border: none;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    
+    &:hover {
+        background: ${({ theme }) => theme.success};
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+    
+    &:active {
+        transform: translateY(0);
+        opacity: 0.8;
+    }
+`;
+
+const CopyMessage = styled.div`
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${({ theme }) => theme.success};
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 1000;
+    box-shadow: ${({ theme }) => theme.shadowLarge};
+`;
+
 const AccountActions = styled.div`
     display: flex;
     gap: 8px;
@@ -147,6 +203,7 @@ export const Accounts: React.FC = () => {
   const [importValue, setImportValue] = useState('');
   const [importType, setImportType] = useState<'private' | 'public' | 'eth' | 'rev'>('private');
   const [successMessage, setSuccessMessage] = useState('');
+  const [copyMessage, setCopyMessage] = useState('');
 
   // Load all accounts from storage on mount
   useEffect(() => {
@@ -286,6 +343,12 @@ export const Accounts: React.FC = () => {
     return `${address.slice(0, 10)}...${address.slice(-8)}`;
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopyMessage('Address copied to clipboard!');
+    setTimeout(() => setCopyMessage(''), 3000);
+  };
+
   const getImportPlaceholder = () => {
     switch (importType) {
       case 'private':
@@ -372,9 +435,20 @@ export const Accounts: React.FC = () => {
                       <AccountBalance>{parseFloat(account.balance).toFixed(2)} REV</AccountBalance>
                     </AccountHeader>
 
-                    <AccountAddress>
-                      {formatAddress(account.revAddress)}
-                    </AccountAddress>
+                    <AddressContainer>
+                      <AddressText>
+                        {formatAddress(account.revAddress)}
+                      </AddressText>
+                      <CopyButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyToClipboard(account.revAddress);
+                        }}
+                        title="Copy full address"
+                      >
+                        Copy
+                      </CopyButton>
+                    </AddressContainer>
 
                     <AccountActions>
                       {selectedAccount?.id === account.id && (
@@ -501,17 +575,30 @@ export const Accounts: React.FC = () => {
         </ImportAccountSection>
       </FormContainer>
 
-      {/* Show message when no accounts exist */}
+      {/* Show prominent warning when no accounts exist */}
       {accounts.length === 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Your Accounts (0)</CardTitle>
+            <CardTitle>Welcome to ASI Wallet v2</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>No accounts found. Create or import an account to get started.</p>
+            <WarningMessage style={{ marginBottom: '24px' }}>
+              <span className="icon"><WarningIcon size={20} color="currentColor" /></span>
+              <div>
+                <strong>No accounts found!</strong><br />
+                You need to create or import an account before you can use the wallet features.
+                All other tabs (Send, Receive, History, etc.) will be available once you have an account.
+              </div>
+            </WarningMessage>
+            <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '24px' }}>
+              Choose one of the options to get started:
+            </p>
           </CardContent>
         </Card>
       )}
+
+      {/* Copy message */}
+      {copyMessage && <CopyMessage>{copyMessage}</CopyMessage>}
     </AccountsContainer>
   );
 };

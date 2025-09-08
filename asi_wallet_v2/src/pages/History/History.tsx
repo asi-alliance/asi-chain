@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from 'store';
-import { Card, CardHeader, CardTitle, CardContent, Button } from 'components';
+import { Card, CardHeader, CardTitle, CardContent, Button, AccountRequiredStub } from 'components';
 import TransactionHistoryService, { Transaction, TransactionFilter } from 'services/transactionHistory';
 import { RChainService } from 'services/rchain';
 
@@ -337,6 +337,23 @@ export const History: React.FC = () => {
       [key]: value === 'all' ? undefined : value
     }));
   };
+
+  if (!selectedAccount) {
+    return (
+      <AccountRequiredStub
+        title="Transaction History"
+        description="View and manage your transaction history. Track all your REV transfers, contract deployments, and other blockchain activities."
+        features={[
+          "View all incoming and outgoing transactions",
+          "Filter transactions by type, status, and date",
+          "Export transaction data as JSON or CSV",
+          "Track transaction status and confirmations",
+          "View detailed transaction information"
+        ]}
+        icon="📊"
+      />
+    );
+  }
 
   return (
     <HistoryContainer>

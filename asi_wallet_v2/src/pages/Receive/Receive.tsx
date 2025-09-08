@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { QRCodeCanvas } from 'qrcode.react';
 import { RootState } from 'store';
-import { Card, CardHeader, CardTitle, CardContent, Button } from 'components';
+import { Card, CardHeader, CardTitle, CardContent, Button, AccountRequiredStub } from 'components';
 
 const ReceiveContainer = styled.div`
     max-width: 600px;
@@ -127,14 +127,18 @@ export const Receive: React.FC = () => {
 
   if (!selectedAccount) {
     return (
-      <ReceiveContainer>
-        <Card>
-          <CardContent>
-            <p>Please select an account first.</p>
-            <Button onClick={() => navigate('/accounts')}>Select Account</Button>
-          </CardContent>
-        </Card>
-      </ReceiveContainer>
+      <AccountRequiredStub
+        title="Receive REV"
+        description="Get your REV address to receive tokens from others. Share your address or QR code for easy transfers."
+        features={[
+          "Generate QR codes for easy sharing",
+          "Copy address to clipboard",
+          "Display both REV and ETH addresses",
+          "Share via various methods",
+          "Real-time address generation"
+        ]}
+        icon="📥"
+      />
     );
   }
 

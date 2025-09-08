@@ -7,6 +7,7 @@ export { PasswordModal } from './PasswordModal';
 export { TransactionConfirmationModal } from './ConfirmationModal';
 export { DeploymentConfirmationModal } from './DeployConfirmationModal';
 export { AccountSwitcher } from './AccountSwitcher';
+export { AccountRequiredStub } from './AccountRequiredStub';
 export { AIHint } from './AIHint';
 export { Switch } from './Switch';
 export { HardwareWalletModal } from './HardwareWallet';

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import QrScanner from 'qr-scanner';
 import { RootState } from 'store';
 import { sendTransaction, fetchBalance } from 'store/walletSlice';
-import { Card, CardHeader, CardTitle, CardContent, Button, Input, TransactionConfirmationModal } from 'components';
+import { Card, CardHeader, CardTitle, CardContent, Button, Input, TransactionConfirmationModal, AccountRequiredStub } from 'components';
 
 const SendContainer = styled.div`
   max-width: 600px;
@@ -462,14 +462,18 @@ export const Send: React.FC = () => {
 
   if (!selectedAccount) {
     return (
-      <SendContainer>
-        <Card>
-          <CardContent>
-            <p>Please select an account first.</p>
-            <Button onClick={() => navigate('/accounts')}>Select Account</Button>
-          </CardContent>
-        </Card>
-      </SendContainer>
+      <AccountRequiredStub
+        title="Send REV"
+        description="Send REV tokens to another address on the RChain network. You can send to REV addresses or Ethereum addresses."
+        features={[
+          "Send REV tokens to any valid address",
+          "QR code scanning for easy address input",
+          "Real-time balance checking",
+          "Transaction confirmation and tracking",
+          "Support for both REV and ETH addresses"
+        ]}
+        icon="💸"
+      />
     );
   }
 
