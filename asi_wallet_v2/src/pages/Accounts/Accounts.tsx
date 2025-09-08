@@ -48,6 +48,9 @@ const AccountName = styled.h3`
 const AccountBalance = styled.div`
     font-size: 16px;
     font-weight: 600;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 48px;
     color: ${({ theme }) => theme.primary};
 `;
 
