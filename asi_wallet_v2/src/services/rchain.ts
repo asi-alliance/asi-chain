@@ -1,6 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 import { signDeploy } from 'utils/crypto';
 
+// Global balance cache to prevent excessive API calls
+const globalBalanceCache: Map<string, { balance: string; timestamp: number }> = new Map();
+const BALANCE_CACHE_TTL = 15000; // 15 seconds cache
+
 export interface Deploy {
   term: string;
   phloLimit: number;
@@ -130,6 +134,16 @@ export class RChainService {
 
   // Get balance using real Rholang code (from F1R3FLY wallet)
   async getBalance(revAddress: string): Promise<string> {
+    // Check global cache first
+    const cacheKey = `${revAddress}_${this.readOnlyUrl}`;
+    const cached = globalBalanceCache.get(cacheKey);
+    const now = Date.now();
+    
+    if (cached && (now - cached.timestamp) < BALANCE_CACHE_TTL) {
+      console.log(`[Balance Cache] Using cached balance for ${revAddress}: ${cached.balance} REV`);
+      return cached.balance;
+    }
+
     const checkBalanceRho = `
       new return, rl(\`rho:registry:lookup\`), RevVaultCh, vaultCh in {
         rl!(\`rho:rchain:revVault\`, *RevVaultCh) |
@@ -154,20 +168,29 @@ export class RChainService {
         
         // Check if it's a direct integer (balance)
         if (firstExpr?.ExprInt?.data !== undefined) {
-          return firstExpr.ExprInt.data.toString();
+          const balance = firstExpr.ExprInt.data.toString();
+          // Cache the balance globally
+          globalBalanceCache.set(cacheKey, { balance, timestamp: now });
+          console.log(`[Balance Cache] Cached balance for ${revAddress}: ${balance} REV`);
+          return balance;
         }
         
         // Check if it's an error string
         if (firstExpr?.ExprString?.data !== undefined) {
           console.error('Balance check error:', firstExpr.ExprString.data);
+          // Cache zero balance for error case
+          globalBalanceCache.set(cacheKey, { balance: '0', timestamp: now });
           return '0';
         }
       }
       
       console.log('Balance check: No valid result', result);
+      // Cache zero balance for no result case
+      globalBalanceCache.set(cacheKey, { balance: '0', timestamp: now });
       return '0';
     } catch (error) {
       console.error('Error getting balance:', error);
+      // Don't cache errors to allow retry
       return '0';
     }
   }

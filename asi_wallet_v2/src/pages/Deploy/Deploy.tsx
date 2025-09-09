@@ -144,13 +144,7 @@ export const Deploy: React.FC = () => {
 
   // Helper function to check if account is unlocked
   const isAccountUnlocked = (account: any): boolean => {
-    const isUnlocked = unlockedAccounts.some(unlockedAcc => unlockedAcc.id === account?.id);
-    console.log('Deploy page - isAccountUnlocked:', {
-      selectedAccount: account,
-      unlockedAccounts: unlockedAccounts,
-      isUnlocked: isUnlocked
-    });
-    return isUnlocked;
+    return unlockedAccounts.some(unlockedAcc => unlockedAcc.id === account?.id);
   };
 
   const handleDeployClick = () => {

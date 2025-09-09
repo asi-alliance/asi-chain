@@ -7,14 +7,13 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "postbuild": "node scripts/post-build.js",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit",
     "serve": "npx serve -s build",
     "deploy:gh": "gh-pages -d build",
-    "deploy:ipfs": "node scripts/deploy-ipfs.js",
+    "deploy:ipfs": "echo 'IPFS deployment script moved to archive'",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "dependencies": {

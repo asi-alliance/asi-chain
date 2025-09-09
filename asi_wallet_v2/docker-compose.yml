@@ -10,16 +10,22 @@ services:
       # WalletConnect Project ID
       - REACT_APP_WALLETCONNECT_PROJECT_ID=${WALLETCONNECT_PROJECT_ID:-4c8ec18817ffbbce4b824f14928d0f8b}
       
-      # RChain Network Configuration
-      # For local RChain node running on host machine:
-      - REACT_APP_RCHAIN_HTTP_URL=${RCHAIN_HTTP_URL:-http://host.docker.internal:40403}
-      - REACT_APP_RCHAIN_GRPC_URL=${RCHAIN_GRPC_URL:-http://host.docker.internal:40401}
-      - REACT_APP_RCHAIN_READONLY_URL=${RCHAIN_READONLY_URL:-http://host.docker.internal:40403}
+      # F1R3FLY Network Configuration (Current AWS Lightsail - Singapore)
+      - REACT_APP_RCHAIN_HTTP_URL=${RCHAIN_HTTP_URL:-http://13.251.66.61:40413}
+      - REACT_APP_RCHAIN_GRPC_URL=${RCHAIN_GRPC_URL:-http://13.251.66.61:40412}
+      - REACT_APP_RCHAIN_READONLY_URL=${RCHAIN_READONLY_URL:-http://13.251.66.61:40453}
       
-      # For RChain node in Docker network (uncomment if using):
-      # - REACT_APP_RCHAIN_HTTP_URL=http://rnode.readonly:40403
-      # - REACT_APP_RCHAIN_GRPC_URL=http://rnode.bootstrap:40401
-      # - REACT_APP_RCHAIN_READONLY_URL=http://rnode.readonly:40403
+      # GraphQL/Indexer endpoints (Current AWS Lightsail - Singapore)
+      - REACT_APP_GRAPHQL_URL=${GRAPHQL_URL:-http://13.251.66.61:8080/v1/graphql}
+      - REACT_APP_INDEXER_API_URL=${INDEXER_API_URL:-http://13.251.66.61:9090}
+      
+      # Network settings
+      - REACT_APP_NETWORK_NAME=F1R3FLY Network
+      - REACT_APP_NETWORK_ID=f1r3fly-mainnet
+      
+      # Performance optimizations
+      - REACT_APP_BALANCE_POLLING_INTERVAL=30000
+      - REACT_APP_DEPLOY_STATUS_POLLING_INTERVAL=5000
     
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]

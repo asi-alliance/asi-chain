@@ -42,7 +42,7 @@ The ASI Chain Indexer deployment on AWS Lightsail provides:
 - **Ports**: 5432, 8080, 9090 open in firewall
 
 ### Local Machine
-- SSH access with key (`claude_devnet.pem`)
+- SSH access with key (`XXXXX.pem`)
 - Git for cloning repository
 - Terminal/command line
 
@@ -77,7 +77,7 @@ tar -czf indexer-deployment.tar.gz \
 
 ```bash
 # Copy deployment package to Lightsail
-scp -i ~/path/to/claude_devnet.pem \
+scp -i ~/path/to/XXXXXX.pem \
   indexer-deployment.tar.gz \
   ubuntu@13.251.66.61:~/
 ```
@@ -86,7 +86,7 @@ scp -i ~/path/to/claude_devnet.pem \
 
 ```bash
 # SSH into server
-ssh -i ~/path/to/claude_devnet.pem ubuntu@13.251.66.61
+ssh -i ~/path/to/XXXXXX.pem ubuntu@13.251.66.61
 
 # Extract deployment files
 tar -xzf indexer-deployment.tar.gz

@@ -41,7 +41,7 @@ The ASI Chain Explorer deployment on AWS Lightsail provides:
 - **Port 3001**: Available and opened in firewall
 
 ### Local Machine
-- SSH access with key (`claude_devnet.pem`)
+- SSH access with key (`XXXXXX.pem`)
 - Git for repository access
 - Terminal/command line
 - Archive tools (tar)

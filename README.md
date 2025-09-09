@@ -26,7 +26,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and operational blockchain explorer with resolved validator deduplication. Indexer deployed on AWS Lightsail (13.251.66.61) with full synchronization and GraphQL API. Explorer v1.0.2 fixes critical validator display issue (6→3 validators).
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer all operational. Explorer v1.0.2 live at http://13.251.66.61:3001 with validator deduplication fixed.
 
 ## ⚙️ Technical Architecture
 
@@ -205,7 +205,8 @@ echo "2" | ./deploy.sh
 - **Prometheus**: http://localhost:9091
 - **Grafana**: http://localhost:3002
 
-#### Production Services (AWS Lightsail)
+#### Production Services (AWS Lightsail) ✅ LIVE
+- **🌐 ASI Chain Explorer**: http://13.251.66.61:3001 **(NEW - v1.0.2)**
 - **GraphQL API**: http://13.251.66.61:8080/v1/graphql
 - **GraphQL Console**: http://13.251.66.61:8080/console
 - **Indexer API**: http://13.251.66.61:9090
@@ -238,10 +239,11 @@ asi-chain/
 │   └── models/                # Protocol buffer definitions
 ├── 📦 rust-client/            # Rust CLI client (Git submodule)
 │   └── src/                   # Node CLI implementation
-├── 💼 asi_wallet_v2/          # ASI Wallet v2.2.0 (React 18, TypeScript)
+├── 💼 asi_wallet_v2/          # ASI Wallet v2.2.0 (React 18, TypeScript) - DEPLOYED ✅
 │   ├── src/components/        # WalletConnect v2, Hardware wallets
-│   ├── src/services/          # Biometric auth, Multi-sig support
-│   └── src/store/             # Redux Toolkit state management
+│   ├── src/services/          # Global balance caching, RChain integration
+│   ├── src/store/             # Redux Toolkit state management
+│   └── AWS_LIGHTSAIL_WALLET_DEPLOYMENT.md # Production deployment guide
 ├── 🌐 explorer/               # Blockchain Explorer v1.0.2 (React 19, Apollo GraphQL)
 │   ├── src/components/        # Real-time data components
 │   ├── src/graphql/           # GraphQL queries and subscriptions
@@ -522,7 +524,7 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 
 | Service | URL | Port | Description | Status |
 |---------|-----|------|-------------|--------|
-| **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet interface with WalletConnect v2 | ✅ Live |
+| **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet with WalletConnect v2, Hardware wallets, Rholang IDE | ✅ Live |
 | **Blockchain Explorer** | http://13.251.66.61:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
 
 ---
@@ -769,18 +771,27 @@ All services run in Docker containers on the single AWS Lightsail instance:
 
 ```bash
 # Running containers (as of deployment):
-asi-explorer       # Port 3001 - Blockchain Explorer
-asi-wallet-v2      # Port 3000 - Web Wallet
+asi-explorer       # Port 3001 - Blockchain Explorer v1.0.2
+asi-wallet-v2      # Port 3000 - ASI Wallet v2.2.0 with WalletConnect v2
 asi-hasura         # Port 8080 - GraphQL Engine
-asi-rust-indexer   # Port 9090 - Blockchain Indexer
+asi-rust-indexer   # Port 9090 - Blockchain Indexer v2.1.1
 asi-indexer-db     # Port 5432 - PostgreSQL Database
 rnode.bootstrap    # Ports 40400-40405 - Bootstrap Node
-rnode.validator1   # Ports 40410-40415 - Validator 1
-rnode.validator2   # Ports 40420-40425 - Validator 2
-rnode.validator3   # Ports 40430-40435 - Validator 3
+rnode.validator1   # Ports 40410-40415 - Validator 1 (transactions)
+rnode.validator2   # Ports 40420-40425 - Validator 2 (transactions)
+rnode.validator3   # Ports 40430-40435 - Validator 3 (transactions)
 rnode.validator4   # Ports 40440-40445 - Validator 4
-rnode.readonly     # Ports 40451-40453 - Read-only Node
+rnode.readonly     # Ports 40451-40453 - Read-only Node (queries)
 autopropose        # Internal - Block Creation Service
+```
+
+### Production (AWS Lightsail) ✅ LIVE
+```
+ASI Wallet v2: http://13.251.66.61:3000
+ASI Explorer: http://13.251.66.61:3001
+F1R3FLY Network: http://13.251.66.61:40403
+GraphQL API: http://13.251.66.61:8080/v1/graphql  
+Indexer API: http://13.251.66.61:9090
 ```
 
 ### Mainnet (Coming Soon)

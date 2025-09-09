@@ -9,7 +9,7 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-# Check if image exists
+# Check if image exists, build if needed
 if ! docker images | grep -q "asi-wallet-v2"; then
     echo "📦 Building Docker image first..."
     docker build -t asi-wallet-v2:latest .
@@ -20,28 +20,36 @@ if ! docker images | grep -q "asi-wallet-v2"; then
 fi
 
 # Stop existing container if running
-if docker ps -a | grep -q "asi-wallet-v2-local"; then
+if docker ps -a | grep -q "asi-wallet-v2"; then
     echo "🛑 Stopping existing container..."
-    docker stop asi-wallet-v2-local
-    docker rm asi-wallet-v2-local
+    docker-compose down
 fi
 
 echo "🏃 Starting ASI Wallet v2..."
-docker-compose -f docker-compose.local.yml up -d
+docker-compose up -d
 
 if [ $? -eq 0 ]; then
     echo ""
     echo "✅ ASI Wallet v2 is running!"
     echo ""
     echo "📱 Access the wallet at: http://localhost:3000"
-    echo "🔗 Connected to: ASI Chain Testnet (54.254.197.253)"
+    echo "🔗 Connected to: F1R3FLY Network (AWS Lightsail)"
+    echo "   • Validator: 13.251.66.61:40413"
+    echo "   • Read-Only: 13.251.66.61:40453"
+    echo "   • GraphQL: 13.251.66.61:8080"
     echo ""
     echo "📊 Container status:"
-    docker ps --filter name=asi-wallet-v2-local --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+    docker ps --filter name=asi-wallet-v2 --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
     echo ""
-    echo "📝 View logs with: docker logs -f asi-wallet-v2-local"
-    echo "🛑 Stop with: docker-compose -f docker-compose.local.yml down"
+    echo "🔍 Health check:"
+    sleep 5
+    curl -s http://localhost:3000/health && echo " ✅ Healthy" || echo " ⚠️  Starting..."
+    echo ""
+    echo "📝 View logs with: docker logs -f asi-wallet-v2"
+    echo "🛑 Stop with: docker-compose down"
+    echo "🔄 Rebuild with: docker-compose build --no-cache"
 else
     echo "❌ Failed to start ASI Wallet v2"
+    echo "📝 Check logs with: docker-compose logs"
     exit 1
 fi
