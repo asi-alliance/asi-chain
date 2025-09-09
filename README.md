@@ -26,7 +26,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, Hardware wallets, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet REV tokens.
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** + **Documentation Site** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, Hardware wallets, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet REV tokens. Documentation Site at http://13.251.66.61:3003 with Docusaurus 3.8.1.
 
 ## ⚙️ Technical Architecture
 
@@ -526,6 +526,7 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 |---------|-----|------|-------------|--------|
 | **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet with WalletConnect v2, Hardware wallets, Rholang IDE | ✅ Live |
 | **Blockchain Explorer** | http://13.251.66.61:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
+| **Documentation Site** | http://13.251.66.61:3003 | 3003 | Interactive Docusaurus documentation | ✅ Live |
 | **Token Faucet** | http://13.251.66.61:5050 | 5050 | Testnet REV token distribution (100 REV/request) | ✅ Live |
 
 ---
@@ -774,6 +775,8 @@ All services run in Docker containers on the single AWS Lightsail instance:
 # Running containers (as of deployment):
 asi-explorer       # Port 3001 - Blockchain Explorer v1.0.2
 asi-wallet-v2      # Port 3000 - ASI Wallet v2.2.0 with WalletConnect v2
+asi-docs           # Port 3003 - Documentation Site (Docusaurus 3.8.1)
+asi-faucet         # Port 5050 - TypeScript Faucet
 asi-hasura         # Port 8080 - GraphQL Engine
 asi-rust-indexer   # Port 9090 - Blockchain Indexer v2.1.1
 asi-indexer-db     # Port 5432 - PostgreSQL Database
@@ -790,6 +793,8 @@ autopropose        # Internal - Block Creation Service
 ```
 ASI Wallet v2: http://13.251.66.61:3000
 ASI Explorer: http://13.251.66.61:3001
+Documentation: http://13.251.66.61:3003
+Token Faucet: http://13.251.66.61:5050
 F1R3FLY Network: http://13.251.66.61:40403
 GraphQL API: http://13.251.66.61:8080/v1/graphql  
 Indexer API: http://13.251.66.61:9090

@@ -2,42 +2,68 @@
 
 This is the official documentation site for ASI Chain, built using [Docusaurus](https://docusaurus.io/) v3.8.1.
 
-**Live Site:** https://13.251.66.61  
+**Live Site:** http://13.251.66.61:3003  
+**Status:** ✅ Deployed  
+**Platform:** AWS Lightsail (Docker)  
 **Auto-Deployment:** Enabled via GitHub Actions
 
-## Installation
+## Quick Start
 
 ```bash
+# Install dependencies
 npm install
-```
 
-## Local Development
-
-```bash
+# Start development server
 npm start
+
+# Build for production
+npm run build
+
+# Serve production build locally
+npm run serve
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+## Docker Deployment
 
-## Build
+The documentation site is containerized for easy deployment:
 
 ```bash
-npm run build
+# Build Docker image
+docker-compose build
+
+# Run locally
+docker-compose up -d
+
+# Access at http://localhost:3003
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+## Production Deployment
 
-## Deployment
+### AWS Lightsail Deployment (Current)
 
-### Automatic Deployment (Recommended)
+The site is deployed on AWS Lightsail using Docker:
+
+- **URL:** http://13.251.66.61:3003
+- **Container:** asi-docs
+- **Port:** 3003
+- **Architecture:** Multi-stage Docker build (Node.js for building, Nginx for serving)
+
+### Automatic Deployment (GitHub Actions)
 
 Simply push changes to the main branch and GitHub Actions will automatically deploy to the AWS Lightsail server.
 
 ### Manual Deployment
 
 ```bash
+# Option 1: Quick deploy script
 ./deployment/quick-deploy.sh
+
+# Option 2: Docker deployment
+docker-compose build --no-cache
+docker-compose up -d
 ```
+
+For detailed deployment instructions, see [AWS_LIGHTSAIL_DOCS_DEPLOYMENT.md](../AWS_LIGHTSAIL_DOCS_DEPLOYMENT.md)
 
 ## Technical Writer Guide
 
