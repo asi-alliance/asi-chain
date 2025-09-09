@@ -4,10 +4,12 @@ A production-ready token faucet for the F1R3FLY blockchain network, distributing
 
 ## 🚀 Deployment Status
 
-✅ **ACTIVE** - Docker deployment running on port 5050  
+✅ **PRODUCTION** - Deployed on AWS Lightsail  
+🌐 **Public URL**: http://13.251.66.61:5050  
 📊 **Balance**: ~500M REV available  
-🔗 **Network**: Connected to Singapore production nodes  
+🔗 **Network**: Connected to Singapore F1R3FLY nodes  
 📍 **Faucet Address**: `1111AtahZeefej4tvVR6ti9TJtv8yxLebT31SCEVDCKMNikBk5r3g`  
+⚡ **Status**: Online and operational  
 
 ## 📦 Active Implementation
 
@@ -166,6 +168,12 @@ docker-compose down -v
 
 ## 🆘 Troubleshooting
 
+### Browser forcing HTTPS (FIXED)
+- **Issue**: Browsers auto-redirecting to HTTPS causing SSL errors
+- **Root Cause**: Helmet.js security headers (HSTS, CSP upgrade-insecure-requests)
+- **Fix Applied**: Disabled HSTS and CSP in server.ts configuration
+- **User Action**: Clear browser cache or use incognito mode to bypass cached HSTS
+
 ### Port 5000 already in use (macOS)
 - macOS ControlCenter uses port 5000 by default
 - Docker deployment uses port 5050 instead
@@ -173,7 +181,7 @@ docker-compose down -v
 
 ### Faucet has no balance
 - Fund the faucet's REV address: `1111AtahZeefej4tvVR6ti9TJtv8yxLebT31SCEVDCKMNikBk5r3g`
-- Check balance at `http://localhost:5050/api/stats`
+- Check balance at `http://13.251.66.61:5050/api/stats`
 
 ### Transaction failures
 - Verify node connectivity: `curl http://13.251.66.61:40413/api/status`

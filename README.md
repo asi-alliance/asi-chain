@@ -26,7 +26,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, Hardware wallets, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed.
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, Hardware wallets, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet REV tokens.
 
 ## ⚙️ Technical Architecture
 
@@ -45,7 +45,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 │  ├── REST API (Port 9090)                               │
 │  ├── GraphQL via Hasura (Port 8080)                     │
 │  ├── gRPC Node Interface (Port 40403)                   │
-│  └── Faucet API (Port 5000)                             │
+│  └── Faucet API (Port 5050)                             │
 ├─────────────────────────────────────────────────────────┤
 │  Data Layer                                             │
 │  ├── Python Indexer with Rust CLI                       │
@@ -375,7 +375,7 @@ npm test
 | **Grafana** | 3002 | Monitoring dashboards |
 | **Redis Primary** | 6379 | Cache primary |
 | **Redis Replica** | 6380 | Cache replica |
-| **Faucet API** | 5000 | Token faucet |
+| **Faucet API** | 5050 | Token faucet |
 
 ### Environment Variables
 
@@ -526,6 +526,7 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 |---------|-----|------|-------------|--------|
 | **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet with WalletConnect v2, Hardware wallets, Rholang IDE | ✅ Live |
 | **Blockchain Explorer** | http://13.251.66.61:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
+| **Token Faucet** | http://13.251.66.61:5050 | 5050 | Testnet REV token distribution (100 REV/request) | ✅ Live |
 
 ---
 
