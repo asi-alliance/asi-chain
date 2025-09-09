@@ -178,9 +178,6 @@ npm run build
 
 #### Option B: Docker Compose
 ```bash
-# Start all services with Docker Compose
-docker-compose up -d
-
 # Deploy Indexer with zero-touch configuration (v2.1.1)
 cd indexer
 echo "1" | ./deploy.sh  # Option 1: Connects to remote F1R3FLY node
@@ -201,7 +198,7 @@ echo "2" | ./deploy.sh
 - **Explorer**: http://localhost:3001
 - **GraphQL**: http://localhost:8080
 - **Indexer API**: http://localhost:9090
-- **Faucet API**: http://localhost:5000
+- **Faucet API**: http://localhost:5050
 - **Prometheus**: http://localhost:9091
 - **Grafana**: http://localhost:3002
 
@@ -260,38 +257,15 @@ asi-chain/
 │   ├── deploy.sh              # Automated deployment script (local/remote)
 │   ├── AWS_LIGHTSAIL_INDEXER_DEPLOYMENT.md # Production deployment guide
 │   └── Dockerfile.rust-builder # Builds Rust CLI from source in Docker
-├── 🐳 faucet/                 # Token faucet service (Python)
+├── 🚰 faucet/                 # Token faucet service (TypeScript & Python)
 ├── 📚 docs-site/              # Docusaurus 3.8.1 documentation site
-├── 🏗️ infrastructure/         # Infrastructure as Code
-│   ├── aws/                   # AWS deployment scripts
-│   ├── terraform/             # Terraform configurations (EKS, RDS, ElastiCache)
-│   └── validators/            # Validator node setup
-├── 🔒 security/               # Security configurations and tools
-│   ├── api/                   # API security middleware
-│   ├── database/              # Database security configs
-│   ├── headers/               # Security headers for nginx
-│   └── secrets-management/    # Secrets management tools
-├── ☸️ k8s/                    # Kubernetes deployment configs
-│   ├── base/                  # Base K8s configurations
-│   └── production/            # Production-specific configs
-├── 📈 monitoring/             # Prometheus + Grafana monitoring stack
-├── 🧪 contracts/              # Smart contracts (Rholang & Solidity)
-├── 🔄 integrations/           # External integrations (GitLab MCP)
-├── 📊 benchmarks/             # Performance benchmarking tools
-├── 🎬 demos/                  # Demo assets and scripts
+├── 📖 docs/                   # Technical documentation and guides
+├── 🎨 media/                  # Brand assets, logos, and images
 ├── 🏛️ legal/                  # Terms of Service, Privacy Policy
 ├── 🔧 patches/                # F1R3FLY submodule patches
-│   └── README.md              # Patch documentation
-├── 📝 config/                 # Configuration files
-│   └── f1r3fly/              # F1R3FLY Kubernetes configs
-├── 🐳 docker-compose.yml      # Local development environment
-├── 🐳 docker-compose.production.yml # Production Docker setup
 └── 📋 scripts/                # Operational and maintenance scripts
     ├── deploy-f1r3fly-k8s.sh # Automated F1R3FLY deployment
-    ├── apply-f1r3fly-patches.sh # Apply submodule patches
-    ├── monitoring/            # Stress tests, metrics exporters
-    ├── security/              # Security audits and hardening
-    └── maintenance/           # Backup, cleanup, health checks
+    └── apply-f1r3fly-patches.sh # Apply submodule patches
 ```
 
 ## 🎯 Key Features
@@ -470,7 +444,6 @@ Before production deployment, you MUST:
 - ❗ Replace test validator keys in `rust-client/f1r3fly/docker/`
 - ❗ Update hardcoded secrets in Kubernetes manifests
 - ❗ Configure proper CORS policies (not "*")
-- ❗ Enable all security headers via `security/headers/`
 - ❗ Set up proper secrets management (AWS Secrets Manager/Vault)
 
 **Security Features:**
@@ -496,10 +469,6 @@ For security vulnerabilities:
 - Environment variables are managed through `.env` files per service
 - The indexer uses Rust CLI (`node_cli`) for blockchain interaction, not HTTP APIs
 - The wallet includes WalletConnect v2 support for DApp connectivity
-- Production deployments use `docker-compose.production.yml` with Redis caching
-- Security configurations are centralized in the `security/` directory
-- Infrastructure as Code is managed via Terraform in `infrastructure/terraform/`
-- External integrations (GitLab MCP) are in the `integrations/` directory
 
 ## 📊 Governance
 
@@ -817,7 +786,7 @@ GraphQL API: http://localhost:8080
 ASI Wallet: http://localhost:3000
 Explorer: http://localhost:3001
 Indexer API: http://localhost:9090
-Faucet API: http://localhost:5000
+Faucet API: http://localhost:5050
 ```
 
 ## 📄 License
