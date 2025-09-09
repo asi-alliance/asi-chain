@@ -1,6 +1,8 @@
 # ASI-Chain GraphQL API Guide
 
-This guide provides comprehensive documentation for accessing ASI-Chain blockchain data through the Hasura GraphQL endpoint.
+**Version**: 2.1.1 | **Updated**: January 2025
+
+This guide provides comprehensive documentation for accessing ASI-Chain blockchain data through the Hasura GraphQL endpoint with automatic relationship configuration.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -15,13 +17,15 @@ This guide provides comprehensive documentation for accessing ASI-Chain blockcha
 ## Overview
 
 The ASI-Chain indexer provides a powerful GraphQL API powered by Hasura, offering:
+- **Zero-Touch Setup**: Automatic relationship configuration during deployment
 - **Single Query Access**: Fetch related data across multiple tables in one request
 - **Real-time Subscriptions**: Live updates as new blocks are indexed
 - **Flexible Filtering**: Complex where clauses, sorting, and pagination
 - **Aggregate Functions**: Count, sum, avg, max, min operations
 - **JSONB Support**: Query into complex JSON fields like bonds_map and justifications
-- **Automatic Configuration**: Hasura is configured automatically via bash script during deployment
 - **Enhanced Transfer Detection**: Supports both variable-based and match-based Rholang patterns
+- **Data Quality**: Proper NULL handling for deployment error messages
+- **Validator Bond Detection**: Full support for new CLI output format
 
 ## Access Details
 

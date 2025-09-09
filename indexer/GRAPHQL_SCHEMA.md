@@ -1,8 +1,10 @@
 # GraphQL Schema Documentation
 
+**Version**: 2.1.1 | **Updated**: January 2025
+
 ## Overview
 
-The ASI-Chain indexer provides a GraphQL API through Hasura, exposing blockchain data for querying. This document describes the current schema, available queries, and known limitations.
+The ASI-Chain indexer provides a GraphQL API through Hasura with automatic relationship configuration, exposing comprehensive blockchain data for querying. This document describes the current schema with 10 tables, available queries, and relationships.
 
 ## Available Tables
 
@@ -106,15 +108,36 @@ Stores network health statistics.
 - `timestamp` (bigint): Timestamp
 
 ### balance_states
-Stores address balance snapshots.
+Stores address balance snapshots with bonded/unbonded separation.
 
 **Fields:**
 - `id` (serial): Primary key
-- `address` (varchar): Address
-- `balance_unbonded` (bigint): Unbonded balance
-- `balance_bonded` (bigint): Bonded balance
+- `address` (varchar): Address (REV address or validator key)
+- `unbonded_balance_dust` (bigint): Unbonded balance in dust
+- `unbonded_balance_rev` (numeric): Unbonded balance in REV
+- `bonded_balance_dust` (bigint): Bonded balance in dust
+- `bonded_balance_rev` (numeric): Bonded balance in REV
+- `total_balance_dust` (bigint): Computed total in dust
+- `total_balance_rev` (numeric): Computed total in REV
 - `block_number` (bigint): Block number
-- `created_at` (timestamp): When indexed
+- `updated_at` (timestamp): When updated
+
+### block_validators
+Many-to-many relationship between blocks and validators.
+
+**Fields:**
+- `id` (serial): Primary key
+- `block_number` (bigint): Block number
+- `validator_public_key` (varchar): Validator public key
+- `role` (varchar): Role in block (proposer/justifier)
+
+### indexer_state
+Stores indexer sync metadata.
+
+**Fields:**
+- `key` (varchar): State key
+- `value` (text): State value
+- `updated_at` (timestamp): Last update
 
 ### epoch_transitions
 Stores epoch boundary information (⚠️ Not populated).

@@ -289,13 +289,28 @@ class RustCLIClient:
             
             for line in lines:
                 # Look for lines with validator info
-                # Format: "Validator: <pubkey> | Stake: <amount> REV"
-                match = re.search(r'Validator:\s*([a-f0-9]+)\s*\|\s*Stake:\s*([\d,]+)\s*REV', line)
+                # New format: "1. 04837a4c...b2df065f (stake: 1000)"
+                # Old format: "Validator: <pubkey> | Stake: <amount> REV"
+                
+                # Try new format first (abbreviated keys with stake in parentheses)
+                match = re.search(r'([a-f0-9]{8})\.\.\.([a-f0-9]{8})\s*\(stake:\s*([\d,]+)\)', line)
                 if match:
+                    # Reconstruct a partial key (we don't have the full key in this format)
+                    # For now, use the abbreviated form as the identifier
+                    validator_key = f"{match.group(1)}...{match.group(2)}"
+                    stake = int(match.group(3).replace(',', ''))
                     bonds.append({
-                        "validator": match.group(1),
-                        "stake": int(match.group(2).replace(',', ''))
+                        "validator": validator_key,
+                        "stake": stake
                     })
+                else:
+                    # Try old format
+                    match = re.search(r'Validator:\s*([a-f0-9]+)\s*\|\s*Stake:\s*([\d,]+)\s*REV', line)
+                    if match:
+                        bonds.append({
+                            "validator": match.group(1),
+                            "stake": int(match.group(2).replace(',', ''))
+                        })
             
             return {"bonds": bonds}
             

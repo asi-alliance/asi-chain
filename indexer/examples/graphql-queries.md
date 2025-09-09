@@ -8,9 +8,10 @@ The Hasura GraphQL engine provides instant GraphQL APIs for the ASI-Chain indexe
 
 ## Features (v2.1)
 - Enhanced REV transfer detection (variable-based and match-based patterns)
-- Address validation supports 53-56 character REV addresses
-- Automatic Hasura configuration via bash script
+- Address validation supports 53-56 character REV addresses and 130+ char validator keys
+- Automatic Hasura configuration with zero-touch deployment
 - Genesis block processing with validator bonds
+- Comprehensive nested relationships working out of the box
 
 ## Basic Queries
 
@@ -240,23 +241,48 @@ query ValidatorPerformance($validatorKey: String!) {
 
 ## Deployment Queries
 
-### Deployments by Type with Error Rates
+### Deployments by Type
 
 ```graphql
 query DeploymentsByType {
-  deployments_aggregate(group_by: [deployment_type, errored]) {
+  # Get unique deployment types and their counts
+  registry_lookup: deployments_aggregate(
+    where: {deployment_type: {_eq: "registry_lookup"}}
+  ) {
     aggregate {
       count
-      avg {
-        phlo_cost
-      }
-      sum {
-        phlo_cost
-      }
+      avg { phlo_cost }
+      sum { phlo_cost }
     }
-    nodes {
-      deployment_type
-      errored
+  }
+  
+  rev_transfer: deployments_aggregate(
+    where: {deployment_type: {_eq: "rev_transfer"}}
+  ) {
+    aggregate {
+      count
+      avg { phlo_cost }
+      sum { phlo_cost }
+    }
+  }
+  
+  smart_contract: deployments_aggregate(
+    where: {deployment_type: {_eq: "smart_contract"}}
+  ) {
+    aggregate {
+      count
+      avg { phlo_cost }
+      sum { phlo_cost }
+    }
+  }
+  
+  other: deployments_aggregate(
+    where: {deployment_type: {_eq: "other"}}
+  ) {
+    aggregate {
+      count
+      avg { phlo_cost }
+      sum { phlo_cost }
     }
   }
 }
@@ -388,16 +414,19 @@ subscription FailedDeployments {
 
 ## Analytics Queries
 
-### Network Statistics (Enhanced)
+### Network Statistics
 
 ```graphql
 query NetworkStats {
-  # Pre-calculated network stats
-  network_stats {
-    total_blocks
-    avg_block_time_seconds
-    earliest_block_time
-    latest_block_time
+  # Network consensus stats
+  network_stats(limit: 1, order_by: {timestamp: desc}) {
+    block_number
+    timestamp
+    active_validators
+    total_validators
+    validators_in_quarantine
+    consensus_participation
+    consensus_status
   }
   
   # Block aggregates
@@ -457,39 +486,42 @@ query NetworkStats {
 
 ```graphql
 query DeploymentErrorAnalysis {
-  # Group by error message
-  deployments_aggregate(
-    where: {error_message: {_is_null: false}}
-    group_by: error_message
+  # Total deployments
+  total: deployments_aggregate {
+    aggregate {
+      count
+    }
+  }
+  
+  # Failed deployments
+  failed: deployments_aggregate(
+    where: {
+      _or: [
+        {errored: {_eq: true}},
+        {error_message: {_is_null: false}}
+      ]
+    }
   ) {
     aggregate {
       count
     }
-    nodes {
-      error_message
-    }
   }
   
-  # Error rate by deployment type
-  by_type: deployments_aggregate(group_by: deployment_type) {
-    aggregate {
-      count
+  # Recent errors with details
+  recent_errors: deployments(
+    where: {
+      _or: [
+        {errored: {_eq: true}},
+        {error_message: {_is_null: false}}
+      ]
     }
-    nodes {
-      deployment_type
-    }
-  }
-  
-  by_type_errored: deployments_aggregate(
-    where: {errored: {_eq: true}}
-    group_by: deployment_type
+    limit: 10
+    order_by: {timestamp: desc}
   ) {
-    aggregate {
-      count
-    }
-    nodes {
-      deployment_type
-    }
+    deploy_id
+    deployment_type
+    error_message
+    timestamp
   }
 }
 ```
@@ -570,11 +602,8 @@ query CompleteBlockHistory($limit: Int = 5) {
 
 ```graphql
 query IndexerStatus {
-  indexer_state {
-    key
-    value
-    updated_at
-  }
+  # Note: indexer_state table may not be populated
+  # Use blocks_aggregate for sync status instead
   
   blocks_aggregate {
     aggregate {
@@ -604,13 +633,11 @@ For queries that use variables, here are some examples:
 
 ```json
 {
-  "blockNumber": 1740,
-  "hashPrefix": "51aa%",
-  "address": "04a936f4e0cda4688ec61fa17cf3cbaed6a450ac8e6334905",
-  "validatorKey": "04837a4cff833e3157e3135d7b40b8e1f33c6e6b5a4342b9fc784230ca4c4f9d356f",
-  "startTime": 1754376000000,
-  "endTime": 1754376999999,
-  "searchTerm": "%insufficient%",
+  "blockNumber": 100,
+  "hashPrefix": "6f3a%",
+  "address": "1111gW5kkGxHg7xDg6dRkZx2f7qxTizJzaCH9VEM1oJKWRvSX9Sk5",
+  "validatorKey": "04837a4cff833e3157e3135d7b40b8e1f33c6e6b5a4342b9fc784230ca4c4f9d356f258debef56ad4984726d6ab3e7709e1632ef079b4bcd653db00b68b2df065f",
+  "searchTerm": "%registry%",
   "limit": 10
 }
 ```
@@ -640,10 +667,23 @@ GraphQL subscriptions work over WebSockets. Most GraphQL clients handle this aut
 - Real-time subscriptions use PostgreSQL's LISTEN/NOTIFY for efficiency
 - Complex queries with multiple aggregations may take longer (10-50ms)
 
-## v1.2 Updates
+## v2.1 Updates
 
-The v1.2 release includes enhanced deployment error tracking:
-- Deployments with `error_message` automatically have `errored=true`
-- Use OR conditions to catch all failed deployments
-- 2,413 historical deployments have been corrected
-- Error analysis queries now return accurate results
+### Zero-Touch Deployment
+- Automatic Hasura relationship configuration
+- No manual GraphQL setup required
+- All nested queries work immediately after deployment
+- Single comprehensive database migration
+
+### Enhanced Features
+- Genesis block processing with validator bonds
+- Full blockchain sync from block 0
+- Enhanced REV transfer detection patterns
+- Support for 130+ character validator public keys
+- JSONB fields for bonds_map and justifications
+- Computed columns for balance tracking
+
+### Known Limitations
+- Group by aggregations not directly supported in Hasura
+- Some network_stats fields may be unpopulated
+- Epoch transitions table exists but not actively populated

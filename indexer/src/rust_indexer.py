@@ -363,6 +363,9 @@ class RustBlockIndexer:
         deployment_type = self.classify_deployment(term)
         
         error_message = deploy_data.get("systemDeployError")
+        # Only set error_message if it's not None and not empty string
+        if error_message == "":
+            error_message = None
         errored = deploy_data.get("errored", False) or bool(error_message)
         
         deployment = Deployment(

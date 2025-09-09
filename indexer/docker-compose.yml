@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: indexer_pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql
+      - ./migrations/000_comprehensive_initial_schema.sql:/docker-entrypoint-initdb.d/000_comprehensive_initial_schema.sql
     ports:
       - "5432:5432"
     healthcheck:

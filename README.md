@@ -26,7 +26,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, advanced indexer, comprehensive wallet implementation, and operational blockchain explorer.
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and operational blockchain explorer.
 
 ## ⚙️ Technical Architecture
 
@@ -181,6 +181,10 @@ npm run build
 # Start all services with Docker Compose
 docker-compose up -d
 
+# Deploy Indexer with zero-touch configuration (v2.1.1)
+cd indexer
+echo "1" | ./deploy.sh  # Connects to remote F1R3FLY node
+
 # Check node status (after building rust-client)
 ./rust-client/target/release/node_cli status -H localhost
 ```
@@ -226,10 +230,11 @@ asi-chain/
 │   ├── src/components/        # Real-time data components
 │   ├── src/graphql/           # GraphQL queries and subscriptions
 │   └── src/pages/             # Block/transaction/validator pages
-├── 📊 indexer/                # Advanced blockchain data indexer
+├── 📊 indexer/                # Advanced blockchain data indexer (v2.1.1)
 │   ├── src/                   # Python asyncio with Rust CLI integration
-│   ├── migrations/            # 10-table PostgreSQL schema
-│   └── scripts/               # Hasura relationship configuration
+│   ├── migrations/            # Single comprehensive schema (000_comprehensive)
+│   ├── scripts/               # Zero-touch deployment with automatic Hasura setup
+│   └── Dockerfile.rust-builder # Builds Rust CLI from source in Docker
 ├── 🐳 faucet/                 # Token faucet service (Python)
 ├── 📚 docs-site/              # Docusaurus 3.8.1 documentation site
 ├── 🏗️ infrastructure/         # Infrastructure as Code
@@ -539,6 +544,77 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 | **Indexer REST API** | http://13.251.66.61:9090 | 9090 | Blockchain data indexer | Public |
 | **PostgreSQL Database** | `13.251.66.61:5432` | 5432 | Direct database connection | Private |
 | **Autopropose Service** | Internal container | N/A | Automatic block creation | Internal |
+
+---
+
+### 🔧 Indexer Configuration
+
+#### Environment Settings for Server Deployment
+
+To deploy the indexer against the live testnet at `13.251.66.61`, use these environment settings:
+
+**Create `.env` file in `indexer/` directory:**
+```env
+# Node Configuration for Remote Server (Observer Node - Best for Indexing)
+NODE_HOST=13.251.66.61
+GRPC_PORT=40452              # Observer gRPC port (read-only)
+HTTP_PORT=40453              # Observer HTTP port (read-only)
+
+# Database Configuration
+DATABASE_URL=postgresql://indexer:indexer_pass@localhost:5432/asichain
+DATABASE_POOL_SIZE=20
+
+# Sync Settings
+SYNC_INTERVAL=5               # Check for new blocks every 5 seconds
+BATCH_SIZE=50                # Process up to 50 blocks per batch
+START_FROM_BLOCK=0           # Start from genesis
+
+# Features
+ENABLE_REV_TRANSFER_EXTRACTION=true
+ENABLE_METRICS=true
+ENABLE_HEALTH_CHECK=true
+
+# Monitoring
+MONITORING_PORT=9090
+LOG_LEVEL=INFO
+LOG_FORMAT=json
+
+# Hasura GraphQL
+HASURA_ADMIN_SECRET=myadminsecretkey
+```
+
+**Deploy Indexer (v2.1.1 - Zero Touch with Enhanced Data Quality):**
+```bash
+cd indexer
+echo "1" | ./deploy.sh  # Option 1 for remote F1R3FLY node
+
+# What you get automatically:
+# ✅ Cross-platform Rust CLI build from source (10-15 min first time)
+# ✅ Complete database schema with 10 tables
+# ✅ Hasura GraphQL relationships configured automatically
+# ✅ Validator bond detection with new CLI format support
+# ✅ Data quality improvements (proper NULL handling)
+# ✅ Real-time blockchain synchronization from genesis
+
+# Or with Docker Compose directly:
+docker-compose -f docker-compose.rust.yml up -d
+# Then configure Hasura: bash scripts/configure-hasura.sh
+```
+
+**Verify Indexer Connection:**
+```bash
+# Check indexer status
+curl http://localhost:9090/status
+
+# Check if syncing from remote node
+docker logs asi-rust-indexer | grep "13.251.66.61"
+
+# Query indexed data via GraphQL
+curl http://localhost:8080/v1/graphql \
+  -H "x-hasura-admin-secret: myadminsecretkey" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ blocks(limit: 5, order_by: {block_number: desc}) { block_number } }"}'
+```
 
 ---
 

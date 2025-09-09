@@ -37,7 +37,7 @@ run-reset: ## Run the indexer with database reset
 	$(PYTHON) -m src.main --reset
 
 migrate: ## Run database migrations
-	psql $(DATABASE_URL) < migrations/001_initial_schema.sql
+	psql $(DATABASE_URL) < migrations/000_comprehensive_initial_schema.sql
 
 docker-build: ## Build Docker image
 	docker build -t asi-indexer:latest .

@@ -3,15 +3,17 @@
 Base URL: `http://localhost:9090`
 GraphQL URL: `http://localhost:8080/v1/graphql`
 
-## 🆕 New Features (v2.1 - Enhanced Transfer Detection)
+## 🆕 New Features (v2.1.1 - Data Quality & Bond Detection)
 
 - **Network-Agnostic Genesis**: Automatic validator bond and REV allocation extraction
 - **Balance State Tracking**: Separate bonded/unbonded balances per address
 - **Enhanced Transfer Detection**: Both variable-based and match-based Rholang patterns
 - **Address Validation**: Supports 53-56 character REV addresses (previously 54-56)
-- **GraphQL API**: Full Hasura integration with bash-based auto-configuration
+- **GraphQL API**: Full Hasura integration with automatic relationship configuration
 - **10 Comprehensive Tables**: Complete blockchain data model
 - **Full Blockchain Sync**: Index from genesis (block 0) without limitations
+- **Validator Bond Detection**: Fixed regex pattern for new CLI output format
+- **Data Quality**: Proper NULL handling for deployment error messages
 
 ## Data Model Overview
 
@@ -538,11 +540,17 @@ See `GRAPHQL_GUIDE.md` for comprehensive examples.
 
 ## Changelog
 
-### v2.0 (2025-08-06)
+### v2.1.1 (2025-09-09)
+- ✅ Fixed validator bond detection for new CLI output format
+- ✅ Proper NULL handling for empty deployment error messages
+- ✅ Automatic Hasura relationship configuration
+- ✅ Zero-touch deployment with all fixes applied
+
+### v2.1.0 (2025-08-06)
 - ✅ Network-agnostic genesis processing
 - ✅ Automatic validator bond extraction from block 0
 - ✅ Balance state tracking (bonded vs unbonded)
-- ✅ Variable-based REV transfer pattern matching
+- ✅ Enhanced REV transfer pattern matching (variable and match-based)
 - ✅ GraphQL API with Hasura integration
 - ✅ One-command deployment with deploy.sh
 - ✅ Support for 150-char addresses (validators and REV)

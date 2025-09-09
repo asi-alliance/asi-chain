@@ -2,6 +2,27 @@
 
 All notable changes to the ASI-Chain Indexer project will be documented in this file.
 
+## [2.1.1] - 2025-09-09
+
+### 🔧 Data Quality & Bond Detection Fixes
+
+This patch release fixes critical issues with validator bond detection and data quality, ensuring accurate blockchain data indexing.
+
+### Fixed
+- ✅ **Validator bond detection** - Updated regex pattern to handle new CLI output format with abbreviated keys
+- ✅ **Data quality** - Empty deployment error messages now properly converted to NULL (prevents false error counts)
+- ✅ **Hasura relationships** - Automatic configuration now completes before user prompts in deploy.sh
+
+### Technical Details
+- **Bond Detection Fix**: CLI output changed from `Validator: <key> | Stake: <amount>` to `1. 04837a4c...b2df065f (stake: 1000)`
+- **Error Message Handling**: Empty strings ("") in error_message field now stored as NULL
+- **Deployment Script**: Relationship setup moved earlier in deploy.sh for better reliability
+
+### Stats After Fix
+- **Validator bonds**: Now correctly showing 3 bonded validators (was 0)
+- **Deployment errors**: Accurate error count (no more false positives from empty strings)
+- **GraphQL relationships**: All nested queries working immediately after deployment
+
 ## [2.1.0] - 2025-08-06
 
 ### 🚀 Enhanced REV Transfer Detection

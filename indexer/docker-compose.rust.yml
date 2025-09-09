@@ -10,8 +10,7 @@ services:
       POSTGRES_PASSWORD: indexer_pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql
-      - ./migrations/002_add_enhanced_tables.sql:/docker-entrypoint-initdb.d/002_add_enhanced_tables.sql
+      - ./migrations/000_comprehensive_initial_schema.sql:/docker-entrypoint-initdb.d/000_comprehensive_initial_schema.sql
     ports:
       - "5432:5432"
     healthcheck:
@@ -24,8 +23,8 @@ services:
 
   rust-indexer:
     build:
-      context: .
-      dockerfile: Dockerfile.rust-simple
+      context: ..
+      dockerfile: indexer/Dockerfile.rust-builder
     container_name: asi-rust-indexer
     depends_on:
       postgres:
