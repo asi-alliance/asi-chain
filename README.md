@@ -206,7 +206,10 @@ echo "2" | ./deploy.sh
 - **Grafana**: http://localhost:3002
 
 #### Production Services (AWS Lightsail) ✅ LIVE
-- **🌐 ASI Chain Explorer**: http://13.251.66.61:3001 **(NEW - v1.0.2)**
+- **💼 ASI Wallet v2**: http://13.251.66.61:3000 **(v2.2.0)**
+- **🌐 ASI Chain Explorer**: http://13.251.66.61:3001 **(v1.0.2)**
+- **📚 Documentation Site**: http://13.251.66.61:3003 **(Docusaurus 3.8.1)**
+- **🚰 Token Faucet**: http://13.251.66.61:5050 **(TypeScript)**
 - **GraphQL API**: http://13.251.66.61:8080/v1/graphql
 - **GraphQL Console**: http://13.251.66.61:8080/console
 - **Indexer API**: http://13.251.66.61:9090
