@@ -14,9 +14,9 @@ dotenv.config();
 const config: FaucetConfig = {
   privateKey: process.env.FAUCET_PRIVATE_KEY || '',
   faucetAmount: parseInt(process.env.FAUCET_AMOUNT || '100'),
-  validatorUrl: process.env.VALIDATOR_URL || 'http://18.142.221.192:40413',
-  readOnlyUrl: process.env.READONLY_URL || 'http://18.142.221.192:40453',
-  graphqlUrl: process.env.GRAPHQL_URL || 'http://18.142.221.192:8080/v1/graphql',
+  validatorUrl: process.env.VALIDATOR_URL || 'http://13.251.66.61:40413',
+  readOnlyUrl: process.env.READONLY_URL || 'http://13.251.66.61:40453',
+  graphqlUrl: process.env.GRAPHQL_URL || 'http://13.251.66.61:8080/v1/graphql',
   phloLimit: parseInt(process.env.PHLO_LIMIT || '500000'),
   phloPrice: parseInt(process.env.PHLO_PRICE || '1'),
   maxRequestsPerDay: parseInt(process.env.MAX_REQUESTS_PER_DAY || '5'),

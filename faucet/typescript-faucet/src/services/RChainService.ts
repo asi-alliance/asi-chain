@@ -22,7 +22,7 @@ export class RChainService {
     this.nodeUrl = nodeUrl;
     this.readOnlyUrl = readOnlyUrl || nodeUrl; // Fallback to validator URL if no read-only URL
     this.adminUrl = adminUrl;
-    this.graphqlUrl = graphqlUrl || 'http://18.142.221.192:8080/v1/graphql';
+    this.graphqlUrl = graphqlUrl || 'http://13.251.66.61:8080/v1/graphql';
     this.shardId = shardId;
     
     // Validator client for state-changing operations
