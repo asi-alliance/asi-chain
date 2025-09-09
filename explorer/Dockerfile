@@ -16,15 +16,18 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Set build-time environment variables
-ENV REACT_APP_GRAPHQL_URL=http://18.142.221.192:8080/v1/graphql
-ENV REACT_APP_GRAPHQL_WS_URL=ws://18.142.221.192:8080/v1/graphql
+# Set build-time environment variables (AWS Lightsail production server)
+ENV REACT_APP_GRAPHQL_URL=http://13.251.66.61:8080/v1/graphql
+ENV REACT_APP_GRAPHQL_WS_URL=ws://13.251.66.61:8080/v1/graphql
+ENV REACT_APP_INDEXER_API_URL=http://13.251.66.61:9090
 ENV REACT_APP_HASURA_ADMIN_SECRET=myadminsecretkey
-ENV REACT_APP_RCHAIN_NODE_URL=http://18.142.221.192:40453
 ENV REACT_APP_ENVIRONMENT=production
 ENV REACT_APP_API_TIMEOUT=30000
-ENV REACT_APP_BRAND_NAME="ASI Chain Explorer"
-ENV REACT_APP_BRAND_SUBTITLE="Powered by GraphQL"
+ENV REACT_APP_NETWORK_NAME="ASI Chain"
+ENV REACT_APP_NETWORK_ID=asi-mainnet
+ENV REACT_APP_ENABLE_WEBSOCKETS=true
+ENV REACT_APP_ENABLE_POLLING=true
+ENV REACT_APP_POLLING_INTERVAL=5000
 
 # Build the React application for production
 RUN npm run build
