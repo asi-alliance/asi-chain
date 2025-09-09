@@ -26,7 +26,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and operational blockchain explorer.
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and operational blockchain explorer. Indexer deployed on AWS Lightsail (13.251.66.61) with full synchronization and GraphQL API.
 
 ## ⚙️ Technical Architecture
 
@@ -183,13 +183,19 @@ docker-compose up -d
 
 # Deploy Indexer with zero-touch configuration (v2.1.1)
 cd indexer
-echo "1" | ./deploy.sh  # Connects to remote F1R3FLY node
+echo "1" | ./deploy.sh  # Option 1: Connects to remote F1R3FLY node
+# Option 2: Skip local F1R3FLY (for remote deployments)
+echo "2" | ./deploy.sh  
 
 # Check node status (after building rust-client)
 ./rust-client/target/release/node_cli status -H localhost
+
+# AWS Lightsail Deployment (Production)
+# Server: 13.251.66.61 (Singapore)
+# See: indexer/AWS_LIGHTSAIL_INDEXER_DEPLOYMENT.md
 ```
 
-#### Access Services
+#### Access Services (Local)
 - **F1R3FLY API**: http://localhost:40403
 - **ASI Wallet**: http://localhost:3000
 - **Explorer**: http://localhost:3001
@@ -199,11 +205,21 @@ echo "1" | ./deploy.sh  # Connects to remote F1R3FLY node
 - **Prometheus**: http://localhost:9091
 - **Grafana**: http://localhost:3002
 
+#### Production Services (AWS Lightsail)
+- **GraphQL API**: http://13.251.66.61:8080/v1/graphql
+- **GraphQL Console**: http://13.251.66.61:8080/console
+- **Indexer API**: http://13.251.66.61:9090
+- **PostgreSQL**: 13.251.66.61:5432
+
 ```bash
 # Check service health
 curl http://localhost:40403/api/status  # F1R3FLY node status
 curl http://localhost:9090/health       # Indexer health
-curl http://localhost:8080/healthz       # Hasura health
+curl http://localhost:8080/healthz      # Hasura health
+
+# Production health checks
+curl http://13.251.66.61:9090/status    # Production indexer status
+curl http://13.251.66.61:9090/health    # Production health
 ```
 
 </details>
@@ -234,6 +250,8 @@ asi-chain/
 │   ├── src/                   # Python asyncio with Rust CLI integration
 │   ├── migrations/            # Single comprehensive schema (000_comprehensive)
 │   ├── scripts/               # Zero-touch deployment with automatic Hasura setup
+│   ├── deploy.sh              # Automated deployment script (local/remote)
+│   ├── AWS_LIGHTSAIL_INDEXER_DEPLOYMENT.md # Production deployment guide
 │   └── Dockerfile.rust-builder # Builds Rust CLI from source in Docker
 ├── 🐳 faucet/                 # Token faucet service (Python)
 ├── 📚 docs-site/              # Docusaurus 3.8.1 documentation site
@@ -402,6 +420,7 @@ export SBT_OPTS="-Xmx4g -Xss2m"
 - [F1R3FLY Quick Start](docs/F1R3FLY_QUICK_START.md)
 - [F1R3FLY Kubernetes](docs/F1R3FLY_KUBERNETES_DEPLOYMENT.md)
 - [F1R3FLY Helm Chart](docs/F1R3FLY_HELM_CHART_GUIDE.md)
+- [AWS Lightsail Indexer](indexer/AWS_LIGHTSAIL_INDEXER_DEPLOYMENT.md)
 - [Docker to K8s Migration](docs/DOCKER_TO_KUBERNETES_MIGRATION.md)
 - [Production Infrastructure](PRODUCTION_INFRASTRUCTURE_GUIDE.md)
 - [Terraform AWS](infrastructure/terraform/)
