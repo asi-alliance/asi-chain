@@ -1,0 +1,15 @@
+diff --git a/docker/shard-with-autopropose.yml b/docker/shard-with-autopropose.yml
+index 618fbf5b..c179dd1d 100644
+--- a/docker/shard-with-autopropose.yml
++++ b/docker/shard-with-autopropose.yml
+@@ -4,8 +4,8 @@ x-rnode: &default-rnode
+   networks:
+     - f1r3fly
+   environment:
+-    - OPENAI_ENABLED=${OPENAI_ENABLED:false}
+-    - OPENAI_SCALA_CLIENT_API_KEY=${OPENAI_SCALA_CLIENT_API_KEY:""}
++    - OPENAI_ENABLED=${OPENAI_ENABLED:-false}
++    - OPENAI_SCALA_CLIENT_API_KEY=${OPENAI_SCALA_CLIENT_API_KEY:-}
+ 
+ services:
+   boot:

@@ -2,8 +2,8 @@
 
 # ASI Chain
 
-[![Status](https://img.shields.io/badge/Status-Production--Ready-7FD67A?style=for-the-badge)](https://gitlab.com/asi-build/asi-chain)
-[![Version](https://img.shields.io/badge/Version-1.0.0--beta-A8E6A3?style=for-the-badge)](https://gitlab.com/asi-build/asi-chain/releases)
+[![Status](https://img.shields.io/badge/Status-Production--Ready-7FD67A?style=for-the-badge)](https://github.com/asi-alliance/asi-chain)
+[![Version](https://img.shields.io/badge/Version-1.0.0--beta-A8E6A3?style=for-the-badge)](https://github.com/asi-alliance/asi-chain/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-1A1A1A?style=for-the-badge)](LICENSE)
 [![Docs](https://img.shields.io/badge/Docs-Available-C4F0C1?style=for-the-badge)](docs-site/)
 
@@ -101,13 +101,16 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 <summary><b>1️⃣ Clone Repository</b></summary>
 
 ```bash
-# Clone from GitLab
-git clone https://gitlab.com/asi-build/asi-chain.git
+# Clone from GitHub
+git clone https://github.com/asi-alliance/asi-chain.git
 cd asi-chain
 
 # Initialize and update Git submodules
 git submodule init
 git submodule update --recursive
+
+# Apply F1R3FLY patches (required for Docker Compose)
+./scripts/apply-f1r3fly-patches.sh
 ```
 
 </details>
@@ -158,25 +161,45 @@ npm run build
 <details>
 <summary><b>3️⃣ Run Local Network</b></summary>
 
+#### Option A: Kubernetes Deployment (Recommended)
+```bash
+# Deploy F1R3FLY on local Kubernetes
+./scripts/deploy-f1r3fly-k8s.sh
+
+# With monitoring stack
+./scripts/deploy-f1r3fly-k8s.sh --monitoring
+
+# Custom validator count
+./scripts/deploy-f1r3fly-k8s.sh --replicas 8
+
+# Clean up
+./scripts/deploy-f1r3fly-k8s.sh --cleanup
+```
+
+#### Option B: Docker Compose
 ```bash
 # Start all services with Docker Compose
 docker-compose up -d
 
 # Check node status (after building rust-client)
 ./rust-client/target/release/node_cli status -H localhost
+```
 
-# Access services
-# ASI Wallet: http://localhost:3000
-# Explorer: http://localhost:3001
-# GraphQL: http://localhost:8080
-# Indexer API: http://localhost:9090
-# Faucet API: http://localhost:5000
-# Prometheus: http://localhost:9091
-# Grafana: http://localhost:3002
+#### Access Services
+- **F1R3FLY API**: http://localhost:40403
+- **ASI Wallet**: http://localhost:3000
+- **Explorer**: http://localhost:3001
+- **GraphQL**: http://localhost:8080
+- **Indexer API**: http://localhost:9090
+- **Faucet API**: http://localhost:5000
+- **Prometheus**: http://localhost:9091
+- **Grafana**: http://localhost:3002
 
+```bash
 # Check service health
-curl http://localhost:9090/health  # Indexer health
-curl http://localhost:8080/healthz  # Hasura health
+curl http://localhost:40403/api/status  # F1R3FLY node status
+curl http://localhost:9090/health       # Indexer health
+curl http://localhost:8080/healthz       # Hasura health
 ```
 
 </details>
@@ -227,9 +250,15 @@ asi-chain/
 ├── 📊 benchmarks/             # Performance benchmarking tools
 ├── 🎬 demos/                  # Demo assets and scripts
 ├── 🏛️ legal/                  # Terms of Service, Privacy Policy
+├── 🔧 patches/                # F1R3FLY submodule patches
+│   └── README.md              # Patch documentation
+├── 📝 config/                 # Configuration files
+│   └── f1r3fly/              # F1R3FLY Kubernetes configs
 ├── 🐳 docker-compose.yml      # Local development environment
 ├── 🐳 docker-compose.production.yml # Production Docker setup
 └── 📋 scripts/                # Operational and maintenance scripts
+    ├── deploy-f1r3fly-k8s.sh # Automated F1R3FLY deployment
+    ├── apply-f1r3fly-patches.sh # Apply submodule patches
     ├── monitoring/            # Stress tests, metrics exporters
     ├── security/              # Security audits and hardening
     └── maintenance/           # Backup, cleanup, health checks
@@ -365,12 +394,12 @@ export SBT_OPTS="-Xmx4g -Xss2m"
 <td width="33%">
 
 ### 🚀 **Deployment**
+- [F1R3FLY Quick Start](docs/F1R3FLY_QUICK_START.md)
+- [F1R3FLY Kubernetes](docs/F1R3FLY_KUBERNETES_DEPLOYMENT.md)
+- [F1R3FLY Helm Chart](docs/F1R3FLY_HELM_CHART_GUIDE.md)
+- [Docker to K8s Migration](docs/DOCKER_TO_KUBERNETES_MIGRATION.md)
 - [Production Infrastructure](PRODUCTION_INFRASTRUCTURE_GUIDE.md)
-- [Docker Guide](docs/DOCKER_GUIDE.MD)
-- [Kubernetes Production](k8s/production/DEPLOYMENT_SUMMARY.md)
 - [Terraform AWS](infrastructure/terraform/)
-- [Monitoring Stack](docs/monitoring/MONITORING_STACK.MD)
-- [F1R3FLY Deployment](docs/F1R3FLY_DOCKER_DEPLOYMENT_GUIDE.MD)
 
 </td>
 <td width="33%">
@@ -459,7 +488,7 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 ## 🎮 Network Endpoints
 
 ### 🟢 Live Testnet Infrastructure (AWS Lightsail - Singapore)
-**Status**: ✅ OPERATIONAL | **Server IP**: `18.142.221.192` | **Deployed**: August 22, 2025
+**Status**: ✅ OPERATIONAL | **Server IP**: `13.251.66.61` | **Deployed**: September 9, 2025
 
 ---
 
@@ -467,8 +496,8 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 
 | Service | URL | Port | Description | Status |
 |---------|-----|------|-------------|--------|
-| **ASI Wallet v2** | http://18.142.221.192:3000 | 3000 | Web wallet interface with WalletConnect v2 | ✅ Live |
-| **Blockchain Explorer** | http://18.142.221.192:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
+| **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet interface with WalletConnect v2 | ✅ Live |
+| **Blockchain Explorer** | http://13.251.66.61:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
 
 ---
 
@@ -476,12 +505,12 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 
 | Node Type | HTTP API | gRPC Port | P2P Port | Purpose | Status |
 |-----------|----------|-----------|----------|---------|--------|
-| **Bootstrap** | http://18.142.221.192:40403 | 40402 | 40400 | Network discovery only ⚠️ | ✅ Active |
-| **Validator1** | http://18.142.221.192:40413 | 40412 | 40410 | **🔥 Send transactions here** | ✅ Active |
-| **Validator2** | http://18.142.221.192:40423 | 40422 | 40420 | **🔥 Send transactions here** | ✅ Active |
-| **Validator3** | http://18.142.221.192:40433 | 40432 | 40430 | **🔥 Send transactions here** | ✅ Active |
-| **Validator4** | http://18.142.221.192:40443 | 40442 | 40440 | Non-consensus validator | ✅ Active |
-| **Read-only** | http://18.142.221.192:40453 | 40452 | 40451 | **📖 Query-only (best for reads)** | ✅ Active |
+| **Bootstrap** | http://13.251.66.61:40403 | 40402 | 40400 | Network discovery only ⚠️ | ✅ Active |
+| **Validator1** | http://13.251.66.61:40413 | 40412 | 40410 | **🔥 Send transactions here** | ✅ Active |
+| **Validator2** | http://13.251.66.61:40423 | 40422 | 40420 | **🔥 Send transactions here** | ✅ Active |
+| **Validator3** | - | - | - | Not deployed | ❌ Inactive |
+| **Validator4** | http://13.251.66.61:40443 | 40442 | 40440 | Bonding in quarantine | ⏳ Pending |
+| **Read-only** | http://13.251.66.61:40453 | 40452 | 40451 | **📖 Query-only (best for reads)** | ✅ Active |
 
 #### ⚠️ CRITICAL: Transaction Port Guidelines
 
@@ -490,7 +519,7 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 - Transactions sent here will NOT be processed or included in blocks
 
 **✅ CORRECT ports for transactions:**
-- **Validator1** (40413), **Validator2** (40423), or **Validator3** (40433)
+- **Validator1** (40413) or **Validator2** (40423)
 - These validators are monitored by autopropose service
 - Transactions will be included in blocks within 30 seconds
 
@@ -504,11 +533,11 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 
 | Service | URL/Endpoint | Port | Purpose | Access |
 |---------|-------------|------|---------|--------|
-| **Hasura GraphQL API** | http://18.142.221.192:8080/v1/graphql | 8080 | GraphQL queries & mutations | Public |
-| **GraphQL Console** | http://18.142.221.192:8080/console | 8080 | Hasura admin interface | Public |
-| **GraphQL WebSocket** | ws://18.142.221.192:8080/v1/graphql | 8080 | Real-time subscriptions | Public |
-| **Indexer REST API** | http://18.142.221.192:9090 | 9090 | Blockchain data indexer | Public |
-| **PostgreSQL Database** | `18.142.221.192:5432` | 5432 | Direct database connection | Private |
+| **Hasura GraphQL API** | http://13.251.66.61:8080/v1/graphql | 8080 | GraphQL queries & mutations | Public |
+| **GraphQL Console** | http://13.251.66.61:8080/console | 8080 | Hasura admin interface | Public |
+| **GraphQL WebSocket** | ws://13.251.66.61:8080/v1/graphql | 8080 | Real-time subscriptions | Public |
+| **Indexer REST API** | http://13.251.66.61:9090 | 9090 | Blockchain data indexer | Public |
+| **PostgreSQL Database** | `13.251.66.61:5432` | 5432 | Direct database connection | Private |
 | **Autopropose Service** | Internal container | N/A | Automatic block creation | Internal |
 
 ---
@@ -520,10 +549,10 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 | **Consensus Health** | 100% participation | 🟢 Healthy |
 | **Latest Block** | ~2000+ (growing) | ✅ Active |
 | **Block Time** | 30 seconds | ⚡ Fast |
-| **Active Validators** | 3 validators (1000 REV stake each) | ✅ Secure |
+| **Active Validators** | 4 validators (including bootstrap) | ✅ Secure |
 | **Total Nodes** | 6 fully connected | 🔗 Connected |
 | **Network Peers** | 5 peers per node | 🌐 Meshed |
-| **Autopropose** | Rotating validator1→2→3 | 🔄 Active |
+| **Autopropose** | Rotating validator1→2 | 🔄 Active |
 
 ---
 
@@ -532,10 +561,10 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 #### Check Blockchain Status
 ```bash
 # Get node status
-curl http://18.142.221.192:40453/api/status
+curl http://13.251.66.61:40453/api/status
 
 # Get latest block via GraphQL
-curl -X POST http://18.142.221.192:8080/v1/graphql \
+curl -X POST http://13.251.66.61:8080/v1/graphql \
   -H "Content-Type: application/json" \
   -d '{"query": "{ blocks(limit: 1, order_by: {block_number: desc}) { block_number timestamp } }"}'
 ```
@@ -543,28 +572,28 @@ curl -X POST http://18.142.221.192:8080/v1/graphql \
 #### Send Transactions (Use any validator 1-3)
 ```bash
 # Deploy via Validator1 (RECOMMENDED)
-curl -X POST http://18.142.221.192:40413/api/deploy \
+curl -X POST http://13.251.66.61:40413/api/deploy \
   -H "Content-Type: application/json" \
   -d '{"deployer": "YOUR_ADDRESS", "term": "YOUR_RHOLANG_CODE", ...}'
 
 # Alternative validators
-# Validator2: http://18.142.221.192:40423/api/deploy
-# Validator3: http://18.142.221.192:40433/api/deploy
+# Validator2: http://13.251.66.61:40423/api/deploy
+# Validator3: http://13.251.66.61:40433/api/deploy
 ```
 
 #### Query Balance
 ```bash
 # Best performance using read-only node
-./node_cli balance YOUR_ADDRESS -H 18.142.221.192 -p 40453
+./node_cli wallet-balance --address YOUR_ADDRESS --host 13.251.66.61 --port 40452
 ```
 
 #### Monitor Services
 ```bash
 # Check indexer health
-curl http://18.142.221.192:9090/health
+curl http://13.251.66.61:9090/health
 
 # View running Docker containers (requires SSH)
-ssh -i XXXXXXXXX.pem ubuntu@18.142.221.192 "docker ps"
+ssh -i XXXXXXXXX.pem ubuntu@13.251.66.61 "docker ps"
 ```
 
 ---
@@ -574,18 +603,18 @@ ssh -i XXXXXXXXX.pem ubuntu@18.142.221.192 "docker ps"
 #### ASI Wallet v2 Settings
 ```yaml
 Network Name: ASI Testnet
-Transaction URL: http://18.142.221.192:40413  # validator1
-Read-only URL: http://18.142.221.192:40453    # for balance checks
-gRPC Endpoint: 18.142.221.192:40412          # validator1 gRPC
-Explorer URL: http://18.142.221.192:3001
+Transaction URL: http://13.251.66.61:40413  # validator1
+Read-only URL: http://13.251.66.61:40453    # for balance checks
+gRPC Endpoint: 13.251.66.61:40412          # validator1 gRPC
+Explorer URL: http://13.251.66.61:3001
 ```
 
 #### Alternative Validator Endpoints
 ```yaml
 # You can use any of these for transactions:
-Validator1: http://18.142.221.192:40413 (gRPC: 40412)
-Validator2: http://18.142.221.192:40423 (gRPC: 40422)  
-Validator3: http://18.142.221.192:40433 (gRPC: 40432)
+Validator1: http://13.251.66.61:40413 (gRPC: 40412)
+Validator2: http://13.251.66.61:40423 (gRPC: 40422)  
+Validator3: http://13.251.66.61:40433 (gRPC: 40432)
 ```
 
 ---
@@ -597,22 +626,22 @@ Validator3: http://18.142.221.192:40433 (gRPC: 40432)
 cd rust-client && cargo build --release
 
 # Check node status
-./target/release/node_cli status -H 18.142.221.192
+./target/release/node_cli status -H 13.251.66.61
 
 # Get recent blocks (use read-only for best performance)
-./target/release/node_cli blocks -H 18.142.221.192 -p 40453 -n 10
+./target/release/node_cli blocks -H 13.251.66.61 -p 40453 -n 10
 
 # Check balance
-./target/release/node_cli balance YOUR_REV_ADDRESS -H 18.142.221.192 -p 40453
+./target/release/node_cli balance YOUR_REV_ADDRESS -H 13.251.66.61 -p 40453
 
 # Deploy contract (use validator1, 2, or 3)
-./target/release/node_cli deploy -f contract.rho -H 18.142.221.192 -p 40413
+./target/release/node_cli deploy -f contract.rho -H 13.251.66.61 -p 40413
 
 # Execute exploratory deploy (testing)
-./target/release/node_cli exploratory-deploy -f test.rho -H 18.142.221.192 -p 40412
+./target/release/node_cli exploratory-deploy -f test.rho -H 13.251.66.61 -p 40412
 
 # ⚠️ NEVER use bootstrap for transactions
-# ❌ WRONG: ./target/release/node_cli deploy -f contract.rho -H 18.142.221.192 -p 40403
+# ❌ WRONG: ./target/release/node_cli deploy -f contract.rho -H 13.251.66.61 -p 40403
 ```
 
 ---
@@ -621,7 +650,7 @@ cd rust-client && cargo build --release
 
 ```bash
 # Connect to server (requires private key)
-ssh -i XXXXXXXXX.pem ubuntu@18.142.221.192
+ssh -i XXXXXXXXX.pem ubuntu@13.251.66.61
 
 # View logs
 docker logs rnode.validator1 --tail 50
@@ -687,7 +716,7 @@ Part of the ASI Alliance ecosystem (https://superintelligence.io)
 
 <div align="center">
 
-[![GitLab](https://img.shields.io/badge/GitLab-ASI--Chain-FCA326?style=for-the-badge&logo=gitlab)](https://gitlab.com/asi-build/asi-chain)
+[![GitHub](https://img.shields.io/badge/GitHub-ASI--Chain-181717?style=for-the-badge&logo=github)](https://github.com/asi-alliance/asi-chain)
 [![Website](https://img.shields.io/badge/Website-superintelligence.io-7FD67A?style=for-the-badge)](https://superintelligence.io)
 [![Documentation](https://img.shields.io/badge/Docs-Available-A8E6A3?style=for-the-badge)](docs-site/)
 [![Community](https://img.shields.io/badge/Community-Join%20Us-C4F0C1?style=for-the-badge)](https://superintelligence.io/community)

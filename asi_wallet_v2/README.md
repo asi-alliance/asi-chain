@@ -92,7 +92,7 @@ See [DOCKER_README.md](./DOCKER_README.md) for detailed Docker deployment instru
 
 ```bash
 # Clone the repository (GitLab)
-git clone https://gitlab.com/asi-build/asi-chain.git
+git clone https://github.com/asi-alliance/asi-chain.git
 cd asi-chain/asi_wallet_v2
 
 # Install dependencies with legacy peer deps flag

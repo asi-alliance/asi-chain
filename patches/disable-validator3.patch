@@ -1,0 +1,111 @@
+From: Assistant
+Date: Mon, 9 Sep 2025
+Subject: [PATCH] Disable validator3 in F1R3FLY network configuration
+
+This patch disables validator3 in both the autopropose configuration and
+docker-compose setup to resolve genesis ceremony timing issues where
+validator3 was missing the initial consensus establishment.
+
+---
+ docker/autopropose/config.yml        |  4 ++--
+ docker/shard-with-autopropose.yml    | 62 ++++++++++++++++----------------
+ 2 files changed, 33 insertions(+), 33 deletions(-)
+
+diff --git a/docker/autopropose/config.yml b/docker/autopropose/config.yml
+index ca2c06c5..86782b02 100644
+--- a/docker/autopropose/config.yml
++++ b/docker/autopropose/config.yml
+@@ -27,11 +27,11 @@ validators:
+     grpc_port: 40402           # Internal gRPC port for propose operations
+     enabled: true              # Participate in rotation
+     
+-  # Validator 3 - Tertiary validator
++  # Validator 3 - Tertiary validator (disabled - not in network)
+   - name: validator3
+     host: rnode.validator3
+     grpc_port: 40402           # Internal gRPC port for propose operations
+-    enabled: true              # Participate in rotation
++    enabled: false              # Not in current network deployment
+
+   # Validator 4 - Quaternary validator
+   - name: validator4
+diff --git a/docker/shard-with-autopropose.yml b/docker/shard-with-autopropose.yml
+index af0242d5..e771db16 100644
+--- a/docker/shard-with-autopropose.yml
++++ b/docker/shard-with-autopropose.yml
+@@ -97,35 +97,35 @@ services:
+       - ./certs/validator2/node.certificate.pem:/var/lib/rnode/node.certificate.pem:ro
+       - ./certs/validator2/node.key.pem:/var/lib/rnode/node.key.pem:ro
+
+-  validator3:
+-    <<: *default-rnode
+-    container_name: $VALIDATOR3_HOST
+-    command:
+-      [
+-        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml",
+-        "run",
+-        "--host=$VALIDATOR3_HOST",
+-        "--allow-private-addresses",
+-        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
+-        "--validator-public-key=$VALIDATOR3_PUBLIC_KEY",
+-        "--validator-private-key=$VALIDATOR3_PRIVATE_KEY",
+-        "--genesis-validator"
+-      ]
+-    ports:
+-      - "40430:40400"
+-      - "40431:40401"
+-      - "40432:40402"
+-      - "40433:40403"
+-      - "40434:40404"
+-      - "40435:40405"
+-    volumes:
+-      - ./conf/shared-rnode.conf:/var/lib/rnode/rnode.conf
+-      - ./genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+-      - ./genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+-      - ./conf/logback.xml:/var/lib/rnode/logback.xml
+-      - ./data/$VALIDATOR3_HOST:/var/lib/rnode/
+-      - ./certs/validator3/node.certificate.pem:/var/lib/rnode/node.certificate.pem:ro
+-      - ./certs/validator3/node.key.pem:/var/lib/rnode/node.key.pem:ro
++  # validator3:
++  #   <<: *default-rnode
++  #   container_name: $VALIDATOR3_HOST
++  #   command:
++  #     [
++  #       "-Dlogback.configurationFile=/var/lib/rnode/logback.xml",
++  #       "run",
++  #       "--host=$VALIDATOR3_HOST",
++  #       "--allow-private-addresses",
++  #       "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
++  #       "--validator-public-key=$VALIDATOR3_PUBLIC_KEY",
++  #       "--validator-private-key=$VALIDATOR3_PRIVATE_KEY",
++  #       "--genesis-validator"
++  #     ]
++  #   ports:
++  #     - "40430:40400"
++  #     - "40431:40401"
++  #     - "40432:40402"
++  #     - "40433:40403"
++  #     - "40434:40404"
++  #     - "40435:40405"
++  #   volumes:
++  #     - ./conf/shared-rnode.conf:/var/lib/rnode/rnode.conf
++  #     - ./genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
++  #     - ./genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
++  #     - ./conf/logback.xml:/var/lib/rnode/logback.xml
++  #     - ./data/$VALIDATOR3_HOST:/var/lib/rnode/
++  #     - ./certs/validator3/node.certificate.pem:/var/lib/rnode/node.certificate.pem:ro
++  #     - ./certs/validator3/node.key.pem:/var/lib/rnode/node.key.pem:ro
+
+   # =================================================================
+   # AUTOPROPOSE SERVICE - RChain-Inspired Continuous Block Proposing
+@@ -151,7 +151,7 @@ services:
+       - boot
+       - validator1
+       - validator2
+-      - validator3
++      # - validator3
+     # Health check to ensure service is running
+     healthcheck:
+       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health', timeout=5)"]
+-- 
+2.39.2
