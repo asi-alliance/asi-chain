@@ -1,0 +1,30 @@
+# Core dependencies
+aiohttp==3.9.5
+asyncpg==0.29.0
+python-dotenv==1.0.1
+pydantic==2.7.4
+pydantic-settings==2.3.4
+
+# Database
+alembic==1.13.2
+sqlalchemy==2.0.31
+
+# Monitoring
+prometheus-client==0.20.0
+aiohttp-cors==0.7.0
+
+# Logging
+structlog==24.2.0
+
+# Development dependencies
+pytest==8.2.2
+pytest-asyncio==0.23.7
+pytest-cov==5.0.0
+black==24.4.2
+flake8==7.1.0
+mypy==1.10.1
+types-aiofiles==23.2.0.0
+
+# Utilities
+click==8.1.7
+tenacity==8.5.0

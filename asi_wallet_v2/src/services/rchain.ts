@@ -1,6 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 import { signDeploy } from 'utils/crypto';
 
+// Global balance cache to prevent excessive API calls
+const globalBalanceCache: Map<string, { balance: string; timestamp: number }> = new Map();
+const BALANCE_CACHE_TTL = 15000; // 15 seconds cache
+
 export interface Deploy {
   term: string;
   phloLimit: number;
@@ -23,12 +27,14 @@ export class RChainService {
   private nodeUrl: string;
   private readOnlyUrl: string;
   private adminUrl?: string;
+  private graphqlUrl: string;
   private shardId: string;
 
-  constructor(nodeUrl: string, readOnlyUrl?: string, adminUrl?: string, shardId: string = 'root') {
+  constructor(nodeUrl: string, readOnlyUrl?: string, adminUrl?: string, shardId: string = 'root', graphqlUrl?: string) {
     this.nodeUrl = nodeUrl;
     this.readOnlyUrl = readOnlyUrl || nodeUrl; // Fallback to validator URL if no read-only URL
     this.adminUrl = adminUrl;
+    this.graphqlUrl = graphqlUrl || 'http://18.142.221.192:8080/v1/graphql';
     this.shardId = shardId;
     
     // Validator client for state-changing operations
@@ -128,6 +134,16 @@ export class RChainService {
 
   // Get balance using real Rholang code (from F1R3FLY wallet)
   async getBalance(revAddress: string): Promise<string> {
+    // Check global cache first
+    const cacheKey = `${revAddress}_${this.readOnlyUrl}`;
+    const cached = globalBalanceCache.get(cacheKey);
+    const now = Date.now();
+    
+    if (cached && (now - cached.timestamp) < BALANCE_CACHE_TTL) {
+      console.log(`[Balance Cache] Using cached balance for ${revAddress}: ${cached.balance} REV`);
+      return cached.balance;
+    }
+
     const checkBalanceRho = `
       new return, rl(\`rho:registry:lookup\`), RevVaultCh, vaultCh in {
         rl!(\`rho:rchain:revVault\`, *RevVaultCh) |
@@ -152,20 +168,29 @@ export class RChainService {
         
         // Check if it's a direct integer (balance)
         if (firstExpr?.ExprInt?.data !== undefined) {
-          return firstExpr.ExprInt.data.toString();
+          const balance = firstExpr.ExprInt.data.toString();
+          // Cache the balance globally
+          globalBalanceCache.set(cacheKey, { balance, timestamp: now });
+          console.log(`[Balance Cache] Cached balance for ${revAddress}: ${balance} REV`);
+          return balance;
         }
         
         // Check if it's an error string
         if (firstExpr?.ExprString?.data !== undefined) {
           console.error('Balance check error:', firstExpr.ExprString.data);
+          // Cache zero balance for error case
+          globalBalanceCache.set(cacheKey, { balance: '0', timestamp: now });
           return '0';
         }
       }
       
       console.log('Balance check: No valid result', result);
+      // Cache zero balance for no result case
+      globalBalanceCache.set(cacheKey, { balance: '0', timestamp: now });
       return '0';
     } catch (error) {
       console.error('Error getting balance:', error);
+      // Don't cache errors to allow retry
       return '0';
     }
   }
@@ -307,84 +332,194 @@ export class RChainService {
     }
   }
 
-  // Enhanced deploy status checking (based on f1r3wallet approach)
-  async waitForDeployResult(deployId: string, maxAttempts: number = 15): Promise<any> {
-    console.log(`Waiting for deploy result: ${deployId}`);
+  // Check deploy status using GraphQL indexer API
+  async waitForDeployResult(deployId: string, maxAttempts: number = 20): Promise<any> {
+    console.log(`[GraphQL] Waiting for deploy result: ${deployId}`);
+    console.log(`[GraphQL] Using endpoint: ${this.graphqlUrl}`);
+    
+    // Use configured GraphQL endpoint
+    const graphqlEndpoint = this.graphqlUrl;
     
     for (let i = 0; i < maxAttempts; i++) {
       try {
-        // Step 1: Check if deploy exists in a block
-        const deployResult = await this.readOnlyClient.get(`/api/deploy/${deployId}`);
-        
-        if (deployResult.data && deployResult.data.blockHash) {
-          console.log(`Deploy ${deployId} found in block ${deployResult.data.blockHash} after ${i + 1} attempts`);
-          
-          // Step 2: Get full block info to check deploy details
-          try {
-            const blockResult = await this.readOnlyClient.get(`/api/block/${deployResult.data.blockHash}`);
-            
-            if (blockResult.data && blockResult.data.deploys) {
-              // Find our specific deploy in the block
-              const deploy = blockResult.data.deploys.find((d: any) => d.sig === deployId);
-              
-              if (deploy) {
-                // Check for deploy execution errors
-                if (deploy.errored) {
-                  return {
-                    status: 'errored',
-                    error: 'Deploy execution failed',
-                    blockHash: deployResult.data.blockHash,
-                    deploy: deploy
-                  };
+        // Query the indexer for this deploy
+        const graphqlQuery = {
+          query: `
+            query GetDeployStatus($deployId: String!) {
+              deployments(where: {deploy_id: {_eq: $deployId}}) {
+                deploy_id
+                block_number
+                timestamp
+                status
+                errored
+                error_message
+                block {
+                  block_hash
+                  timestamp
                 }
-                
-                if (deploy.systemdeployerror) {
-                  return {
-                    status: 'system_error',
-                    error: deploy.systemdeployerror,
-                    blockHash: deployResult.data.blockHash,
-                    deploy: deploy
-                  };
+                transfers {
+                  from_address
+                  to_address
+                  amount_rev
+                  status
                 }
-                
-                // Deploy succeeded and is in a block
-                return {
-                  status: 'completed',
-                  message: 'Deploy successfully included in block',
-                  blockHash: deployResult.data.blockHash,
-                  cost: deploy.cost,
-                  deploy: deploy
-                };
               }
             }
-          } catch (blockError) {
-            console.log(`Could not get block details for ${deployResult.data.blockHash}:`, blockError);
+          `,
+          variables: {
+            deployId: deployId
+          }
+        };
+        
+        console.log(`[GraphQL] Querying indexer for deploy ${deployId} (attempt ${i + 1}/${maxAttempts})`);
+        
+        const response = await axios.post(graphqlEndpoint, graphqlQuery, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log(`[GraphQL] Response:`, response.data);
+        
+        if (response.data?.data?.deployments && response.data.data.deployments.length > 0) {
+          const deploy = response.data.data.deployments[0];
+          console.log(`[GraphQL] ✅ Deploy ${deployId} found in block ${deploy.block_number} after ${i + 1} attempts`);
+          console.log(`[GraphQL] Deploy details:`, deploy);
+          
+          // Check for deploy execution errors
+          if (deploy.errored) {
+            return {
+              status: 'errored',
+              error: deploy.error_message || 'Deploy execution failed',
+              blockHash: deploy.block?.block_hash,
+              blockNumber: deploy.block_number,
+              deployId: deployId
+            };
           }
           
-          // Deploy found but couldn't get block details - still a success
+          // Deploy succeeded and is in a block
           return {
             status: 'completed',
             message: 'Deploy successfully included in block',
-            blockHash: deployResult.data.blockHash,
-            deployId: deployId
+            blockHash: deploy.block?.block_hash,
+            blockNumber: deploy.block_number,
+            deployId: deployId,
+            timestamp: deploy.timestamp,
+            transfers: deploy.transfers
           };
         }
         
+        console.log(`[GraphQL] Deploy ${deployId} not found in indexer... (${i + 1}/${maxAttempts})`);
+        
       } catch (error: any) {
-        // Continue polling if deploy not found yet
-        console.log(`Waiting for deploy ${deployId}... (${i + 1}/${maxAttempts})`);
-        if (error.response?.status === 404 || error.response?.status === 400) {
-          // Deploy not found yet, continue polling
-        } else {
-          console.error(`Error checking deploy ${deployId}:`, error.message);
+        console.error(`[GraphQL] Error checking indexer for deploy ${deployId}:`, error.message);
+        console.error(`[GraphQL] Full error:`, error);
+        
+        // Fallback to old method if GraphQL fails
+        try {
+          const blocksResult = await this.readOnlyClient.get('/api/blocks/10');
+          
+          if (blocksResult.data && Array.isArray(blocksResult.data)) {
+            for (const block of blocksResult.data) {
+              if (block.deploys && Array.isArray(block.deploys)) {
+                const foundDeploy = block.deploys.find((deploy: any) => 
+                  deploy.sig === deployId || deploy.signature === deployId || deploy.deployId === deployId
+                );
+                
+                if (foundDeploy) {
+                  console.log(`Deploy ${deployId} found via fallback method in block ${block.blockHash}`);
+                  return {
+                    status: 'completed',
+                    message: 'Deploy successfully included in block',
+                    blockHash: block.blockHash,
+                    deployId: deployId,
+                    cost: foundDeploy.cost,
+                    timestamp: block.timestamp
+                  };
+                }
+              }
+            }
+          }
+        } catch (fallbackError) {
+          console.error('Fallback method also failed:', fallbackError);
         }
       }
       
-      // Wait 3 seconds before next attempt
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Wait 5 seconds before next attempt (blocks take 30 seconds)
+      await new Promise(resolve => setTimeout(resolve, 5000));
     }
     
-    throw new Error(`Deploy ${deployId} not found in any block after ${maxAttempts} attempts (45 seconds). The deploy may still be processing or pending block inclusion.`);
+    throw new Error(`Deploy ${deployId} not found after ${maxAttempts} attempts (${maxAttempts * 5} seconds). The deploy may still be processing.`);
+  }
+
+  // Fetch transaction history from GraphQL indexer
+  async fetchTransactionHistory(address: string, limit: number = 50): Promise<any[]> {
+    const graphqlEndpoint = this.graphqlUrl;
+    
+    try {
+      const graphqlQuery = {
+        query: `
+          query GetTransactionHistory($address: String!, $limit: Int!) {
+            transfers(
+              where: {
+                _or: [
+                  {from_address: {_eq: $address}},
+                  {to_address: {_eq: $address}}
+                ]
+              },
+              order_by: {block_number: desc},
+              limit: $limit
+            ) {
+              id
+              deploy_id
+              block_number
+              from_address
+              to_address
+              amount_rev
+              status
+              created_at
+              deployments {
+                deploy_id
+                timestamp
+                status
+                block {
+                  block_hash
+                  timestamp
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          address: address,
+          limit: limit
+        }
+      };
+      
+      const response = await axios.post(graphqlEndpoint, graphqlQuery, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.data?.data?.transfers) {
+        return response.data.data.transfers.map((tx: any) => ({
+          deployId: tx.deploy_id,
+          blockNumber: tx.block_number,
+          from: tx.from_address,
+          to: tx.to_address,
+          amount: tx.amount_rev,
+          status: tx.status === 'success' ? 'confirmed' : tx.status,
+          timestamp: tx.deployments?.timestamp || tx.created_at,
+          blockHash: tx.deployments?.block?.block_hash
+        }));
+      }
+      
+      return [];
+    } catch (error) {
+      console.error('Error fetching transaction history from indexer:', error);
+      return [];
+    }
   }
 
   // Check if node is accessible (checks validator node by default)

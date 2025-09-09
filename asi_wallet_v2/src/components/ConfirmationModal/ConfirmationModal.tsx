@@ -149,7 +149,7 @@ export const TransactionConfirmationModal: React.FC<TransactionConfirmationProps
         </Description>
         
         <WarningText>
-          ⚠️ This transaction cannot be reversed once sent. Please verify all details carefully.
+          WARNING: This transaction cannot be reversed once sent. Please verify all details carefully.
         </WarningText>
 
         <TransactionDetails>

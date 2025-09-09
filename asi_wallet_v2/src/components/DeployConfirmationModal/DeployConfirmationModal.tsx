@@ -195,7 +195,7 @@ export const DeploymentConfirmationModal: React.FC<DeploymentConfirmationProps> 
         
         {!isExplore && (
           <WarningText>
-            ⚠️ This deployment will consume gas and cannot be reversed once confirmed.
+            WARNING: This deployment will consume gas and cannot be reversed once confirmed.
           </WarningText>
         )}
 

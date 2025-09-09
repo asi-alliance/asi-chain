@@ -1,0 +1,113 @@
+/**
+ * ASI Chain Documentation Theme
+ * Custom CSS variables for ASI brand colors
+ */
+
+:root {
+  /* ASI Brand Colors */
+  --asi-primary: #7FD67A;
+  --asi-primary-dark: #5CC555;
+  --asi-primary-darker: #4ABF42;
+  --asi-primary-darkest: #38A82F;
+  --asi-primary-light: #A8E6A3;
+  --asi-primary-lighter: #C4F0C1;
+  --asi-primary-lightest: #E0F8DE;
+  --asi-black: #1A1A1A;
+  --asi-white: #FFFFFF;
+
+  /* Docusaurus Theme Colors - Light Mode */
+  --ifm-color-primary: #7FD67A;
+  --ifm-color-primary-dark: #5CC555;
+  --ifm-color-primary-darker: #4ABF42;
+  --ifm-color-primary-darkest: #38A82F;
+  --ifm-color-primary-light: #A8E6A3;
+  --ifm-color-primary-lighter: #C4F0C1;
+  --ifm-color-primary-lightest: #E0F8DE;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(127, 214, 122, 0.1);
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', 'Cascadia Code',
+    Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+
+/* Dark Mode */
+[data-theme='dark'] {
+  --ifm-color-primary: #A8E6A3;
+  --ifm-color-primary-dark: #8FDF89;
+  --ifm-color-primary-darker: #7FDA78;
+  --ifm-color-primary-darkest: #5CC555;
+  --ifm-color-primary-light: #C4F0C1;
+  --ifm-color-primary-lighter: #D4F5D2;
+  --ifm-color-primary-lightest: #E8FAE7;
+  --docusaurus-highlighted-code-line-bg: rgba(168, 230, 163, 0.2);
+  
+  --ifm-background-color: #1A1A1A;
+  --ifm-background-surface-color: #242424;
+  --ifm-navbar-background-color: #242424;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, #7FD67A 0%, #A8E6A3 50%, #C4F0C1 100%);
+  color: var(--asi-black);
+  padding: 4rem 0;
+}
+
+.hero__title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero__subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+/* Buttons */
+.button--primary {
+  background-color: var(--asi-primary);
+  border-color: var(--asi-primary);
+  color: var(--asi-black);
+  font-weight: 600;
+}
+
+.button--primary:hover {
+  background-color: var(--asi-primary-dark);
+  border-color: var(--asi-primary-dark);
+}
+
+/* Features */
+.features {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--asi-black);
+  padding: 3rem 0;
+}
+
+.footer__title {
+  color: var(--asi-primary);
+  font-weight: 600;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 996px) {
+  .hero__title {
+    font-size: 2.5rem;
+  }
+  
+  .hero__subtitle {
+    font-size: 1.25rem;
+  }
+}

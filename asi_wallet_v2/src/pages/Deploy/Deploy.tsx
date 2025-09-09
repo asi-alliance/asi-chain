@@ -6,6 +6,7 @@ import { RootState } from 'store';
 import { RChainService } from 'services/rchain';
 import { Card, CardHeader, CardTitle, CardContent, Button, Input, DeploymentConfirmationModal } from 'components';
 import TransactionHistoryService from 'services/transactionHistory';
+import { SuccessIcon, ErrorIcon, PendingIcon } from 'components/Icons';
 
 const DeployContainer = styled.div`
   max-width: 800px;
@@ -143,13 +144,7 @@ export const Deploy: React.FC = () => {
 
   // Helper function to check if account is unlocked
   const isAccountUnlocked = (account: any): boolean => {
-    const isUnlocked = unlockedAccounts.some(unlockedAcc => unlockedAcc.id === account?.id);
-    console.log('Deploy page - isAccountUnlocked:', {
-      selectedAccount: account,
-      unlockedAccounts: unlockedAccounts,
-      isUnlocked: isUnlocked
-    });
-    return isUnlocked;
+    return unlockedAccounts.some(unlockedAcc => unlockedAcc.id === account?.id);
   };
 
   const handleDeployClick = () => {
@@ -159,6 +154,23 @@ export const Deploy: React.FC = () => {
 
   const handleConfirmDeploy = async () => {
     if (!selectedAccount) return;
+
+    // Issue #37 & #38: Final validation before deployment
+    const balance = parseFloat(selectedAccount.balance || '0');
+    const phloLimitNum = parseInt(phloLimit);
+    const minGasCost = phloLimitNum * parseFloat(phloPrice) / 1000000000;
+    
+    if (balance <= 0 || balance < minGasCost) {
+      setError('Transaction aborted: Insufficient balance');
+      setShowDeployConfirmation(false);
+      return;
+    }
+    
+    if (isNaN(phloLimitNum) || phloLimitNum <= 0) {
+      setError('Transaction aborted: Invalid phlo limit');
+      setShowDeployConfirmation(false);
+      return;
+    }
 
     setShowDeployConfirmation(false);
     setIsLoading(true);
@@ -198,7 +210,7 @@ export const Deploy: React.FC = () => {
           setResult({
             ...finalResult,
             deployId: deployResult,
-            message: `✅ ${finalResult.message}`,
+            message: `${finalResult.message}`,
             blockHash: finalResult.blockHash,
             cost: finalResult.cost
           });
@@ -210,12 +222,12 @@ export const Deploy: React.FC = () => {
             gasCost: finalResult.cost?.toString()
           });
         } else if (finalResult.status === 'errored') {
-          setError(`❌ Deploy execution failed: ${finalResult.error}`);
+          setError(`[ERROR] Deploy execution failed: ${finalResult.error}`);
           TransactionHistoryService.updateTransaction(historyTx.id, {
             status: 'failed'
           });
         } else if (finalResult.status === 'system_error') {
-          setError(`❌ System error: ${finalResult.error}`);
+          setError(`[ERROR] System error: ${finalResult.error}`);
           TransactionHistoryService.updateTransaction(historyTx.id, {
             status: 'failed'
           });
@@ -228,7 +240,7 @@ export const Deploy: React.FC = () => {
         setResult({
           deployId: deployResult,
           status: 'submitted',
-          message: '⏳ Deploy submitted successfully. It may still be processing or pending block inclusion.'
+          message: '[PENDING] Deploy submitted successfully. It may still be processing or pending block inclusion.'
         });
       }
     } catch (err: any) {

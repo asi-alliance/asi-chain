@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from 'store';
-import { selectAccount, removeAccount, syncAccounts, fetchBalance } from 'store/walletSlice';
+import { selectAccount, removeAccount, syncAccounts, fetchBalance, loadAccountsFromStorage } from 'store/walletSlice';
 import { createAccountWithPassword, importAccountWithPassword, exportAccountKeyfile } from 'store/authSlice';
 import { Card, CardHeader, CardTitle, CardContent, Button, Input } from 'components';
 import { PasswordSetup } from 'components/PasswordSetup';
+import { WarningIcon } from 'components/Icons';
 
 const AccountsContainer = styled.div`
   max-width: 800px;
@@ -103,11 +104,12 @@ const WarningMessage = styled.div`
   margin-bottom: 16px;
   font-size: 14px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   
   .icon {
-    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
   }
 `;
 
@@ -130,7 +132,12 @@ export const Accounts: React.FC = () => {
   const [importValue, setImportValue] = useState('');
   const [importType, setImportType] = useState<'private' | 'public' | 'eth' | 'rev'>('private');
 
-  // Sync unlocked accounts to wallet state
+  // Load all accounts from storage on mount
+  useEffect(() => {
+    dispatch(loadAccountsFromStorage() as any);
+  }, [dispatch]);
+  
+  // Sync unlocked accounts to wallet state (update existing accounts with unlocked data)
   useEffect(() => {
     if (unlockedAccounts.length > 0) {
       dispatch(syncAccounts(unlockedAccounts));
@@ -318,7 +325,7 @@ export const Accounts: React.FC = () => {
             <CardContent>
               {hasAccounts && !isAuthenticated && (
                 <WarningMessage>
-                  <span className="icon">⚠️</span>
+                  <span className="icon"><WarningIcon size={16} color="currentColor" /></span>
                   <span>
                     You have existing accounts. Creating a new account will not automatically log you in. 
                     You'll need to unlock your existing accounts with your password.
@@ -350,7 +357,7 @@ export const Accounts: React.FC = () => {
             <CardContent>
               {hasAccounts && !isAuthenticated && (
                 <WarningMessage>
-                  <span className="icon">⚠️</span>
+                  <span className="icon"><WarningIcon size={16} color="currentColor" /></span>
                   <span>
                     You have existing accounts. Importing a new account will not automatically log you in. 
                     You'll need to unlock your existing accounts with your password.

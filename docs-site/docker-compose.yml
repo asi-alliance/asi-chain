@@ -1,0 +1,28 @@
+services:
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: asi-docs
+    ports:
+      - "3003:80"  # Using 3003 to avoid conflicts with wallet (3000), explorer (3001), grafana (3002)
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - asi-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "com.asi-chain.service=documentation"
+      - "com.asi-chain.description=ASI Chain Documentation Site"
+      - "com.asi-chain.version=1.0.0"
+
+networks:
+  asi-network:
+    external: true
+    name: asi-network

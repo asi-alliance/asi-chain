@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { RootState } from 'store';
 import { Card, CardHeader, CardTitle, CardContent, Button } from 'components';
 import TransactionHistoryService, { Transaction, TransactionFilter } from 'services/transactionHistory';
+import { RChainService } from 'services/rchain';
 
 const HistoryContainer = styled.div`
   max-width: 1200px;
@@ -197,6 +198,55 @@ export const History: React.FC = () => {
   const [stats, setStats] = useState<any>({});
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
+  const checkPendingTransactionStatuses = useCallback(async () => {
+    if (!selectedNetwork) return;
+    
+    console.log('[History] Checking pending transaction statuses...');
+    
+    // Create RChain service instance
+    const rchain = new RChainService(
+      selectedNetwork.url,
+      selectedNetwork.readOnlyUrl,
+      selectedNetwork.adminUrl,
+      selectedNetwork.shardId,
+      selectedNetwork.graphqlUrl
+    );
+    
+    // Get all pending transactions
+    const pendingTxs = TransactionHistoryService.getFilteredTransactions({
+      status: 'pending'
+    });
+    
+    console.log(`[History] Found ${pendingTxs.length} pending transactions to check`);
+    
+    // Check status for each pending transaction
+    for (const tx of pendingTxs) {
+      if (tx.deployId) {
+        try {
+          console.log(`[History] Checking status for deploy ${tx.deployId}`);
+          // Use shorter timeout for status checks
+          const result = await rchain.waitForDeployResult(tx.deployId, 1);
+          
+          if (result.status === 'completed') {
+            console.log(`[History] Deploy ${tx.deployId} is now confirmed!`);
+            TransactionHistoryService.updateTransaction(tx.id, {
+              status: 'confirmed',
+              blockHash: result.blockHash
+            });
+          } else if (result.status === 'errored') {
+            console.log(`[History] Deploy ${tx.deployId} failed`);
+            TransactionHistoryService.updateTransaction(tx.id, {
+              status: 'failed'
+            });
+          }
+        } catch (error) {
+          // Still pending or error checking, leave as is
+          console.log(`[History] Deploy ${tx.deployId} still pending or error checking`);
+        }
+      }
+    }
+  }, [selectedNetwork]);
+
   const loadTransactions = useCallback(() => {
     let txs: Transaction[];
     
@@ -232,18 +282,25 @@ export const History: React.FC = () => {
 
   useEffect(() => {
     loadTransactions();
-  }, [loadTransactions]);
+    // Check pending transaction statuses on load
+    checkPendingTransactionStatuses().then(() => {
+      // Reload transactions after status updates
+      loadTransactions();
+    });
+  }, [loadTransactions, checkPendingTransactionStatuses]);
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       console.log('[History] Auto-refreshing transactions...');
-      loadTransactions();
-      setLastRefresh(new Date());
+      checkPendingTransactionStatuses().then(() => {
+        loadTransactions();
+        setLastRefresh(new Date());
+      });
     }, 30000); // 30 seconds
 
     return () => clearInterval(interval);
-  }, [loadTransactions]);
+  }, [loadTransactions, checkPendingTransactionStatuses]);
 
   const handleExportJSON = () => {
     TransactionHistoryService.downloadTransactions('json');
@@ -289,7 +346,9 @@ export const History: React.FC = () => {
               <Button 
                 size="small" 
                 variant="ghost" 
-                onClick={() => {
+                onClick={async () => {
+                  console.log('[History] Manual refresh triggered');
+                  await checkPendingTransactionStatuses();
                   loadTransactions();
                   setLastRefresh(new Date());
                 }}

@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  asi-wallet:
+    build: .
+    container_name: asi-wallet-v2
+    ports:
+      - "3000:80"
+    environment:
+      # WalletConnect Project ID
+      - REACT_APP_WALLETCONNECT_PROJECT_ID=${WALLETCONNECT_PROJECT_ID:-4c8ec18817ffbbce4b824f14928d0f8b}
+      
+      # F1R3FLY Network Configuration (Current AWS Lightsail - Singapore)
+      - REACT_APP_RCHAIN_HTTP_URL=${RCHAIN_HTTP_URL:-http://13.251.66.61:40413}
+      - REACT_APP_RCHAIN_GRPC_URL=${RCHAIN_GRPC_URL:-http://13.251.66.61:40412}
+      - REACT_APP_RCHAIN_READONLY_URL=${RCHAIN_READONLY_URL:-http://13.251.66.61:40453}
+      
+      # GraphQL/Indexer endpoints (Current AWS Lightsail - Singapore)
+      - REACT_APP_GRAPHQL_URL=${GRAPHQL_URL:-http://13.251.66.61:8080/v1/graphql}
+      - REACT_APP_INDEXER_API_URL=${INDEXER_API_URL:-http://13.251.66.61:9090}
+      
+      # Network settings
+      - REACT_APP_NETWORK_NAME=F1R3FLY Network
+      - REACT_APP_NETWORK_ID=f1r3fly-mainnet
+      
+      # Performance optimizations
+      - REACT_APP_BALANCE_POLLING_INTERVAL=30000
+      - REACT_APP_DEPLOY_STATUS_POLLING_INTERVAL=5000
+    
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    restart: unless-stopped
+    
+    # If you need to connect to RChain nodes in a Docker network:
+    # networks:
+    #   - rchain-network
+
+# If connecting to RChain Docker network:
+# networks:
+#   rchain-network:
+#     external: true
+#     name: node_rchain-network

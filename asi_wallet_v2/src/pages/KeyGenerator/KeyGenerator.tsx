@@ -240,11 +240,11 @@ export const KeyGenerator: React.FC = () => {
       <h2>Key Generator</h2>
       
       <InfoBox>
-        <h4>🔑 About Keys</h4>
+        <h4>About Keys</h4>
         <p>
           Generate new keypairs or derive addresses from existing private keys. 
           The ETH address is compatible with MetaMask and all Ethereum wallets. 
-          The REV address is specific to the RChain/Firefly network.
+          The REV address is specific to the RChain network.
         </p>
       </InfoBox>
 

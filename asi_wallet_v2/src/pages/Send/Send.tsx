@@ -349,13 +349,22 @@ export const Send: React.FC = () => {
       return false;
     }
     
+    // Issue #32: Prevent self-transfers
+    if (selectedAccount && recipient.toLowerCase() === selectedAccount.address.toLowerCase()) {
+      setValidationError('Cannot send to the same address (self-transfer not allowed)');
+      return false;
+    }
+    
     if (!amount.trim() || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
       setValidationError('Valid amount is required');
       return false;
     }
     
-    if (parseFloat(amount) > parseFloat(selectedAccount?.balance || '0')) {
-      setValidationError('Insufficient balance');
+    // Issue #31: Account for gas fees in balance check
+    const estimatedGas = 0.001; // Estimated gas fee
+    const totalRequired = parseFloat(amount) + estimatedGas;
+    if (totalRequired > parseFloat(selectedAccount?.balance || '0')) {
+      setValidationError(`Insufficient balance. Need ${totalRequired.toFixed(4)} REV (including gas)`);
       return false;
     }
     
@@ -437,10 +446,18 @@ export const Send: React.FC = () => {
   };
 
   const maxAmount = () => {
+    // Issue #31: Properly calculate max amount accounting for gas
     const balance = parseFloat(selectedAccount?.balance || '0');
-    const fee = 0.001; // Estimated fee
-    const max = Math.max(0, balance - fee);
-    setAmount(max.toString());
+    const estimatedGas = 0.001; // Estimated gas fee
+    const max = Math.max(0, balance - estimatedGas);
+    
+    if (max <= 0) {
+      setValidationError('Insufficient balance to cover gas fees');
+      setAmount('0');
+    } else {
+      setAmount(max.toFixed(8)); // Use 8 decimal precision
+      setValidationError('');
+    }
   };
 
   if (!selectedAccount) {
@@ -535,7 +552,7 @@ export const Send: React.FC = () => {
                   onClick={handlePasteImage}
                   title="Paste QR Code from Clipboard"
                 >
-                  📋
+                  Paste
                 </ScanButton>
               </ButtonGroup>
             </InputWithButton>
@@ -545,7 +562,7 @@ export const Send: React.FC = () => {
               </div>
             )}
             <div style={{ marginTop: '4px', fontSize: '12px', color: '#666' }}>
-              Tip: Copy a QR code image and paste it directly in the field or click the 📋 button
+              Tip: Copy a QR code image and paste it directly in the field or click the Paste button
             </div>
           </FormGroup>
 

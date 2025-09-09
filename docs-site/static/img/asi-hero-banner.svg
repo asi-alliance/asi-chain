@@ -1,0 +1,87 @@
+<svg width="1200" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- ASI Green gradient -->
+    <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7FD67A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A8E6A3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C4F0C1;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Mesh gradient effect -->
+    <radialGradient id="mesh1">
+      <stop offset="0%" style="stop-color:#C4F0C1;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#C4F0C1;stop-opacity:0" />
+    </radialGradient>
+    
+    <radialGradient id="mesh2">
+      <stop offset="0%" style="stop-color:#7FD67A;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#7FD67A;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background gradient -->
+  <rect width="1200" height="300" fill="url(#heroGradient)"/>
+  
+  <!-- Mesh overlay for depth -->
+  <circle cx="200" cy="100" r="200" fill="url(#mesh1)" opacity="0.6">
+    <animate attributeName="r" values="200;250;200" dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="1000" cy="200" r="250" fill="url(#mesh2)" opacity="0.5">
+    <animate attributeName="r" values="250;300;250" dur="12s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Subtle grid pattern -->
+  <pattern id="grid" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+    <line x1="0" y1="0" x2="0" y2="50" stroke="#1A1A1A" stroke-width="0.5" opacity="0.05"/>
+    <line x1="0" y1="0" x2="50" y2="0" stroke="#1A1A1A" stroke-width="0.5" opacity="0.05"/>
+  </pattern>
+  <rect width="1200" height="300" fill="url(#grid)"/>
+  
+  <!-- Title Text - Centered -->
+  <text x="600" y="130" text-anchor="middle" font-family="Inter, sans-serif" font-size="72" font-weight="800" fill="#1A1A1A" letter-spacing="-2">
+    ASI Chain
+  </text>
+  
+  <!-- Tagline - Centered -->
+  <text x="600" y="180" text-anchor="middle" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#1A1A1A" opacity="0.85">
+    Blockchain Infrastructure for Decentralized AI
+  </text>
+  
+  <!-- Animated particles -->
+  <g id="particles">
+    <circle r="2" fill="#1A1A1A" opacity="0.3">
+      <animate attributeName="opacity" values="0;0.3;0" dur="4s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" 
+        values="300,250; 350,200; 400,250" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="2" fill="#1A1A1A" opacity="0.3">
+      <animate attributeName="opacity" values="0;0.3;0" dur="4s" begin="1s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" 
+        values="500,250; 550,200; 600,250" dur="4s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="2" fill="#7FD67A" opacity="0.4">
+      <animate attributeName="opacity" values="0;0.4;0" dur="4s" begin="2s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" 
+        values="700,250; 750,200; 800,250" dur="4s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="2" fill="#A8E6A3" opacity="0.35">
+      <animate attributeName="opacity" values="0;0.35;0" dur="4s" begin="3s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" 
+        values="900,250; 950,200; 1000,250" dur="4s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Status indicators -->
+  <g transform="translate(475, 220)">
+    <rect x="0" y="-15" width="250" height="30" rx="15" fill="#1A1A1A" opacity="0.1"/>
+    <circle cx="20" cy="0" r="4" fill="#7FD67A">
+      <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="35" y="4" font-family="Inter, sans-serif" font-size="14" fill="#1A1A1A">Network Active • v0.1.0-alpha</text>
+  </g>
+  
+  <!-- ASI Alliance members - Bottom -->
+  <g transform="translate(600, 260)" opacity="0.7">
+    <text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#1A1A1A">Fetch.ai • SingularityNET • Ocean Protocol • CUDOS</text>
+  </g>
+</svg>

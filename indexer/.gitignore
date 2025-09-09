@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Debug and test files
+debug_*.py
+test_*.py
+*_test.py
+deploy_test.*
+
+# Logs
+*.log
+deployment.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Binary files
+node_cli_*
+*.bin
+
+# Temporary files
+temp/
+*.tmp
+*.bak
+
+# IDE
+.vscode/
+.idea/

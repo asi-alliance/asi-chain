@@ -37,6 +37,7 @@ export interface Network {
   url: string;
   readOnlyUrl?: string;
   adminUrl?: string;
+  graphqlUrl?: string;
   shardId?: string;
 }
 

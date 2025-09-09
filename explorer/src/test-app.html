@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Explorer Debug</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>ASI Chain Explorer Debugging</h1>
+    <div id="status"></div>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        async function testExplorer() {
+            // Test 1: Check if dev server responds
+            try {
+                const response = await fetch('http://localhost:3002');
+                const html = await response.text();
+                if (html.includes('root')) {
+                    status.innerHTML += '<p class="success">✓ Dev server responding</p>';
+                }
+            } catch (e) {
+                status.innerHTML += '<p class="error">✗ Dev server error: ' + e + '</p>';
+            }
+            
+            // Test 2: Check GraphQL
+            try {
+                const graphqlResponse = await fetch('http://localhost:8080/v1/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-hasura-admin-secret': 'myadminsecretkey'
+                    },
+                    body: JSON.stringify({
+                        query: '{ blocks_aggregate { aggregate { count } } }'
+                    })
+                });
+                const data = await graphqlResponse.json();
+                if (data.data) {
+                    status.innerHTML += '<p class="success">✓ GraphQL working - ' + data.data.blocks_aggregate.aggregate.count + ' blocks</p>';
+                }
+            } catch (e) {
+                status.innerHTML += '<p class="error">✗ GraphQL error: ' + e + '</p>';
+            }
+            
+            // Test 3: Check if JavaScript bundle loads
+            try {
+                const jsResponse = await fetch('http://localhost:3002/static/js/bundle.js');
+                if (jsResponse.ok) {
+                    status.innerHTML += '<p class="success">✓ JavaScript bundle loads</p>';
+                }
+            } catch (e) {
+                status.innerHTML += '<p class="error">✗ JS bundle error: ' + e + '</p>';
+            }
+            
+            // Show what might be wrong
+            status.innerHTML += '<h3>Common Issues:</h3>';
+            status.innerHTML += '<ul>';
+            status.innerHTML += '<li>If page is blank but console shows React DevTools message = React is running but may have a render error</li>';
+            status.innerHTML += '<li>Check browser console for specific React errors</li>';
+            status.innerHTML += '<li>The 500 error on hot-update.json is harmless (webpack hot reload issue)</li>';
+            status.innerHTML += '</ul>';
+            
+            // Try to load in iframe
+            status.innerHTML += '<h3>Explorer Preview (if it loads):</h3>';
+            status.innerHTML += '<iframe src="http://localhost:3002" width="100%" height="600" style="border:1px solid #ccc;"></iframe>';
+        }
+        
+        testExplorer();
+    </script>
+</body>
+</html>

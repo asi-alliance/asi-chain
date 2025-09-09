@@ -1,0 +1,953 @@
+/* ASI-Chain Block Explorer - ASI Wallet v2 Brand Styles */
+
+/* Import Inter font to match ASI Wallet v2 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+/* Color Variables - ASI Wallet v2 Brand Guide */
+:root {
+    /* Primary Colors - Same for both themes */
+    --asi-lime: #93E27C;
+    --asi-lime-dark: #82C96D;
+    --asi-pulse-blue: #33E4FF;
+    --asi-pulse-blue-dark: #00B8D4;
+    
+    /* Core Colors - Dark Mode (Default) */
+    --deep-space: #0D1012;
+    --charcoal-700: #1B1F21;
+    --charcoal-500: #272B2E;
+    
+    /* Text Colors - Dark Mode */
+    --off-white: #F7F9FA;
+    --text-secondary: #b8b8b8;
+    --text-tertiary: #757575;
+    
+    /* Status Colors */
+    --alert-red: #FF4D4F;
+    --warning-orange: #FFB84D;
+    
+    /* Borders and Effects - Dark Mode */
+    --border-color: #272B2E;
+    --border-light: rgba(255, 255, 255, 0.1);
+    --shadow: 0 1px 4px rgba(0, 0, 0, 0.32);
+    --shadow-large: 0 4px 12px rgba(0, 0, 0, 0.36);
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+}
+
+/* Global Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    background: var(--deep-space);
+    color: var(--off-white);
+    line-height: 1.5;
+    font-weight: 400;
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-xl);
+}
+
+/* Typography - ASI Wallet v2 Scale */
+h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    color: var(--off-white);
+}
+
+h2 {
+    font-size: 2.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.25rem;
+    color: var(--off-white);
+}
+
+h3 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    color: var(--off-white);
+}
+
+p {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+/* ASI Wallet v2 Card Component */
+.asi-card {
+    background: var(--charcoal-700);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--spacing-lg);
+}
+
+.asi-card.glass {
+    background: rgba(27, 31, 33, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-light);
+}
+
+.asi-card:hover.hoverable {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-large);
+}
+
+/* Table Styles - ASI Wallet v2 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--spacing-md);
+    background-color: var(--charcoal-700);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th {
+    background-color: var(--charcoal-500);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--text-secondary);
+    padding: var(--spacing-md) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+td {
+    padding: var(--spacing-md) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--off-white);
+    font-size: 16px;
+    line-height: 26px;
+}
+
+tbody tr {
+    transition: all 0.2s ease;
+}
+
+tbody tr:hover {
+    background-color: rgba(147, 226, 124, 0.05);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Navigation Tabs - ASI Wallet v2 Style */
+.nav-tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0;
+}
+
+.nav-tab {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    text-decoration: none;
+}
+
+.nav-tab:hover {
+    color: var(--off-white);
+}
+
+.nav-tab.active {
+    color: var(--asi-lime);
+    border-bottom-color: var(--asi-lime);
+}
+
+/* Hash/Address Display - Monospace */
+.hash-cell, .mono {
+    font-family: 'Fira Mono', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.hash-cell {
+    max-width: 600px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hash-cell a {
+    color: var(--asi-pulse-blue);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.hash-cell a:hover {
+    color: var(--asi-pulse-blue-dark);
+    text-decoration: underline;
+}
+
+.hash-cell:hover {
+    overflow: visible;
+    white-space: normal;
+    word-break: break-all;
+}
+
+/* Links */
+a {
+    color: var(--asi-lime);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+a:hover {
+    opacity: 0.8;
+}
+
+/* Buttons - ASI Wallet v2 Style */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    letter-spacing: -0.01em;
+    padding: 12px 24px;
+    font-size: 16px;
+    line-height: 24px;
+    box-shadow: var(--shadow);
+}
+
+.btn:hover:not(:disabled) {
+    box-shadow: var(--shadow-large);
+    transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.btn-primary {
+    background: var(--asi-lime);
+    color: var(--deep-space);
+    font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--asi-lime-dark);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--asi-lime);
+    border: 2px solid var(--asi-lime);
+    box-shadow: none;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: rgba(147, 226, 124, 0.12);
+}
+
+/* Input Fields - ASI Wallet v2 Style */
+input, textarea, select {
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 26px;
+    background: var(--charcoal-500);
+    color: var(--off-white);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+    outline: none;
+    width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--asi-lime);
+    background: var(--charcoal-700);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-tertiary);
+}
+
+/* Code/Monospace Text */
+code, .code {
+    font-family: 'Fira Mono', monospace;
+    background: var(--charcoal-500);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--off-white);
+}
+
+/* Block Number Styling */
+.block-number {
+    font-weight: 600;
+    color: var(--asi-lime);
+}
+
+/* Timestamp Styling */
+.timestamp {
+    font-size: 14px;
+    color: var(--text-tertiary);
+}
+
+/* Status Messages */
+.status-message {
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-md);
+    font-weight: 500;
+}
+
+.status-message.info {
+    background-color: rgba(51, 228, 255, 0.1);
+    border: 1px solid var(--asi-pulse-blue);
+    color: var(--asi-pulse-blue);
+}
+
+.status-message.success {
+    background-color: rgba(147, 226, 124, 0.1);
+    border: 1px solid var(--asi-lime);
+    color: var(--asi-lime);
+}
+
+.status-message.error {
+    background-color: rgba(255, 77, 79, 0.1);
+    border: 1px solid var(--alert-red);
+    color: var(--alert-red);
+}
+
+/* Loading State - ASI Wallet v2 Style */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid transparent;
+    border-top-color: var(--asi-lime);
+    border-right-color: var(--asi-lime);
+    border-radius: 50%;
+    animation: spin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    filter: drop-shadow(0 0 2px rgba(147, 226, 124, 0.4));
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Glass Morphism Effect - Dark Mode */
+.glass {
+    background: rgba(27, 31, 33, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure proper text colors for glass cards */
+.glass h3 {
+    color: var(--off-white);
+    font-weight: 600;
+}
+
+.glass p {
+    color: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-muted { color: var(--text-secondary); }
+.text-success { color: var(--asi-lime); }
+.text-error { color: var(--alert-red); }
+.text-warning { color: var(--warning-orange); }
+.text-info { color: var(--asi-pulse-blue); }
+
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .container {
+        padding: var(--spacing-md) var(--spacing-md);
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    h2 {
+        font-size: 2rem;
+    }
+    
+    h3 {
+        font-size: 1.5rem;
+    }
+    
+    table {
+        font-size: 14px;
+    }
+    
+    th, td {
+        padding: var(--spacing-sm) var(--spacing-sm);
+    }
+    
+    .hash-cell {
+        max-width: 150px;
+    }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--charcoal-700);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+
+/* Selection Styling */
+::selection {
+    background: var(--asi-lime);
+    color: var(--deep-space);
+}
+
+/* Focus Styles */
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--asi-lime);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Search Box */
+.search-box {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.search-box input {
+    flex: 1;
+}
+
+/* Summary Card Grid */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Header Layout */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.header-right {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+/* Logo styling */
+.asi-logo {
+    height: 45px;
+    width: auto;
+}
+
+/* Inverted logo for dark theme */
+.asi-logo-inverted {
+    filter: invert(1) brightness(1.2) contrast(1.1);
+    transition: filter 0.3s ease;
+}
+
+.asi-logo-inverted:hover {
+    filter: invert(1) brightness(1.4) contrast(1.2);
+}
+
+/* Network Status */
+.network-status {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--asi-lime);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    box-shadow: 0 0 0 0 rgba(147, 226, 124, 0.4);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(147, 226, 124, 0.4);
+    }
+    50% {
+        opacity: 0.8;
+        box-shadow: 0 0 0 8px rgba(147, 226, 124, 0);
+    }
+}
+
+/* Wallet Search Card */
+.wallet-search-card {
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, var(--charcoal-500) 0%, rgba(39, 43, 46, 0.8) 100%);
+}
+
+.wallet-search-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.wallet-search-info {
+    flex: 1;
+}
+
+.wallet-search-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--asi-lime);
+}
+
+.wallet-search-info p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.wallet-search-controls {
+    display: flex;
+    gap: 1rem;
+    flex: 2;
+    max-width: 600px;
+}
+
+.wallet-search-controls input {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--deep-space);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--off-white);
+    font-family: 'SF Mono', monospace;
+    font-size: 14px;
+}
+
+/* Section Card Header */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.section-header h2 {
+    margin: 0;
+}
+
+.section-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Pagination */
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-info input {
+    width: 60px;
+    text-align: center;
+}
+
+/* Deployment/Transaction Styles */
+.deployment-item {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.deployment-item dl {
+    margin: 0;
+}
+
+.deployment-item dt {
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.deployment-item dd {
+    margin: 0.25rem 0 0.5rem 0;
+}
+
+.deployment-item pre {
+    white-space: pre;
+    word-wrap: normal;
+    max-width: 100%;
+    overflow-x: auto;
+    font-family: 'Fira Mono', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+}
+
+.deployment-item pre code {
+    display: block;
+    color: var(--asi-lime);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.deployment-item details {
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.75rem;
+}
+
+.deployment-item details summary {
+    outline: none;
+    user-select: none;
+    font-weight: 500;
+    padding: 0.25rem 0;
+}
+
+.deployment-item details summary:hover {
+    text-decoration: underline;
+}
+
+.deployment-item details[open] summary {
+    margin-bottom: 0.5rem;
+    color: var(--asi-lime);
+}
+
+/* Wallet Search Container */
+.wallet-search-container {
+    background: linear-gradient(135deg, var(--charcoal-500) 0%, rgba(39, 43, 46, 0.8) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow);
+}
+
+/* Wallet Balance Modal - ASI Wallet v2 Theme */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+    max-width: 700px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: var(--charcoal-700);
+    border: 1px solid var(--border-light);
+    animation: modalSlideIn 0.3s ease-out;
+    position: relative;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, var(--charcoal-500) 0%, rgba(39, 43, 46, 0.8) 100%);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    color: var(--off-white);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-body {
+    padding: var(--spacing-lg);
+}
+
+.wallet-info {
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-sm);
+}
+
+.label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.address-display {
+    width: 100%;
+}
+
+.address-text {
+    display: block;
+    width: 100%;
+    padding: var(--spacing-sm);
+    background: var(--deep-space);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: 'Fira Mono', monospace;
+    font-size: 12px;
+    word-break: break-all;
+    line-height: 1.4;
+}
+
+.balance-section {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-lg);
+}
+
+.balance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
+}
+
+.balance-item:last-child {
+    margin-bottom: 0;
+}
+
+.balance-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.balance-value {
+    font-family: 'Fira Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.transactions-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+.transactions-table {
+    margin-top: var(--spacing-md);
+}
+
+.transactions-table table {
+    background: var(--charcoal-500);
+}
+
+.transactions-table th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-tertiary);
+}
+
+.transactions-table td {
+    font-size: 14px;
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.transactions-table code {
+    background: var(--deep-space);
+    border: 1px solid var(--border-color);
+    font-size: 11px;
+}
+
+/* Mobile Responsiveness for Modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: var(--spacing-md);
+        max-height: 90vh;
+    }
+    
+    .modal-header, .modal-body {
+        padding: var(--spacing-md);
+    }
+    
+    .balance-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+    
+    .balance-value {
+        font-size: 16px;
+    }
+    
+    .address-text {
+        font-size: 11px;
+    }
+    
+    .info-row {
+        margin-bottom: var(--spacing-sm);
+    }
+}

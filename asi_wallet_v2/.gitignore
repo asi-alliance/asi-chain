@@ -1,1 +1,52 @@
+# Dependencies
 node_modules
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Test and debug files
+debug-*.js
+test-*.js
+test-*.html
+*-test.*
+*.test.*
+clear-all-wc.js
+fix-walletconnect-*.js
+reset-walletconnect.sh
+
+# Coverage reports
+/coverage
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+/build
+/dist
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+temp/
+*.tmp
+*.bak

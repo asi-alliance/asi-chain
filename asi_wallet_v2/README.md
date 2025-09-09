@@ -19,6 +19,33 @@ Quick links:
 - **[WalletConnect](../docs/WALLET.md#walletconnect-integration)** - dApp connectivity
 - **[Development](../docs/WALLET.md#development)** - Contributing guide
 
+## 🐳 Docker Quick Start
+
+Run the wallet instantly with Docker:
+
+```bash
+# Easy start script (recommended)
+./start-wallet.sh
+
+# Or manual start
+docker-compose up -d
+
+# Access at http://localhost:3000
+```
+
+The `start-wallet.sh` script provides automatic image building, health checking, and helpful status information.
+
+## 🌐 Production Deployment
+
+ASI Wallet v2 is currently deployed on AWS Lightsail:
+
+- **Live Wallet**: http://13.251.66.61:3000
+- **Region**: Singapore (ap-southeast-1) for optimal F1R3FLY network performance
+- **Infrastructure**: Docker containerization with nginx, health checks, and auto-restart
+- **Network**: Connected to F1R3FLY blockchain nodes running on the same server
+
+For detailed deployment instructions, see [AWS_LIGHTSAIL_WALLET_DEPLOYMENT.md](../AWS_LIGHTSAIL_WALLET_DEPLOYMENT.md).
+
 ## 🚀 Key Features
 
 ### 100% Client-Side Architecture
@@ -78,12 +105,12 @@ Quick links:
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/F1R3FLY-io/f1r3fly/
-cd f1r3fly/asi-chain/asi_wallet_v2
+# Clone the repository (GitLab)
+git clone https://github.com/asi-alliance/asi-chain.git
+cd asi-chain/asi_wallet_v2
 
-# Install dependencies (~1,900+ packages)
-npm install
+# Install dependencies with legacy peer deps flag
+npm install --legacy-peer-deps
 
 # Set up environment variables
 cp .env.example .env
@@ -93,6 +120,8 @@ cp .env.example .env
 # Start development server
 npm start
 ```
+
+> **Important**: Use `npm install --legacy-peer-deps` to handle peer dependency conflicts
 
 The wallet will be available at [http://localhost:3000](http://localhost:3000).
 
@@ -130,7 +159,27 @@ The production build will be in the `build/` directory, ready for deployment to 
 - Test thoroughly with your specific RChain network configuration
 - Generate your own WalletConnect Project ID for production use
 
-### Recent Updates (July 2025)
+### Recent Updates (September 2025)
+- **Deployed**: Production wallet on AWS Lightsail Singapore (http://13.251.66.61:3000)
+- **Fixed**: Balance caching performance issue - eliminated excessive API calls
+- **Added**: Global balance caching system with 15-second TTL
+- **Improved**: RChain service efficiency with cross-instance caching
+- **Enhanced**: Console logging for cache hit/miss monitoring
+- **Updated**: Network configuration to use Singapore server endpoints (13.251.66.61)
+- **Created**: Comprehensive AWS Lightsail deployment documentation
+- **Improved**: Start script with health checking and current network info
+- **Cleaned**: Workspace organization - moved non-essential files to archive
+
+### Previous Updates (August 2025)
+- **Fixed**: Webpack module resolution for `process/browser` polyfill
+- **Fixed**: TypeScript theme typing with styled-components
+- **Fixed**: QRCode import to use named export from react-qr-code
+- **Added**: Missing SecureStorage static methods for storage operations
+- **Added**: Type declarations for speakeasy and validator modules
+- **Removed**: Unused backend code (rateLimiter.ts) from frontend
+- **Updated**: Installation instructions to use `--legacy-peer-deps`
+
+### Previous Updates (July 2025)
 - **Fixed**: Network settings persistence issue (#12) - Custom networks now save correctly
 - **Added**: Comprehensive test suite with 62.88% store coverage
 - **Improved**: Build configuration to exclude test files from production
@@ -236,6 +285,12 @@ npm run type-check    # TypeScript checking
 npm run build         # Production build
 npm run analyze       # Bundle analysis
 
+# Docker Operations
+./start-wallet.sh     # Start wallet with Docker (recommended)
+docker-compose up -d  # Start Docker container manually
+docker-compose down   # Stop Docker container
+docker-compose build --no-cache  # Rebuild Docker image
+
 # Testing
 npm test -- --watchAll=false         # Run all tests once
 npm test -- --coverage --watchAll=false  # Generate coverage report
@@ -283,6 +338,8 @@ npm run deploy:ipfs   # Deploy to IPFS
 - ✅ Separate read/write operations
 - ✅ Network-specific configurations
 - ✅ Connection retry logic
+- ✅ Global balance caching (15s TTL)
+- ✅ Reduced API call frequency
 
 ## 🧪 Testing
 
@@ -365,7 +422,15 @@ This project is licensed under the MIT License.
 ### Installation Issues
 - **Memory error during build**: `export NODE_OPTIONS=--max_old_space_size=4096`
 - **Port already in use**: Kill the process using port 3000 or use `PORT=3001 npm start`
-- **Dependencies won't install**: Delete `node_modules` and `package-lock.json`, then retry
+- **Dependencies won't install**: Delete `node_modules` and `package-lock.json`, then retry with `npm install --legacy-peer-deps`
+- **Module resolution errors**: Ensure `config-overrides.js` has proper webpack polyfills
+- **TypeScript errors**: Check `src/types/modules.d.ts` for missing type declarations
+
+### Docker Issues  
+- **Docker not running**: Ensure Docker Desktop is started before running `./start-wallet.sh`
+- **Container won't start**: Try `docker-compose down` then `./start-wallet.sh` for a clean restart
+- **Build fails**: Use `docker-compose build --no-cache` to force rebuild
+- **Health check failing**: Wait 30-60 seconds after container start for full initialization
 
 ### Runtime Issues
 - **Blank screen**: Check browser console for errors, ensure JavaScript is enabled

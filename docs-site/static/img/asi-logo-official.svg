@@ -1,0 +1,27 @@
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Official ASI Alliance Logo -->
+  <g fill="none">
+    <!-- Logo Mark - ASI symbol with connecting nodes -->
+    <g transform="translate(4, 8)">
+      <!-- Center circle -->
+      <circle cx="12" cy="12" r="3" fill="#1A1A1A"/>
+      
+      <!-- Outer connecting nodes -->
+      <circle cx="12" cy="2" r="4" fill="#1A1A1A"/>
+      <circle cx="12" cy="22" r="4" fill="#1A1A1A"/>
+      <circle cx="2" cy="12" r="4" fill="#1A1A1A"/>
+      <circle cx="22" cy="12" r="4" fill="#1A1A1A"/>
+      
+      <!-- Corner nodes -->
+      <circle cx="5" cy="5" r="3.5" fill="#1A1A1A"/>
+      <circle cx="19" cy="5" r="3.5" fill="#1A1A1A"/>
+      <circle cx="5" cy="19" r="3.5" fill="#1A1A1A"/>
+      <circle cx="19" cy="19" r="3.5" fill="#1A1A1A"/>
+    </g>
+    
+    <!-- Text -->
+    <text x="35" y="26" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600" fill="#1A1A1A">
+      ASI Chain
+    </text>
+  </g>
+</svg>

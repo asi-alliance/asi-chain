@@ -4,8 +4,11 @@ import styled from 'styled-components';
 import { RootState } from 'store';
 import { updateNetwork, addNetwork } from 'store/walletSlice';
 import { Card, CardHeader, CardTitle, CardContent, Button, Input } from 'components';
+// import { HardwareWalletModal } from 'components'; // Hidden for now
 import { Network } from 'types/wallet';
 import { CustomNetworkConfig } from './CustomNetworkConfig';
+// import { useAppSelector } from 'store/hooks'; // Hidden for now
+// import { selectHardwareWalletState, disconnectHardwareWallet } from 'store/hardwareWalletSlice'; // Hidden for now
 
 const SettingsContainer = styled.div`
   max-width: 800px;
@@ -63,8 +66,10 @@ const ActionButtons = styled.div`
 export const Settings: React.FC = () => {
   const dispatch = useDispatch();
   const { networks, selectedNetwork } = useSelector((state: RootState) => state.wallet);
+  // const hardwareWalletState = useAppSelector(selectHardwareWalletState); // Hidden for now
   const [editingNetwork, setEditingNetwork] = useState<Network | null>(null);
   const [isCustomNetwork, setIsCustomNetwork] = useState(false);
+  // const [showHardwareWalletModal, setShowHardwareWalletModal] = useState(false); // Hidden for now
 
   const handleEditNetwork = (network: Network) => {
     setEditingNetwork({ ...network });
@@ -109,9 +114,77 @@ export const Settings: React.FC = () => {
     }
   };
 
+  // Hardware wallet handlers - Hidden for now
+  // const handleConnectHardwareWallet = () => {
+  //   setShowHardwareWalletModal(true);
+  // };
+
+  // const handleDisconnectHardwareWallet = () => {
+  //   dispatch(disconnectHardwareWallet() as any);
+  // };
+
+  // const handleHardwareWalletAccountSelected = (account: any) => {
+  //   // Handle account selection if needed
+  //   console.log('Hardware wallet account selected:', account);
+  // };
+
   return (
     <SettingsContainer>
-      <h2>Network Settings</h2>
+      <h2>Wallet Settings</h2>
+      
+      {/* Hardware Wallet Section - Hidden for now */}
+      {/* <NetworkCard>
+        <CardHeader>
+          <CardTitle>Hardware Wallet</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {hardwareWalletState.isConnected ? (
+            <>
+              <FormGroup>
+                <Label>Connected Device</Label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>{hardwareWalletState.connectedDevice}</span>
+                  <StatusIndicator status="online" />
+                </div>
+              </FormGroup>
+              {hardwareWalletState.selectedAccount && (
+                <FormGroup>
+                  <Label>Active Account</Label>
+                  <div style={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>
+                    {hardwareWalletState.selectedAccount.address}
+                  </div>
+                  <HelpText>
+                    Derivation path: {hardwareWalletState.selectedAccount.derivationPath}
+                  </HelpText>
+                </FormGroup>
+              )}
+              <ActionButtons>
+                <Button variant="secondary" onClick={handleDisconnectHardwareWallet}>
+                  Disconnect
+                </Button>
+                <Button variant="primary" onClick={handleConnectHardwareWallet}>
+                  Switch Account
+                </Button>
+              </ActionButtons>
+            </>
+          ) : (
+            <>
+              <FormGroup>
+                <Label>Status</Label>
+                <div>No hardware wallet connected</div>
+                <HelpText>
+                  Connect your Ledger or Trezor device to use hardware wallet features for enhanced security.
+                </HelpText>
+              </FormGroup>
+              <Button variant="primary" onClick={handleConnectHardwareWallet}>
+                Connect Hardware Wallet
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </NetworkCard> */}
+
+      <h3 style={{ marginTop: '20px', marginBottom: '20px' }}>Network Settings</h3>
       
       {/* Custom Network Configuration Section */}
       <CustomNetworkConfig />
@@ -306,6 +379,13 @@ export const Settings: React.FC = () => {
           </CardContent>
         </NetworkCard>
       )}
+
+      {/* Hardware Wallet Modal - Hidden for now */}
+      {/* <HardwareWalletModal
+        isOpen={showHardwareWalletModal}
+        onClose={() => setShowHardwareWalletModal(false)}
+        onAccountSelected={handleHardwareWalletAccountSelected}
+      /> */}
     </SettingsContainer>
   );
 };

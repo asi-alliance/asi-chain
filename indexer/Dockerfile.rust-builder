@@ -1,0 +1,76 @@
+# Dockerfile that builds the Rust CLI from source
+FROM rust:latest as rust-builder
+
+# Install protobuf compiler for Rust build
+RUN apt-get update && apt-get install -y \
+    protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy rust-client source
+WORKDIR /rust-client
+COPY rust-client/Cargo.toml rust-client/Cargo.lock ./
+COPY rust-client/src ./src
+
+# Build the Rust CLI
+RUN cargo build --release
+
+# Python builder stage
+FROM python:3.11-slim as python-builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+WORKDIR /app
+COPY indexer/requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Runtime stage
+FROM python:3.11-slim
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -u 1000 indexer
+
+WORKDIR /app
+
+# Copy Python packages from builder
+COPY --from=python-builder /root/.local /home/indexer/.local
+
+# Copy Rust CLI from rust-builder
+COPY --from=rust-builder /rust-client/target/release/node_cli /usr/local/bin/node_cli
+RUN chmod +x /usr/local/bin/node_cli
+
+# Copy indexer source code
+COPY indexer/ .
+
+# Set ownership
+RUN chown -R indexer:indexer /app /home/indexer/.local
+
+# Switch to non-root user
+USER indexer
+
+# Set Python path
+ENV PYTHONPATH=/app
+ENV PATH="/home/indexer/.local/bin:${PATH}"
+ENV RUST_CLI_PATH=/usr/local/bin/node_cli
+
+# Expose monitoring port
+EXPOSE 9090
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:9090/health || exit 1
+
+# Run the indexer
+ENV PYTHONUNBUFFERED=1
+CMD ["python", "-m", "src.main"]

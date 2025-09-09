@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: asi-indexer-db
+    environment:
+      POSTGRES_DB: asichain
+      POSTGRES_USER: indexer
+      POSTGRES_PASSWORD: indexer_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations/000_comprehensive_initial_schema.sql:/docker-entrypoint-initdb.d/000_comprehensive_initial_schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U indexer -d asichain"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - indexer-network
+
+  indexer:
+    build: .
+    container_name: asi-indexer
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # RChain Node
+      NODE_URL: ${NODE_URL:-http://host.docker.internal:40453}
+      NODE_TIMEOUT: ${NODE_TIMEOUT:-30}
+      
+      # Rust CLI Configuration
+      RUST_CLI_PATH: ${RUST_CLI_PATH:-/app/node_cli_linux}
+      NODE_HOST: ${NODE_HOST:-localhost}
+      GRPC_PORT: ${GRPC_PORT:-40412}
+      HTTP_PORT: ${HTTP_PORT:-40413}
+      
+      # Database
+      DATABASE_URL: postgresql://indexer:indexer_pass@postgres:5432/asichain
+      DATABASE_POOL_SIZE: ${DATABASE_POOL_SIZE:-20}
+      
+      # Sync settings
+      SYNC_INTERVAL: ${SYNC_INTERVAL:-5}
+      BATCH_SIZE: ${BATCH_SIZE:-50}
+      START_FROM_BLOCK: ${START_FROM_BLOCK:-0}
+      
+      # Monitoring
+      MONITORING_PORT: 9090
+      
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_FORMAT: ${LOG_FORMAT:-json}
+      
+      # Features
+      ENABLE_REV_TRANSFER_EXTRACTION: ${ENABLE_REV_TRANSFER_EXTRACTION:-true}
+      ENABLE_METRICS: ${ENABLE_METRICS:-true}
+      ENABLE_HEALTH_CHECK: ${ENABLE_HEALTH_CHECK:-true}
+    ports:
+      - "9090:9090"  # Monitoring endpoints
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - indexer-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  hasura:
+    image: hasura/graphql-engine:v2.36.0
+    container_name: asi-hasura
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database connection
+      HASURA_GRAPHQL_DATABASE_URL: postgresql://indexer:indexer_pass@postgres:5432/asichain
+      
+      # Console and admin
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET:-myadminsecretkey}
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "public"
+      
+      # Performance and real-time optimization
+      HASURA_GRAPHQL_LIVE_QUERIES_MULTIPLEXED_REFETCH_INTERVAL: "500"
+      HASURA_GRAPHQL_LIVE_QUERIES_MULTIPLEXED_BATCH_SIZE: "100"
+      HASURA_GRAPHQL_STREAMING_QUERIES_MULTIPLEXED_REFETCH_INTERVAL: "500"
+      HASURA_GRAPHQL_STREAMING_QUERIES_MULTIPLEXED_BATCH_SIZE: "100"
+      
+      # Security and features
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+      HASURA_GRAPHQL_CORS_DOMAIN: "*"
+      HASURA_GRAPHQL_WS_READ_COOKIE: "false"
+      HASURA_GRAPHQL_STRINGIFY_NUMERIC_TYPES: "true"
+    restart: unless-stopped
+    networks:
+      - indexer-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  indexer-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
