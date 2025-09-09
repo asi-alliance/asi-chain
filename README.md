@@ -3,7 +3,7 @@
 # ASI Chain
 
 [![Status](https://img.shields.io/badge/Status-Production--Ready-7FD67A?style=for-the-badge)](https://github.com/asi-alliance/asi-chain)
-[![Version](https://img.shields.io/badge/Version-1.0.0--beta-A8E6A3?style=for-the-badge)](https://github.com/asi-alliance/asi-chain/releases)
+[![Version](https://img.shields.io/badge/Version-1.0.2-A8E6A3?style=for-the-badge)](https://github.com/asi-alliance/asi-chain/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-1A1A1A?style=for-the-badge)](LICENSE)
 [![Docs](https://img.shields.io/badge/Docs-Available-C4F0C1?style=for-the-badge)](docs-site/)
 
@@ -26,7 +26,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and operational blockchain explorer. Indexer deployed on AWS Lightsail (13.251.66.61) with full synchronization and GraphQL API.
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and operational blockchain explorer with resolved validator deduplication. Indexer deployed on AWS Lightsail (13.251.66.61) with full synchronization and GraphQL API. Explorer v1.0.2 fixes critical validator display issue (6→3 validators).
 
 ## ⚙️ Technical Architecture
 
@@ -242,10 +242,12 @@ asi-chain/
 │   ├── src/components/        # WalletConnect v2, Hardware wallets
 │   ├── src/services/          # Biometric auth, Multi-sig support
 │   └── src/store/             # Redux Toolkit state management
-├── 🌐 explorer/               # Blockchain Explorer (React 19, Apollo GraphQL)
+├── 🌐 explorer/               # Blockchain Explorer v1.0.2 (React 19, Apollo GraphQL)
 │   ├── src/components/        # Real-time data components
 │   ├── src/graphql/           # GraphQL queries and subscriptions
-│   └── src/pages/             # Block/transaction/validator pages
+│   ├── src/pages/             # Block/transaction/validator pages (validator deduplication fixed)
+│   ├── archive/               # Non-essential files moved for organization
+│   └── deploy-docker.sh       # Automated Docker deployment script
 ├── 📊 indexer/                # Advanced blockchain data indexer (v2.1.1)
 │   ├── src/                   # Python asyncio with Rust CLI integration
 │   ├── migrations/            # Single comprehensive schema (000_comprehensive)
