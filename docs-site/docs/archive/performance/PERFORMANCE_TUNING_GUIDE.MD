@@ -11,10 +11,10 @@ This guide provides comprehensive performance optimization strategies for the F1
 | Metric | Current Value | Target Value | Status |
 |--------|--------------|-------------|--------|
 | Block Time | 30 seconds | 10-30 seconds | ✅ Optimal |
-| Memory Usage (per node) | 1-2 GB | &lt; GB | ✅ Good |
-| CPU Usage (average) | 10-20% | &lt;0% | ✅ Excellent |
-| Network Latency | &lt;00ms | &lt;00ms | ✅ Good |
-| Disk I/O | Minimal | &lt;000 IOPS | ✅ Good |
+| Memory Usage (per node) | 1-2 GB | <3 GB | ✅ Good |
+| CPU Usage (average) | 10-20% | <50% | ✅ Excellent |
+| Network Latency | <100ms | <200ms | ✅ Good |
+| Disk I/O | Minimal | <1000 IOPS | ✅ Good |
 | Container Restarts | 0/hour | 0/hour | ✅ Stable |
 
 ## System-Level Optimizations
@@ -475,7 +475,7 @@ alerts:
     action: notify
     
   - name: low_memory
-    condition: memory_available < 2lt;2GB
+    condition: memory_available < 2GB
     duration: 10m
     action: restart_container
 ```

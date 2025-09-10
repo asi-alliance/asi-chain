@@ -63,7 +63,7 @@ docker-compose build --no-cache
 docker-compose up -d
 ```
 
-For detailed deployment instructions, see [AWS_LIGHTSAIL_DOCS_DEPLOYMENT.md](../AWS_LIGHTSAIL_DOCS_DEPLOYMENT.md)
+For detailed deployment instructions, see [AWS_LIGHTSAIL_DOCS_DEPLOYMENT.md](docs/archive/deployment/lightsail_fullstack/AWS_LIGHTSAIL_DOCS_DEPLOYMENT.md)
 
 ## Technical Writer Guide
 

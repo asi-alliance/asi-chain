@@ -1,8 +1,3 @@
----
-sidebar_position: 2
-title: Network Status
----
-
 # ASI Chain Network Status
 
 ## Overview
@@ -66,8 +61,8 @@ Key metrics to monitor:
 - **Validator Participation**: All bonded validators should be proposing
 - **Peer Connectivity**: Each node should have 5+ peers
 - **Resource Usage**: 
-  - CPU: < 5lt;50% average
-  - Memory: < 8lt;80% of available
+  - CPU: < 50% average
+  - Memory: < 80% of available
   - Disk: Monitor growth rate
 
 ### API Endpoints
@@ -104,7 +99,7 @@ Key metrics to monitor:
    - Action: Monitor network latency, check validator performance
 
 2. **Low Peer Count**
-   - Condition: Peers < 3lt;3
+   - Condition: Peers < 3
    - Action: Check network connectivity, bootstrap node status
 
 ## Troubleshooting Guide

@@ -42,14 +42,14 @@ This document provides comprehensive performance benchmarks for ASI Chain, demon
 | Probabilistic Finality | ~60s | 2 blocks |
 | Economic Finality | ~150s | 5 blocks |
 | Finality Rate | 99.98% | Over 10,000 blocks |
-| Fork Resolution Time | &lt;0s | Average |
+| Fork Resolution Time | \<9lt;90s | Average |
 
 ### Validator Performance
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Validator Join Time | &lt; min | From bonding to active |
-| Validator Leave Time | &lt; min | Unbonding period |
+| Validator Join Time | \<2lt;2 min | From bonding to active |
+| Validator Leave Time | \<5lt;5 min | Unbonding period |
 | Max Active Validators | 100 | Tested configuration |
 | Consensus Messages/sec | 450 | Peak throughput |
 
@@ -90,7 +90,7 @@ This document provides comprehensive performance benchmarks for ASI Chain, demon
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Peer Discovery Time | &lt;0s | Bootstrap to connected |
+| Peer Discovery Time | \<3lt;30s | Bootstrap to connected |
 | Max Peers | 150 | Per node |
 | Message Propagation | 200ms | To 95% of network |
 | Bandwidth Usage | 5-10 Mbps | Average per validator |
@@ -122,11 +122,11 @@ This document provides comprehensive performance benchmarks for ASI Chain, demon
 
 | Query Type | Response Time | Notes |
 |-----------|--------------|-------|
-| Block by Height | &lt;0ms | Indexed |
-| Transaction by Hash | &lt;5ms | Indexed |
-| Account Balance | &lt;0ms | Direct lookup |
-| Contract State | &lt;0ms | Complex queries |
-| Block Range (100) | &lt;00ms | Sequential read |
+| Block by Height | \<1lt;10ms | Indexed |
+| Transaction by Hash | \<1lt;15ms | Indexed |
+| Account Balance | \<2lt;20ms | Direct lookup |
+| Contract State | \<5lt;50ms | Complex queries |
+| Block Range (100) | \<2lt;200ms | Sequential read |
 
 ## AI Workload Benchmarks
 
@@ -183,7 +183,7 @@ This document provides comprehensive performance benchmarks for ASI Chain, demon
 ### For Validators
 
 1. **Hardware**: NVMe SSD critical for LMDB performance
-2. **Network**: Low latency (&lt;0ms) between validators
+2. **Network**: Low latency (\<5lt;50ms) between validators
 3. **Memory**: 32 GB minimum for large state
 4. **CPU**: 16+ cores for parallel execution
 

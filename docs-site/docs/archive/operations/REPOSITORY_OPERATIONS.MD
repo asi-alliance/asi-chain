@@ -1,8 +1,3 @@
----
-sidebar_position: 1
-title: Repository Operations
----
-
 # ASI Chain Repository Operations & Maintenance Guide
 
 **Version:** 2.0  
@@ -241,8 +236,8 @@ cp scripts/monitoring/logrotate_config /etc/logrotate.d/f1r3fly
 
 - **Block Time**: 30 seconds average
 - **Transaction Throughput**: >10 TPS minimum
-- **API Latency**: P95 < 5lt;500ms
-- **Node Sync Time**: < 5lt;5 minutes for new nodes
+- **API Latency**: P95 < 500ms
+- **Node Sync Time**: < 5 minutes for new nodes
 - **Uptime**: 99.9% availability target
 
 ### 9.2 Performance Monitoring

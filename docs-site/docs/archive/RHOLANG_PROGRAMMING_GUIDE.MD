@@ -1,8 +1,3 @@
----
-sidebar_position: 1
-title: Rholang Guide
----
-
 # Rholang Programming Guide
 
 ## Table of Contents
@@ -19,10 +14,6 @@ title: Rholang Guide
 11. [Examples and Patterns](#examples-and-patterns)
 
 ## Introduction to Rholang
-
-<div style={{textAlign: 'center', margin: '2rem 0'}}>
-  <img src="/img/asi-rholang-execution.svg" alt="Rholang Smart Contract Execution" style={{maxWidth: '100%', height: 'auto'}} />
-</div>
 
 Rholang (Reflective Higher-Order Language) is a concurrent programming language designed for writing smart contracts on the F1R3FLY blockchain. Based on the ρ-calculus (rho-calculus), it provides a formally verified foundation for distributed computing.
 
@@ -959,7 +950,7 @@ contract Oracle(dataSource, action, return) = {
       for (c <- cache) {
         match c.get(key) {
           {"value": v, "timestamp": t} => {
-            if (getCurrentTime() - t < 3lt;3600) {  // 1 hour cache
+            if (getCurrentTime() - t < 3600) {  // 1 hour cache
               cache!(c) |
               ack!(v)
             } else {
