@@ -220,10 +220,10 @@ docker cp prometheus:/tmp/prometheus-backup.tar.gz ./backups/
 
 ## References
 
-- [ASI Chain Documentation](../README.md)
-- [Monitoring Stack Guide](monitoring/MONITORING_STACK.MD)
-- [Troubleshooting Guide](troubleshooting/COMMON_ISSUES.MD)
-- [Performance Tuning](performance/PERFORMANCE_TUNING_GUIDE.MD)
+- [ASI Chain Documentation](intro.md)
+- [Monitoring Stack Guide](monitoring/stack.md)
+- [Troubleshooting Guide](troubleshooting/common-issues.md)
+- [Performance Tuning](performance/tuning-guide.md)
 
 ---
 

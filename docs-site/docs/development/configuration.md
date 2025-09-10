@@ -25,9 +25,9 @@ The `configs/` directory contains essential configuration files for monitoring a
   - Custom blockchain metrics exporter (port 9091)
 
 **Node Monitoring**:
-- Bootstrap node: `rnode.bootstrap:40404`
-- Validator nodes 1-4: `rnode.validator[1-4]:40404`
-- Observer node: `rnode.readonly:40402`
+- Bootstrap node: `rnode.bootstrap:40403`   
+- Validator nodes 1-4: `rnode.validator[1-4]:40413`
+- Observer node: `rnode.readonly:40453`
 
 **Labels Applied**:
 - `node_type`: bootstrap, validator, or observer
@@ -74,7 +74,7 @@ sudo systemctl start blockchain-exporter
 - job_name: 'f1r3fly-validator5'
   metrics_path: '/metrics'
   static_configs:
-    - targets: ['rnode.validator5:40404']
+    - targets: ['rnode.validator5:40453']
       labels:
         node_type: 'validator'
         validator_id: '5'
@@ -129,9 +129,9 @@ These configurations integrate with:
 
 ## Related Documentation
 
-- [Monitoring Stack Guide](monitoring/MONITORING_STACK.md)
-- [Deployment Artifacts](operations/DEPLOYMENT_ARTIFACTS.md)
-- [Network Status](NETWORK_STATUS.md)
+- [Monitoring Stack Guide](monitoring/stack.md)
+- [Deployment Artifacts](operations/artifacts.md)
+- [Network Status](monitoring/network-status.md)
 
 ---
 

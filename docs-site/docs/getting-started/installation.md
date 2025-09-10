@@ -18,6 +18,9 @@ Get started with ASI Chain development.
 # Clone the repository
 git clone https://github.com/asi-alliance/asi-chain.git
 
+# Navigate to directory
+cd asi-chain
+
 # Start local node
 docker-compose up -d
 ```

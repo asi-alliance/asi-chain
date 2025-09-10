@@ -189,7 +189,7 @@ tar -czf configs-$(date +%Y%m%d).tar.gz \
 | Memory Usage | >80% | >95% | `free -h` |
 | Disk Usage | >70% | >85% | `df -h` |
 | Block Delay | >60s | >120s | Check AutoPropose logs |
-| Peer Count | &lt; | &lt; | API status check |
+| Peer Count | &lt;3 | &lt;1 | API status check |
 | Container Restarts | >1/hour | >3/hour | `docker ps` |
 
 ### Simple Monitoring Script

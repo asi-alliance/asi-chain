@@ -863,7 +863,7 @@ This guide provides comprehensive information for developing on the F1R3FLY bloc
 For additional resources:
 - [Scala Documentation](https://docs.scala-lang.org/)
 - [Cats Effect Guide](https://typelevel.org/cats-effect/)
-- [SBT Reference](https://www.scala-sbt.org/documentation.html)
+- [SBT Reference](https://www.scala-sbt.org/1.x/docs/)
 - [Protocol Buffers](https://developers.google.com/protocol-buffers)
 
 ---
