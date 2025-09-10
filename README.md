@@ -34,12 +34,12 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    ASI Chain Stack                       │
+│                    ASI Chain Stack                      │
 ├─────────────────────────────────────────────────────────┤
-│  Frontend Layer                                          │
-│  ├── ASI Wallet v2.2.0 (React 18, TypeScript, Redux)   │
+│  Frontend Layer                                         │
+│  ├── ASI Wallet v2.2.0 (React 18, TypeScript, Redux)    │
 │  ├── Blockchain Explorer (React 19, Apollo GraphQL)     │
-│  └── Documentation Site (Docusaurus 3.8.1)             │
+│  └── Documentation Site (Docusaurus 3.8.1)              │
 ├─────────────────────────────────────────────────────────┤
 │  API Layer                                              │
 │  ├── REST API (Port 9090)                               │
@@ -54,7 +54,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 │  └── Hasura GraphQL Engine                              │
 ├─────────────────────────────────────────────────────────┤
 │  Blockchain Core (F1R3FLY)                              │
-│  ├── CBC Casper PoS Consensus (Scala 2.12.15)          │
+│  ├── CBC Casper PoS Consensus (Scala 2.12.15)           │
 │  ├── Rholang VM & Runtime                               │
 │  ├── RSpace Parallel Execution                          │
 │  └── P2P Network Layer                                  │
