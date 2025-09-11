@@ -356,7 +356,7 @@ const BlockVisualization: React.FC<BlockVisualizationProps> = ({
                                 cy="50%"
                                 outerRadius={100}
                                 dataKey="blockCount"
-                                label={({ percentage }) => `${percentage.toFixed(1)}%`}
+                                label={({ payload }) => `${payload.percentage.toFixed(1)}%`}
                             >
                                 {proposerData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.color} />
