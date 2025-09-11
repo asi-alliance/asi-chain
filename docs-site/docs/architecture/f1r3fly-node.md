@@ -256,11 +256,11 @@ sbt it:test  # Integration tests
 
 ## Related Documentation
 
-- [Architecture Overview](architecture-overview.md)
-- [Casper Consensus Guide](casper-consensus-guide.md)
-- [Rholang Programming Guide](rholang-programming-guide.md)
-- [Deployment Guide](deployment/AWS_LIGHTSAIL_DEPLOYMENT.md)
-- [Rust Client Guide](tools/RUST_CLIENT_GUIDE.md)
+- [Architecture Overview](architecture/overview.md)
+- [Casper Consensus Guide](smart-contracts/casper-consensus.md)
+- [Rholang Programming Guide](smart-contracts/rholang-guide.md)
+- [Deployment Guide](deployment/aws-lightsail.md)
+- [Rust Client Guide](tools/rust-client.md)
 
 ---
 
