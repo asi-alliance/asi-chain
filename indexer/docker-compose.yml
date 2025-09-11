@@ -29,12 +29,12 @@ services:
         condition: service_healthy
     environment:
       # RChain Node
-      NODE_URL: ${NODE_URL:-http://44.198.8.24:40453}
+      NODE_URL: ${NODE_URL:-44.198.8.24:40453}
       NODE_TIMEOUT: ${NODE_TIMEOUT:-30}
       
       # Rust CLI Configuration
       RUST_CLI_PATH: ${RUST_CLI_PATH:-/app/node_cli_linux}
-      NODE_HOST: ${NODE_HOST:-http://44.198.8.24:40453}
+      NODE_HOST: ${NODE_HOST:-44.198.8.24:40453}
       GRPC_PORT: ${GRPC_PORT:-40451}
       HTTP_PORT: ${HTTP_PORT:-40453}
       
