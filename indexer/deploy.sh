@@ -289,7 +289,7 @@ echo "--- Building and deploying indexer services... ---"
 
 if [ "$BUILD_METHOD" = "build-from-source" ]; then
     echo "🔨 Building Rust CLI from source... This may take 10-15 minutes on first run."
-    echo "💡 Tip: Monitor progress with: docker-compose -f docker-compose.rust.yml logs -f rust-indexer"
+    echo "💡 Tip: Monitor progress with: docker compose -f docker-compose.rust.yml logs -f rust-indexer"
     echo ""
     
     # Build with more verbose output for long-running process

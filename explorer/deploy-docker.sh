@@ -44,11 +44,11 @@ case $ACTION in
         
         # Build the Docker image
         print_status "Building Docker image..."
-        docker-compose -f docker-compose.standalone.yml build
+        docker compose -f docker-compose.standalone.yml build
         
         # Start the container
         print_status "Starting container..."
-        docker-compose -f docker-compose.standalone.yml up -d
+        docker compose -f docker-compose.standalone.yml up -d
         
         # Wait for health check
         echo ""
@@ -67,20 +67,20 @@ case $ACTION in
             echo "📝 View logs: docker logs -f asi-explorer"
         else
             print_error "Failed to start explorer container"
-            docker-compose -f docker-compose.standalone.yml logs
+            docker compose -f docker-compose.standalone.yml logs
             exit 1
         fi
         ;;
         
     stop)
         echo "Stopping ASI Chain Explorer..."
-        docker-compose -f docker-compose.standalone.yml down
+        docker compose -f docker-compose.standalone.yml down
         print_status "Explorer stopped"
         ;;
         
     restart)
         echo "Restarting ASI Chain Explorer..."
-        docker-compose -f docker-compose.standalone.yml restart
+        docker compose -f docker-compose.standalone.yml restart
         print_status "Explorer restarted"
         ;;
         
@@ -101,9 +101,9 @@ case $ACTION in
         
     rebuild)
         echo "Rebuilding ASI Chain Explorer..."
-        docker-compose -f docker-compose.standalone.yml down
-        docker-compose -f docker-compose.standalone.yml build --no-cache
-        docker-compose -f docker-compose.standalone.yml up -d
+        docker compose -f docker-compose.standalone.yml down
+        docker compose -f docker-compose.standalone.yml build --no-cache
+        docker compose -f docker-compose.standalone.yml up -d
         print_status "Explorer rebuilt and started"
         ;;
         
