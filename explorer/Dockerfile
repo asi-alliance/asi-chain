@@ -17,9 +17,9 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # Set build-time environment variables (AWS Lightsail production server)
-ENV REACT_APP_GRAPHQL_URL=http://13.251.66.61:8080/v1/graphql
-ENV REACT_APP_GRAPHQL_WS_URL=ws://13.251.66.61:8080/v1/graphql
-ENV REACT_APP_INDEXER_API_URL=http://13.251.66.61:9090
+ENV REACT_APP_GRAPHQL_URL=http://localhost:8080/v1/graphql
+ENV REACT_APP_GRAPHQL_WS_URL=ws://localhost:8080/v1/graphql
+ENV REACT_APP_INDEXER_API_URL=http://localhost:9090
 ENV REACT_APP_HASURA_ADMIN_SECRET=myadminsecretkey
 ENV REACT_APP_ENVIRONMENT=production
 ENV REACT_APP_API_TIMEOUT=30000

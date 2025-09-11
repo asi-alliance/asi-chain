@@ -122,9 +122,9 @@ if [ ! -f ".env" ]; then
                 # Create remote config
                 cat > .env << 'EOF'
 # ASI-Chain Indexer Configuration for Remote Observer Node
-NODE_HOST=13.251.66.61
-GRPC_PORT=40452
-HTTP_PORT=40453
+NODE_HOST=44.198.8.24
+HTTP_PORT=40403
+GRPC_PORT=40401
 DATABASE_URL=postgresql://indexer:indexer_pass@postgres:5432/asichain
 RUST_CLI_PATH=/usr/local/bin/node_cli
 SYNC_INTERVAL=5
