@@ -143,7 +143,7 @@ EOF
         2)
             cat > .env << 'EOF'
 # ASI-Chain Indexer Configuration for Local Node
-NODE_HOST=host.docker.internal
+NODE_HOST=44.198.8.24
 GRPC_PORT=40452
 HTTP_PORT=40453
 DATABASE_URL=postgresql://indexer:indexer_pass@postgres:5432/asichain
@@ -165,7 +165,7 @@ EOF
 # ASI-Chain Indexer Environment Configuration
 # Please customize these values for your deployment
 
-NODE_HOST=localhost
+NODE_HOST=44.198.8.24
 GRPC_PORT=40452
 HTTP_PORT=40453
 DATABASE_URL=postgresql://indexer:indexer_pass@postgres:5432/asichain
