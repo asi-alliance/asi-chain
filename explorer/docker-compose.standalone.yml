@@ -8,18 +8,18 @@ services:
       target: production
       args:
         # Build args to pass environment at build time
-        - REACT_APP_GRAPHQL_URL=http://localhost:8080/v1/graphql
-        - REACT_APP_GRAPHQL_WS_URL=ws://localhost:8080/v1/graphql
-        - REACT_APP_INDEXER_API_URL=http://localhost:9090
+        - REACT_APP_GRAPHQL_URL=http://184.73.0.34/:8080/v1/graphql
+        - REACT_APP_GRAPHQL_WS_URL=ws://184.73.0.34:8080/v1/graphql
+        - REACT_APP_INDEXER_API_URL=http://184.73.0.34:9090
         - REACT_APP_HASURA_ADMIN_SECRET=myadminsecretkey
     container_name: asi-explorer
     image: asi-explorer:latest
     ports:
       - "3001:80"  # Map to port 3001 on host (explorer default)
     environment:
-      - REACT_APP_GRAPHQL_URL=http://localhost:8080/v1/graphql
-      - REACT_APP_GRAPHQL_WS_URL=ws://localhost:8080/v1/graphql
-      - REACT_APP_INDEXER_API_URL=http://localhost:9090
+      - REACT_APP_GRAPHQL_URL=http://184.73.0.34:8080/v1/graphql
+      - REACT_APP_GRAPHQL_WS_URL=ws://184.73.0.34:8080/v1/graphql
+      - REACT_APP_INDEXER_API_URL=http://184.73.0.34:9090
       - REACT_APP_HASURA_ADMIN_SECRET=myadminsecretkey
       - REACT_APP_NETWORK_NAME=ASI Chain
       - REACT_APP_ENVIRONMENT=production
