@@ -63,6 +63,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'development/guide',
         'development/configuration',
+        'development/running-multiple-nodes',
       ],
     },
     {
