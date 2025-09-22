@@ -134,7 +134,8 @@ export const formatBalanceDashboard = (balance: string | number): string => {
   if (num >= 1000) {
     return `${num.toFixed(2)} REV`;
   } else if (num >= 1) {
-    return `${num.toFixed(4)} REV`;
+    const truncated = Math.floor(num * 100) / 100;
+    return `${truncated.toFixed(2)} REV`;
   } else if (num >= 0.01) {
     return `${num.toFixed(6)} REV`;
   } else {
