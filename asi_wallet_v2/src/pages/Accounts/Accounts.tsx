@@ -7,6 +7,7 @@ import { createAccountWithPassword, importAccountWithPassword, exportAccountKeyf
 import { Card, CardHeader, CardTitle, CardContent, Button, Input, PrivateKeyDisplay } from 'components';
 import { PasswordSetup } from 'components/PasswordSetup';
 import { SecureStorage } from 'services/secureStorage';
+import { validateAccountName } from 'utils/textUtils';
 
 const AccountsContainer = styled.div`
   max-width: 800px;
@@ -132,6 +133,8 @@ export const Accounts: React.FC = () => {
   const [importName, setImportName] = useState('');
   const [importValue, setImportValue] = useState('');
   const [importType, setImportType] = useState<'private' | 'public' | 'eth' | 'rev'>('private');
+  const [newAccountNameError, setNewAccountNameError] = useState('');
+  const [importNameError, setImportNameError] = useState('');
 
   useEffect(() => {
     if (unlockedAccounts.length > 0) {
@@ -167,10 +170,17 @@ export const Accounts: React.FC = () => {
   };
 
   const handleCreateAccount = () => {
-    if (newAccountName.trim()) {
-      setPendingAccountName(newAccountName.trim());
-      setShowPasswordSetup(true);
+    const trimmedName = newAccountName.trim();
+    const validation = validateAccountName(trimmedName);
+    
+    if (!validation.isValid) {
+      setNewAccountNameError(validation.error || 'Invalid account name');
+      return;
     }
+    
+    setNewAccountNameError('');
+    setPendingAccountName(trimmedName);
+    setShowPasswordSetup(true);
   };
 
   const handlePasswordSet = async (password: string) => {
@@ -215,29 +225,41 @@ export const Accounts: React.FC = () => {
   };
 
   const handleImportAccount = () => {
-    if (importName.trim() && importValue.trim()) {
-      if (importType === 'private') {
-        setPendingImport({
-          name: importName.trim(),
-          value: importValue.trim(),
-          type: importType
-        });
-        setShowImportPassword(true);
-      } else {
-        dispatch(importAccountWithPassword({
-          name: importName.trim(),
-          value: importValue.trim(),
-          type: importType,
-          password: '' 
-        }) as any).then((resultAction: any) => {
-          if (importAccountWithPassword.fulfilled.match(resultAction)) {
-            // Sync the new account to wallet state
-            dispatch(syncAccounts([resultAction.payload.account]));
-          }
-        });
-        setImportName('');
-        setImportValue('');
-      }
+    const trimmedName = importName.trim();
+    const trimmedValue = importValue.trim();
+    
+    if (!trimmedName || !trimmedValue) {
+      return;
+    }
+    
+    const validation = validateAccountName(trimmedName);
+    if (!validation.isValid) {
+      setImportNameError(validation.error || 'Invalid account name');
+      return;
+    }
+    
+    setImportNameError('');
+    
+    if (importType === 'private') {
+      setPendingImport({
+        name: trimmedName,
+        value: trimmedValue,
+        type: importType
+      });
+      setShowImportPassword(true);
+    } else {
+      dispatch(importAccountWithPassword({
+        name: trimmedName,
+        value: trimmedValue,
+        type: importType,
+        password: '' 
+      }) as any).then((resultAction: any) => {
+        if (importAccountWithPassword.fulfilled.match(resultAction)) {
+          dispatch(syncAccounts([resultAction.payload.account]));
+        }
+      });
+      setImportName('');
+      setImportValue('');
     }
   };
 
@@ -350,8 +372,15 @@ export const Accounts: React.FC = () => {
               <Input
                 label="Account Name"
                 value={newAccountName}
-                onChange={(e) => setNewAccountName(e.target.value)}
-                placeholder="Enter account name"
+                onChange={(e) => {
+                  setNewAccountName(e.target.value);
+                  if (newAccountNameError) {
+                    setNewAccountNameError('');
+                  }
+                }}
+                placeholder="Enter account name (max 30 characters)"
+                error={newAccountNameError}
+                maxLength={30}
               />
               <Button
                 onClick={handleCreateAccount}
@@ -382,8 +411,15 @@ export const Accounts: React.FC = () => {
               <Input
                 label="Account Name"
                 value={importName}
-                onChange={(e) => setImportName(e.target.value)}
-                placeholder="Enter account name"
+                onChange={(e) => {
+                  setImportName(e.target.value);
+                  if (importNameError) {
+                    setImportNameError('');
+                  }
+                }}
+                placeholder="Enter account name (max 30 characters)"
+                error={importNameError}
+                maxLength={30}
               />
               
               <ImportTypeSelector

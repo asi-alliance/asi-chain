@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'store';
 import { selectAccount, fetchBalance } from 'store/walletSlice';
+import { truncateText } from 'utils/textUtils';
 
 const SwitcherContainer = styled.div`
   position: relative;
@@ -50,6 +51,14 @@ const AccountName = styled.span`
   font-weight: 500;
   font-size: 14px;
   color: ${({ theme }) => theme.text.primary};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+  
+  @media (max-width: 768px) {
+    max-width: 80px;
+  }
 `;
 
 const AccountAddress = styled.span`
@@ -222,7 +231,9 @@ export const AccountSwitcher: React.FC = () => {
         <AccountInfo>
           {selectedAccount ? (
             <>
-              <AccountName>{selectedAccount.name}</AccountName>
+              <AccountName title={selectedAccount.name}>
+                {truncateText(selectedAccount.name, 20)}
+              </AccountName>
               <AccountAddress>{formatAddress(selectedAccount.revAddress)}</AccountAddress>
             </>
           ) : (
@@ -246,7 +257,9 @@ export const AccountSwitcher: React.FC = () => {
               onClick={() => handleAccountSelect(account.id)}
             >
               <AccountInfo>
-                <AccountName>{account.name}</AccountName>
+                <AccountName title={account.name}>
+                  {truncateText(account.name, 25)}
+                </AccountName>
                 <AccountAddress>{formatAddress(account.revAddress)}</AccountAddress>
               </AccountInfo>
               <AccountBalance>
