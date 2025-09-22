@@ -6,6 +6,7 @@ import { fetchBalance } from 'store/walletSlice';
 import { setSessionProposal, addSessionRequest } from 'store/walletConnectSlice';
 import { Card, CardHeader, CardTitle, CardContent, Button } from 'components';
 import { useNavigate } from 'react-router-dom';
+import { formatBalanceDashboard } from 'utils/balanceUtils';
 import { 
   WalletConnectModalV2, 
   SessionProposalModal, 
@@ -347,7 +348,7 @@ export const Dashboard: React.FC = () => {
               <LoadingSkeleton height="48px" />
             ) : (
               <BalanceAmount>
-                {parseFloat(selectedAccount.balance).toFixed(2)} REV
+                {formatBalanceDashboard(selectedAccount.balance)}
               </BalanceAmount>
             )}
             <BalanceLabel>Current Balance</BalanceLabel>
