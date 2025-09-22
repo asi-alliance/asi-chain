@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.js": "./static/js/main.1aaaa44b.js",
+    "static/js/614.47f8ecd8.chunk.js": "./static/js/614.47f8ecd8.chunk.js",
+    "monaco-editor.css": "./static/css/monaco-editor.3d7d3319.css",
+    "monaco-editor.js": "./static/js/monaco-editor.a7f37b48.js",
+    "vendors.js": "./static/js/vendors.a001c103.js",
+    "static/media/codicon.ttf": "./static/media/codicon.f6283f7ccaed1249d9eb.ttf",
+    "index.html": "./index.html",
+    "main.1aaaa44b.js.map": "./static/js/main.1aaaa44b.js.map",
+    "614.47f8ecd8.chunk.js.map": "./static/js/614.47f8ecd8.chunk.js.map",
+    "monaco-editor.3d7d3319.css.map": "./static/css/monaco-editor.3d7d3319.css.map",
+    "monaco-editor.a7f37b48.js.map": "./static/js/monaco-editor.a7f37b48.js.map",
+    "vendors.a001c103.js.map": "./static/js/vendors.a001c103.js.map"
+  },
+  "entrypoints": [
+    "static/css/monaco-editor.3d7d3319.css",
+    "static/js/monaco-editor.a7f37b48.js",
+    "static/js/vendors.a001c103.js",
+    "static/js/main.1aaaa44b.js"
+  ]
+}

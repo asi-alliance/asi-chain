@@ -372,7 +372,7 @@ export const Settings: React.FC = () => {
                     </div>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="small"
                     onClick={() => handleViewPrivateKey(account.id)}
                   >
@@ -388,9 +388,10 @@ export const Settings: React.FC = () => {
       {/* Password Modal for Private Key */}
       {showPasswordModal && selectedAccountForPrivateKey && (
         <PasswordModal
+          isOpen={showPasswordModal}
           title="Enter Password to View Private Key"
-          onPasswordSubmit={handlePasswordSubmit}
-          onCancel={() => {
+          onConfirm={handlePasswordSubmit}
+          onClose={() => {
             setShowPasswordModal(false);
             setSelectedAccountForPrivateKey(null);
           }}
