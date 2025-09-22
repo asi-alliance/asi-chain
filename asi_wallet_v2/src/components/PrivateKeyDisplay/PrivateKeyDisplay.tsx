@@ -187,7 +187,7 @@ export const PrivateKeyDisplay: React.FC<PrivateKeyDisplayProps> = ({
               </ToggleButton>
             </KeyContainer>
             <CopyButton
-              variant="outline"
+              variant="secondary"
               onClick={handleCopy}
               disabled={!isVisible}
             >
