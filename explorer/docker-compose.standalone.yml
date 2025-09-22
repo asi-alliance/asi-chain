@@ -1,4 +1,3 @@
-
 services:
   asi-explorer:
     build:
@@ -6,23 +5,16 @@ services:
       dockerfile: Dockerfile
       target: production
       args:
-        # Build args to pass environment at build time
-        - REACT_APP_GRAPHQL_URL=http://184.73.0.34:8080/v1/graphql
-        - REACT_APP_GRAPHQL_WS_URL=ws://184.73.0.34:8080/v1/graphql
-        - REACT_APP_INDEXER_API_URL=http://184.73.0.34:9090
-        - REACT_APP_HASURA_ADMIN_SECRET=myadminsecretkey
+        REACT_APP_GRAPHQL_URL: ${REACT_APP_GRAPHQL_URL}
+        REACT_APP_GRAPHQL_WS_URL: ${REACT_APP_GRAPHQL_WS_URL}
+        REACT_APP_INDEXER_API_URL: ${REACT_APP_INDEXER_API_URL}
+        REACT_APP_HASURA_ADMIN_SECRET: ${REACT_APP_HASURA_ADMIN_SECRET}
     container_name: asi-explorer
     image: asi-explorer:latest
+    env_file:
+      - .env
     ports:
       - "3001:80"  # Map to port 3001 on host (explorer default)
-    environment:
-      - REACT_APP_GRAPHQL_URL=http://184.73.0.34:8080/v1/graphql
-      - REACT_APP_GRAPHQL_WS_URL=ws://184.73.0.34:8080/v1/graphql
-      - REACT_APP_INDEXER_API_URL=http://184.73.0.34:9090
-      - REACT_APP_HASURA_ADMIN_SECRET=myadminsecretkey
-      - REACT_APP_NETWORK_NAME=ASI Chain
-      - REACT_APP_ENVIRONMENT=production
-      - NODE_ENV=production
     networks:
       - asi-network
     restart: unless-stopped
