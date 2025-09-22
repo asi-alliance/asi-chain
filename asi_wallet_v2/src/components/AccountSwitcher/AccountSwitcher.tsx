@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'store';
 import { selectAccount, fetchBalance } from 'store/walletSlice';
 import { truncateText } from 'utils/textUtils';
+import { formatBalanceCompact } from 'utils/balanceUtils';
 
 const SwitcherContainer = styled.div`
   position: relative;
@@ -148,12 +149,7 @@ const formatAddress = (address: string): string => {
   return `${address.substring(0, 8)}...${address.substring(address.length - 6)}`;
 };
 
-const formatBalance = (balance: string): string => {
-  const num = parseFloat(balance);
-  if (num === 0) return '0 REV';
-  if (num < 0.0001) return '<0.0001 REV';
-  return `${num.toFixed(4)} REV`;
-};
+// Remove the old formatBalance function since we're using the utility now
 
 export const AccountSwitcher: React.FC = () => {
   const dispatch = useDispatch();
@@ -242,7 +238,7 @@ export const AccountSwitcher: React.FC = () => {
         </AccountInfo>
         {selectedAccount && (
           <AccountBalance>
-            {isLoadingBalances ? <LoadingSpinner /> : formatBalance(selectedAccount.balance)}
+            {isLoadingBalances ? <LoadingSpinner /> : formatBalanceCompact(selectedAccount.balance)}
           </AccountBalance>
         )}
         <ChevronIcon $isOpen={isOpen}>▼</ChevronIcon>
@@ -263,7 +259,7 @@ export const AccountSwitcher: React.FC = () => {
                 <AccountAddress>{formatAddress(account.revAddress)}</AccountAddress>
               </AccountInfo>
               <AccountBalance>
-                {isLoadingBalances ? <LoadingSpinner /> : formatBalance(account.balance)}
+                {isLoadingBalances ? <LoadingSpinner /> : formatBalanceCompact(account.balance)}
               </AccountBalance>
             </DropdownItem>
           ))

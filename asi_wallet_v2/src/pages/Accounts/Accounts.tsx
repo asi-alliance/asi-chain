@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent, Button, Input, PrivateKeyDisp
 import { PasswordSetup } from 'components/PasswordSetup';
 import { SecureStorage } from 'services/secureStorage';
 import { validateAccountName } from 'utils/textUtils';
+import { formatBalanceCard } from 'utils/balanceUtils';
 
 const AccountsContainer = styled.div`
   max-width: 800px;
@@ -478,7 +479,7 @@ export const Accounts: React.FC = () => {
                   >
                     <AccountHeader>
                       <AccountName>{account.name}</AccountName>
-                      <AccountBalance>{parseFloat(account.balance).toFixed(2)} REV</AccountBalance>
+                      <AccountBalance>{formatBalanceCard(account.balance)}</AccountBalance>
                     </AccountHeader>
                     
                     <AccountAddress>
