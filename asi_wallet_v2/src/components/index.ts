@@ -9,5 +9,4 @@ export { DeploymentConfirmationModal } from './DeployConfirmationModal';
 export { AccountSwitcher } from './AccountSwitcher';
 export { AIHint } from './AIHint';
 export { Switch } from './Switch';
-export { HardwareWalletModal } from './HardwareWallet';
-export { QRScannerModal } from './QRScanner';
+export { PrivateKeyDisplay } from './PrivateKeyDisplay';
