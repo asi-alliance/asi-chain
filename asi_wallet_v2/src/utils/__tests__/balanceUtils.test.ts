@@ -99,7 +99,7 @@ describe('balanceUtils', () => {
       expect(formatBalanceDashboard(12345.6789)).toBe('12345.68 REV');
     });
 
-    it('should format large numbers with 4 decimals', () => {
+    it('should format large numbers with 2 decimals', () => {
       expect(formatBalanceDashboard(1234.56789)).toBe('1234.57 REV');
     });
 
@@ -109,6 +109,11 @@ describe('balanceUtils', () => {
 
     it('should format small numbers with 8 decimals', () => {
       expect(formatBalanceDashboard(0.00123456789)).toBe('0.00123457 REV');
+    });
+
+    it('should format balance with 2 decimals for numbers >= 1 (truncated)', () => {
+      expect(formatBalanceDashboard(706.9976)).toBe('706.99 REV');
+      expect(formatBalanceDashboard(123.456789)).toBe('123.45 REV');
     });
   });
 
