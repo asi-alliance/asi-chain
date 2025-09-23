@@ -7,7 +7,6 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "postbuild": "node scripts/post-build.js",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit",
@@ -25,8 +24,11 @@
     "test:lt:web:homePage": "npx wdio wdio.web.conf.js --suite homePageTests"
   },
   "dependencies": {
+    "@ledgerhq/hw-app-eth": "^6.45.18",
+    "@ledgerhq/hw-transport-webusb": "^6.29.10",
     "@monaco-editor/react": "^4.7.0",
     "@reduxjs/toolkit": "^1.9.5",
+    "@trezor/connect-web": "^9.6.3",
     "@types/blake2b": "^2.1.3",
     "@types/crypto-js": "^4.2.2",
     "@types/node": "^18.16.0",
@@ -46,7 +48,9 @@
     "dotenv": "^17.2.1",
     "elliptic": "^6.5.4",
     "ethereumjs-util": "^7.1.5",
+    "ethers": "^5.8.0",
     "js-sha3": "^0.9.3",
+    "jsqr": "^1.4.0",
     "monaco-editor": "^0.52.2",
     "qr-scanner": "^1.4.2",
     "qrcode.react": "^4.2.0",
