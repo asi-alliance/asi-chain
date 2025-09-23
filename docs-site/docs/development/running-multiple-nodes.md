@@ -18,14 +18,12 @@ This guide explains how to set up and run multiple ASI Chain nodes for testing a
 
 ## Creating a Docker Network
 
-Before starting multiple nodes, create a dedicated Docker network for inter-container communication:
+Before starting multiple nodes, verify network creation by running the command below:
 
 ```bash
-# Create the ASI Chain network
-docker network create f1r3fly
-
 # Verify network creation
 docker network ls | grep f1r3fly
+
 ```
 
 **Network Configuration**:
@@ -46,7 +44,7 @@ This method starts a full network with bootstrap node, multiple validators, and 
 cd f1r3fly/docker
 
 # Start the complete shard network with auto-propose
-docker-compose -f shard-with-autopropose.yml up -d
+docker compose -f shard-with-autopropose.yml up -d
 
 # Wait for genesis ceremony (4-5 minutes)
 echo "Waiting for genesis ceremony to complete..."
@@ -64,30 +62,30 @@ This command starts:
 
 ```bash
 # Start read-only observer node
-docker-compose -f observer.yml up -d
+docker compose -f observer.yml up -d
 
 # Verify observer is connected
-docker-compose -f observer.yml logs -f rnode.readonly
+docker compose -f observer.yml logs
 ```
 
 #### Step 3: Add Additional Validator (Optional)
 
 ```bash
 # Start fourth validator
-docker-compose -f validator4.yml up -d
+docker compose -f validator4.yml up -d
 
 # Monitor validator startup
-docker-compose -f validator4.yml logs -f rnode.validator4
+docker compose -f validator4.yml logs
 ```
 
 ### Method 2: Manual Two-Node Setup
 
-For simple testing with just two nodes:
+For simple testing with just two nodes using containerized operations:
 
-#### Step 1: Start Bootstrap Node (rnode0)
+#### Step 1: Start Bootstrap Container (rnode0)
 
 ```bash
-# Start only the bootstrap node
+# Create and start bootstrap container in background
 docker run -d \
   --name rnode0 \
   --network f1r3fly \
@@ -96,19 +94,20 @@ docker run -d \
   -v $(pwd)/genesis:/var/lib/rnode/genesis \
   -v $(pwd)/certs:/var/lib/rnode \
   f1r3flyindustries/f1r3fly-scala-node:latest \
+  sleep infinity
+
+# Start the RChain node service inside the container
+docker exec -d rnode0 rnode \
   run \
   --host rnode0 \
   --allow-private-addresses \
   --validator-private-key 30440220...
 ```
 
-#### Step 2: Start Peer Node (rnode1)
+#### Step 2: Start Peer Container (rnode1)
 
 ```bash
-# Get bootstrap node ID first
-BOOTSTRAP_ID=$(docker exec rnode0 cat /var/lib/rnode/.rnode/rnode_id)
-
-# Start peer node connected to bootstrap
+# Create and start peer container in background
 docker run -d \
   --name rnode1 \
   --network f1r3fly \
@@ -117,11 +116,36 @@ docker run -d \
   -v $(pwd)/genesis:/var/lib/rnode/genesis \
   -v $(pwd)/certs:/var/lib/rnode \
   f1r3flyindustries/f1r3fly-scala-node:latest \
+  sleep infinity
+
+# Get bootstrap node ID using docker exec
+BOOTSTRAP_ID=$(docker exec rnode0 cat /var/lib/rnode/.rnode/rnode_id)
+
+# Start the RChain node service inside the peer container
+docker exec -d rnode1 rnode \
   run \
   --host rnode1 \
   --bootstrap "rnode://${BOOTSTRAP_ID}@rnode0" \
   --validator-private-key 30440220...
 ```
+
+⚠️ **Key Take-aways**
+1. **Validator recognition depends on the bonds file**
+
+   * If your validator private key is **already listed in the existing `bonds.txt`**, the node will be recognized as a validator.
+   * If it’s **not in the file**, your node will start but **will not propose blocks**.
+
+2. **Config alignment is critical**
+
+   * The node’s `rnode.conf` must match the network, ports, and genesis used in the existing setup.
+   * If it differs (e.g., wrong shardId, networkId, or genesis block), the node may fail to join the network properly.
+
+3. **Using the existing bonds.txt and config**
+
+   * Means you are **joining the network as defined by those files**.
+   * If the private key you specify is already in the bonds file, **blocks will be proposed**.
+   * If not, your node will only **sync and observe**, but not propose blocks.
+
 
 ## Node Port Mappings
 
@@ -163,11 +187,11 @@ curl -s http://localhost:40453/api/status | jq .
 ### Method 2: Monitor Peer Connections
 
 ```bash
-# View bootstrap node peers
-curl -s http://localhost:40403/api/peers | jq '.[] | {id: .peer_id, address: .address}'
+# View number of active peers on the bootstrap node
+curl -s http://localhost:40403/api/status | jq '.peers'
 
 # Check if nodes are discovering each other
-docker-compose -f shard-with-autopropose.yml logs | grep -i "peer"
+docker compose -f shard-with-autopropose.yml logs | grep -i "peer"
 ```
 
 ### Method 3: Verify Block Synchronization
@@ -188,8 +212,16 @@ curl -s http://localhost:40453/api/blocks | jq '.[0].blockNumber'
 
 ```bash
 # Test network connectivity between containers
-docker exec rnode.validator1 ping -c 3 rnode.bootstrap
-docker exec rnode.readonly ping -c 3 rnode.validator1
+# For Method 1 (docker compose): Get the container IP rnode.bootstrap & rnode.validator1
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rnode.bootstrap
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rnode.validator1
+
+# For Method 2 (manual setup): Get the container IP rnode0 & rnode1
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rnode0
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rnode1
+
+# Ping containers from host
+ping -c 3 <container-ip>
 
 # Check Docker network details
 docker network inspect f1r3fly
@@ -209,12 +241,12 @@ echo "=== ASI Chain Multi-Node Health Check ==="
 
 # Check container status
 echo "Container Status:"
-docker-compose -f shard-with-autopropose.yml ps
-docker-compose -f observer.yml ps 2>/dev/null || true
+docker compose -f shard-with-autopropose.yml ps
+docker compose -f observer.yml ps 2>/dev/null || true
 
 # Check API endpoints
 echo -e "\nAPI Health Checks:"
-NODES=("40403:Bootstrap" "40413:Validator1" "40423:Validator2" "40433:Validator3" "40453:Observer")
+NODES=("40403:Bootstrap" "40413:rnode.validator1" "40423:rnode.validator2" "40433:rnode.validator3" "40453:Observer")
 
 for node in "${NODES[@]}"; do
     IFS=':' read -r port name <<< "$node"
@@ -255,17 +287,17 @@ cd f1r3fly/docker
 docker network create f1r3fly 2>/dev/null || echo "Network already exists"
 
 # 2. Start main shard with auto-propose
-docker-compose -f shard-with-autopropose.yml up -d
+docker compose -f shard-with-autopropose.yml up -d
 
 # 3. Wait for genesis (important!)
 echo "Waiting for genesis ceremony..."
 sleep 300
 
 # 4. Start observer
-docker-compose -f observer.yml up -d
+docker compose -f observer.yml up -d
 
 # 5. Start additional validator (optional)
-docker-compose -f validator4.yml up -d
+docker compose -f validator4.yml up -d
 
 echo "Multi-node network started successfully!"
 ```
@@ -274,23 +306,23 @@ echo "Multi-node network started successfully!"
 
 ```bash
 # View all container logs
-docker-compose -f shard-with-autopropose.yml logs -f
+docker compose -f shard-with-autopropose.yml logs -f
 
 # Monitor specific services
-docker-compose -f shard-with-autopropose.yml logs -f validator1
-docker-compose -f shard-with-autopropose.yml logs -f autopropose
+docker compose -f shard-with-autopropose.yml logs -f validator1
+docker compose -f shard-with-autopropose.yml logs -f autopropose
 
 # Monitor block production
-docker-compose -f shard-with-autopropose.yml logs -f | grep -i "proposed\|finalized"
+docker compose -f shard-with-autopropose.yml logs -f | grep -i "proposed\|finalized"
 ```
 
 ### Stopping the Network
 
 ```bash
 # Stop all nodes gracefully
-docker-compose -f validator4.yml down 2>/dev/null || true
-docker-compose -f observer.yml down 2>/dev/null || true
-docker-compose -f shard-with-autopropose.yml down
+docker compose -f validator4.yml down 2>/dev/null || true
+docker compose -f observer.yml down 2>/dev/null || true
+docker compose -f shard-with-autopropose.yml down
 
 # Optional: Remove all data for fresh start
 rm -rf data/
@@ -303,7 +335,9 @@ docker network rm f1r3fly 2>/dev/null || true
 
 ### Custom Network Topology
 
-You can create custom network configurations by modifying the docker-compose files:
+You can create custom network configurations by modifying the `docker compose` files:
+
+📝 Please note that "Custom Network Topology” will work only on localhost.
 
 ```yaml
 # custom-network.yml
@@ -360,13 +394,24 @@ sudo systemctl restart docker
 
 ```bash
 # Check network connectivity
-docker exec rnode.validator1 ping rnode.bootstrap
+# For Method 1 (docker compose): Get the container IP
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rnode.bootstrap
+
+# For Method 2 (manual setup): Get the container IP
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rnode0
+
+# Ping containers from host
+ping -c 3 <container-ip>
 
 # Verify ports are not blocked
 netstat -tuln | grep 404
 
 # Check Docker network
 docker network inspect f1r3fly
+
+# For manual setup - check container logs using docker exec
+docker exec rnode0 tail -f /var/lib/rnode/rnode.log
+docker exec rnode1 tail -f /var/lib/rnode/rnode.log
 ```
 
 #### 2. Genesis Ceremony Timeout
@@ -376,14 +421,14 @@ docker network inspect f1r3fly
 sleep 600  # Wait 10 minutes instead of 5
 
 # Check bootstrap logs
-docker-compose -f shard-with-autopropose.yml logs rnode.bootstrap
+docker compose -f shard-with-autopropose.yml logs rnode.bootstrap
 ```
 
 #### 3. Block Sync Issues
 
 ```bash
 # Restart specific node
-docker-compose -f shard-with-autopropose.yml restart validator1
+docker compose -f shard-with-autopropose.yml restart validator1
 
 # Check for network partitions
 curl http://localhost:40403/api/peers
@@ -395,7 +440,7 @@ curl http://localhost:40403/api/peers
 # Check what's using ports
 sudo lsof -i :40400-40455
 
-# Use different port ranges in docker-compose files
+# Use different port ranges in `docker compose` files
 ports:
   - "50400-50405:40400-40405"  # Custom port range
 ```
@@ -407,9 +452,14 @@ ports:
 # reset-network.sh - Complete network reset
 
 echo "Stopping all containers..."
-docker-compose -f validator4.yml down 2>/dev/null
-docker-compose -f observer.yml down 2>/dev/null  
-docker-compose -f shard-with-autopropose.yml down
+# Stop docker compose containers (Method 1)
+docker compose -f validator4.yml down 2>/dev/null
+docker compose -f observer.yml down 2>/dev/null
+docker compose -f shard-with-autopropose.yml down
+
+# Stop manual containers (Method 2)
+docker stop rnode0 rnode1 2>/dev/null
+docker rm rnode0 rnode1 2>/dev/null
 
 echo "Removing all blockchain data..."
 rm -rf data/
@@ -421,13 +471,13 @@ echo "Creating fresh network..."
 docker network create f1r3fly
 
 echo "Starting fresh network..."
-docker-compose -f shard-with-autopropose.yml up -d
+docker compose -f shard-with-autopropose.yml up -d
 
 echo "Waiting for genesis ceremony..."
 sleep 300
 
 echo "Starting observer..."
-docker-compose -f observer.yml up -d
+docker compose -f observer.yml up -d
 
 echo "Network reset complete!"
 ```
