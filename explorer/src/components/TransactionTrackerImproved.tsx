@@ -76,7 +76,8 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
   embedded = false
 }) => {
   // State
-  const [activeTab, setActiveTab] = useState<'all' | 'deployments' | 'transfers'>('all');
+  const [activeTab, setActiveTab] = useState<'deployments' | 'transfers'>('deployments');
+  // const [activeTab, setActiveTab] = useState<'all' | 'deployments' | 'transfers'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [searchQuery, setSearchQuery] = useState('');
@@ -115,7 +116,8 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
     const results: any[] = [];
     
     // Add deployments
-    if (activeTab === 'all' || activeTab === 'deployments') {
+    // if (activeTab === 'all' || activeTab === 'deployments') {
+    if (activeTab === 'deployments') {
       transactionData.deployments?.forEach((deployment: any) => {
         results.push({
           ...deployment,
@@ -129,7 +131,8 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
     }
     
     // Add transfers
-    if (activeTab === 'all' || activeTab === 'transfers') {
+    // if (activeTab === 'all' || activeTab === 'transfers') {
+    if (activeTab === 'transfers') {
       transactionData.transfers?.forEach((transfer: any) => {
         results.push({
           ...transfer,
@@ -168,12 +171,13 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
       };
     }
     
-    if (activeTab === 'all') {
-      return {
-        title: "All Transactions",
-        subtitle: `Showing ${startIndex}-${Math.min(endIndex, transactions.length)} of ${totalTransactions} total (${totalDeployments} deployments, ${totalTransfers} transfers)`
-      };
-    } else if (activeTab === 'deployments') {
+    // if (activeTab === 'all') {
+    //   return {
+    //     title: "All Transactions",
+    //     subtitle: `Showing ${startIndex}-${Math.min(endIndex, transactions.length)} of ${totalTransactions} total (${totalDeployments} deployments, ${totalTransfers} transfers)`
+    //   };
+    // } else if (activeTab === 'deployments') {
+    if (activeTab === 'deployments') {
       return {
         title: "Smart Contract Deployments",
         subtitle: `Showing ${startIndex}-${endIndex} of ${totalDeployments} total deployments`
@@ -230,7 +234,8 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         marginBottom: '2rem'
       }}>
-        {(['all', 'deployments', 'transfers'] as const).map((tab) => (
+        {/* {(['all', 'deployments', 'transfers'] as const).map((tab) => ( */}
+        {(['deployments', 'transfers'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => {
@@ -248,9 +253,10 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
               fontWeight: activeTab === tab ? '600' : '400'
             }}
           >
-            {tab === 'all' ? `All (${totalTransactions})` 
+            {/* {tab === 'all' ? `All (${totalTransactions})` 
               : tab === 'deployments' ? `Deployments (${totalDeployments})`
-              : `Transfers (${totalTransfers})`}
+              : `Transfers (${totalTransfers})`} */}
+              {tab === 'deployments' ? `Deployments (${totalDeployments})` : `Transfers (${totalTransfers})`}
           </button>
         ))}
       </div>
