@@ -140,7 +140,7 @@ const HomePage: React.FC = () => {
         {/* Left Column - Main Content */}
         <div  style={{ flex: "auto" }}>
           {/* Summary Cards Row */}
-          <div className="summary-grid" style={}>
+          <div className="summary-grid">
             <div className="asi-card glass">
               <p className="text-muted" style={{ marginBottom: '0.5rem' }}>Latest Block</p>
               <h3 className="text-success" style={{ margin: 0 }}>
@@ -192,7 +192,7 @@ const HomePage: React.FC = () => {
               <input 
                 type="text"
                 placeholder="Search by block number or hash..."
-                style={{ width: '300px' }}
+                style={{ flex: '0 1 300px', marginRight: '0.5rem' }}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyUp={handleSearch}
@@ -201,6 +201,7 @@ const HomePage: React.FC = () => {
                 className="btn btn-secondary" 
                 style={{ padding: '8px 16px' }}
                 onClick={() => setCurrentPage(1)}
+                disabled={searchQuery === ""}
               >
                 Search
               </button>

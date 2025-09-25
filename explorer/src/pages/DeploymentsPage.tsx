@@ -170,18 +170,20 @@ const DeploymentsPage: React.FC = () => {
                 onKeyUp={handleSearchKeyUp}
                 placeholder="Search by deploy ID or deployer..."
                 style={{ 
-                  width: '300px',
+                  flex: '0 1 300px',
                   padding: '0.5rem',
                   borderRadius: '6px',
                   border: '1px solid var(--border-color)',
                   background: 'var(--charcoal-500)',
-                  color: 'var(--text-primary)'
+                  color: 'var(--text-primary)',
+                  marginRight: '0.5rem',
                 }}
               />
               <button 
                 className="btn btn-secondary" 
                 onClick={handleSearch}
                 style={{ padding: '8px 16px' }}
+                disabled={searchInput === ''}
               >
                 Search
               </button>

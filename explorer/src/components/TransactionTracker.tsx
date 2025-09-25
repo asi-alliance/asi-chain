@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { AnimatePresence } from './AnimatePresenceWrapper';
 import { useQuery, useLazyQuery } from '@apollo/client';
@@ -275,6 +275,18 @@ const TransactionTracker: React.FC<TransactionTrackerProps> = ({
     status: '',
     type: 'all'
   });
+
+  // const closeFilters = () => {
+  //   setShowFilters(false);
+  // }
+
+  // useEffect(() => {
+  //   if (showFilters) {
+  //     document.addEventListener('click', closeFilters);
+  //   }
+
+  //   return () => document.removeEventListener('click', closeFilters);
+  // }, [showFilters])
 
   // Initial data query
   const { data: initialData, loading: initialLoading } = useQuery(GET_RECENT_TRANSACTIONS, {
