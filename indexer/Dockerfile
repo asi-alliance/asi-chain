@@ -39,6 +39,9 @@ COPY . .
 # Set ownership
 RUN chown -R indexer:indexer /app /home/indexer/.local
 
+COPY node_cli_linux /usr/local/bin/node_cli
+RUN chmod +x /usr/local/bin/node_cli
+
 # Switch to non-root user
 USER indexer
 

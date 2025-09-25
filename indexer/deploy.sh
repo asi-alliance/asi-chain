@@ -122,9 +122,9 @@ if [ ! -f ".env" ]; then
                 # Create remote config
                 cat > .env << 'EOF'
 # ASI-Chain Indexer Configuration for Remote Observer Node
-NODE_HOST=13.251.66.61
-GRPC_PORT=40452
-HTTP_PORT=40453
+NODE_HOST=44.198.8.24
+HTTP_PORT=40403
+GRPC_PORT=40401
 DATABASE_URL=postgresql://indexer:indexer_pass@postgres:5432/asichain
 RUST_CLI_PATH=/usr/local/bin/node_cli
 SYNC_INTERVAL=5
@@ -143,7 +143,7 @@ EOF
         2)
             cat > .env << 'EOF'
 # ASI-Chain Indexer Configuration for Local Node
-NODE_HOST=host.docker.internal
+NODE_HOST=44.198.8.24
 GRPC_PORT=40452
 HTTP_PORT=40453
 DATABASE_URL=postgresql://indexer:indexer_pass@postgres:5432/asichain
@@ -165,7 +165,7 @@ EOF
 # ASI-Chain Indexer Environment Configuration
 # Please customize these values for your deployment
 
-NODE_HOST=localhost
+NODE_HOST=44.198.8.24
 GRPC_PORT=40452
 HTTP_PORT=40453
 DATABASE_URL=postgresql://indexer:indexer_pass@postgres:5432/asichain
@@ -289,7 +289,7 @@ echo "--- Building and deploying indexer services... ---"
 
 if [ "$BUILD_METHOD" = "build-from-source" ]; then
     echo "🔨 Building Rust CLI from source... This may take 10-15 minutes on first run."
-    echo "💡 Tip: Monitor progress with: docker-compose -f docker-compose.rust.yml logs -f rust-indexer"
+    echo "💡 Tip: Monitor progress with: docker compose -f docker-compose.rust.yml logs -f rust-indexer"
     echo ""
     
     # Build with more verbose output for long-running process
