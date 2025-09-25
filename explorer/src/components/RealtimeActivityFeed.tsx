@@ -127,7 +127,7 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
 
   if (compact) {
     return (
-      <div className="asi-card" style={{ height }}>
+      <div className="asi-card live-activity" style={{ height }}>
         <div className="section-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Activity size={20} />
@@ -229,7 +229,7 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
   }
 
   return (
-    <div className="asi-card" style={{ height }}>
+    <div className="asi-card live-activity" style={{ height }}>
       <div className="section-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Activity size={24} />

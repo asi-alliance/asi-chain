@@ -128,15 +128,19 @@ const HomePage: React.FC = () => {
       
       {/* Main Dashboard Grid */}
       <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '2fr 1fr', 
-        gap: '2rem',
-        marginBottom: '2rem'
+        // display: 'grid', 
+        // gridTemplateColumns: '2fr 1fr', 
+        // gap: '2rem',
+        // marginBottom: '2rem'
+        display: "flex",
+        flexWrap: "wrap",
+        columnGap: "2rem",
+        justifyContent: "center"
       }}>
         {/* Left Column - Main Content */}
-        <div>
+        <div  style={{ flex: "auto" }}>
           {/* Summary Cards Row */}
-          <div className="summary-grid" style={{ marginBottom: '2rem' }}>
+          <div className="summary-grid" style={}>
             <div className="asi-card glass">
               <p className="text-muted" style={{ marginBottom: '0.5rem' }}>Latest Block</p>
               <h3 className="text-success" style={{ margin: 0 }}>
