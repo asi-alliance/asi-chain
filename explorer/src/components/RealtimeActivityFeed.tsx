@@ -31,7 +31,7 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
   height = '400px'
 }) => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [isAutoScroll, setIsAutoScroll] = useState(true);
+  // const [isAutoScroll, setIsAutoScroll] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // Fetch real-time data using GraphQL queries with polling
@@ -53,7 +53,6 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
   const blocks = blocksData?.blocks || [];
   const transfers = transfersData?.transfers || [];
   const deployments = deploymentsData?.deployments || [];
-  const connectionStatus = 'connected'; // Connection status based on GraphQL polling
 
   // Convert data to activity items
   useEffect(() => {
@@ -110,20 +109,11 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
   }, [blocks, transfers, deployments, maxItems]);
 
   // Auto-scroll to bottom when new activities arrive
-  useEffect(() => {
-    if (isAutoScroll && scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
-    }
-  }, [activities, isAutoScroll]);
-
-  // Handle scroll to detect if user is scrolling up
-  const handleScroll = () => {
-    if (scrollContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
-      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
-      setIsAutoScroll(isAtBottom);
-    }
-  };
+  // useEffect(() => {
+  //   if (isAutoScroll && scrollContainerRef.current) {
+  //     scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+  //   }
+  // }, [activities, isAutoScroll]);
 
   const getConnectionStatusColor = () => {
     // Since connectionStatus is mocked as 'connected', always return connected color
@@ -163,7 +153,7 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
         
         <div 
           ref={scrollContainerRef}
-          onScroll={handleScroll}
+          // onScroll={handleScroll}
           style={{ 
             height: 'calc(100% - 60px)', 
             overflowY: 'auto',
@@ -234,29 +224,6 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
             ))}
           </AnimatePresence>
         </div>
-
-        {!isAutoScroll && (
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="btn btn-secondary"
-            style={{
-              position: 'absolute',
-              bottom: '1rem',
-              right: '1rem',
-              fontSize: '0.75rem',
-              padding: '0.5rem 1rem'
-            }}
-            onClick={() => {
-              setIsAutoScroll(true);
-              if (scrollContainerRef.current) {
-                scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
-              }
-            }}
-          >
-            Jump to Latest
-          </motion.button>
-        )}
       </div>
     );
   }
@@ -299,7 +266,7 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
       
       <div 
         ref={scrollContainerRef}
-        onScroll={handleScroll}
+        // onScroll={handleScroll}
         style={{ 
           height: 'calc(100% - 100px)', 
           overflowY: 'auto',
@@ -394,31 +361,6 @@ const RealtimeActivityFeed: React.FC<RealtimeActivityFeedProps> = ({
           </div>
         )}
       </div>
-
-      {!isAutoScroll && (
-        <motion.button
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="btn btn-primary"
-          style={{
-            position: 'absolute',
-            bottom: '1rem',
-            right: '1rem',
-            fontSize: '0.875rem',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
-          }}
-          onClick={() => {
-            setIsAutoScroll(true);
-            if (scrollContainerRef.current) {
-              scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
-            }
-          }}
-        >
-          Jump to Latest
-        </motion.button>
-      )}
     </div>
   );
 };
