@@ -776,6 +776,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
       {/* Advanced Filters Panel */}
       <AnimatePresence>
+        <div className="advanced-searcher">
+
         {showFilters && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -787,7 +789,10 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               backgroundColor: 'rgba(0, 0, 0, 0.8)',
               borderRadius: '12px',
               border: '1px solid rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)'
+              backdropFilter: 'blur(10px)',
+              position: 'absolute',
+              zIndex: 5,
+              width: '100%',
             }}
           >
             <div style={{ 
@@ -796,7 +801,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               alignItems: 'center',
               marginBottom: '1rem'
             }}>
-              <h4 style={{ margin: 0, color: '#fff' }}>Advanced Search Filters</h4>
+              <h4 style={{ margin: 0, color: '#fff' }}>Filters</h4>
               <button
                 onClick={clearFilters}
                 style={{
@@ -806,7 +811,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                   backgroundColor: 'transparent',
                   color: '#9ca3af',
                   cursor: 'pointer',
-                  fontSize: '0.875rem'
+                  fontSize: '0.875rem',
                 }}
               >
                 Clear All
@@ -832,7 +837,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                   padding: '0.5rem',
                   borderRadius: '6px',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  backgroundColor: '#121313',
                   color: '#fff'
                 }}
               >
@@ -846,7 +851,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             {/* Date Range Filters */}
             <div style={{ 
               display: 'grid', 
-              gridTemplateColumns: '1fr 1fr', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
               gap: '1rem',
               marginBottom: '1rem'
             }}>
@@ -870,7 +875,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                     borderRadius: '6px',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
                     backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    color: '#fff'
+                    color: '#fff',
+                    
                   }}
                 />
               </div>
@@ -1114,6 +1120,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             )}
           </motion.div>
         )}
+        </div>
       </AnimatePresence>
 
       {/* Search Results Dropdown */}
