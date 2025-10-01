@@ -16,7 +16,7 @@
     "deploy:ipfs": "node scripts/deploy-ipfs.js",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "TA": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "react-scripts test",
     "wdio": "wdio run ./wdio.conf.js",
     "TA-lambda": "wdio wdio.lambdatest.conf.js",
     "test:lt:android": "npx wdio wdio.android.conf.js",

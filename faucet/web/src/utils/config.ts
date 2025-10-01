@@ -13,12 +13,12 @@ const BASE_URL: string = (
     (import.meta.env.VITE_BASE_URL || "").trim() || "http://localhost:3001"
 ).replace(/\/+$/, "");
 
-const FAUCET_BALANCE_REV_LIMIT: number = Number(
-    (import.meta.env.VITE_FAUCET_BALANCE_REV_LIMIT || "").trim() || "200000000"
+const FAUCET_BALANCE_LIMIT: number = Number(
+    (import.meta.env.VITE_FAUCET_BALANCE_LIMIT || "").trim() || "20000"
 );
 
 const REV_DECIMALS: number = Number(
-    (import.meta.env.VITE_REV_DECIMALS || "").trim() || "9"
+    (import.meta.env.VITE_TOKEN_DECIMALS || "").trim() || "9"
 );
 
 const ADDRESS_VALIDATION_CONFIG: IInputWithValidationConfig = {
@@ -38,7 +38,7 @@ const DEPLOY_ID_VALIDATION_CONFIG: IInputWithValidationConfig = {
 
 export {
     BASE_URL,
-    FAUCET_BALANCE_REV_LIMIT,
+    FAUCET_BALANCE_LIMIT,
     ADDRESS_VALIDATION_CONFIG,
     DEPLOY_ID_VALIDATION_CONFIG,
     USER_GUIDE_URL,

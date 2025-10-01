@@ -152,7 +152,7 @@ const Faucet = ({ address }: IFaucetProps): ReactElement => {
                         <div className="address-balance-block">
                             <AddressBalance
                                 value={addressBalance}
-                                coin={FaucetCoins.REV}
+                                coin={FaucetCoins.ASI}
                             />
                         </div>
 

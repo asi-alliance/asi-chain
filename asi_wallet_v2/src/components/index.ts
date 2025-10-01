@@ -9,3 +9,4 @@ export { DeploymentConfirmationModal } from './DeployConfirmationModal';
 export { AccountSwitcher } from './AccountSwitcher';
 export { AIHint } from './AIHint';
 export { Switch } from './Switch';
+export { PrivateKeyDisplay } from './PrivateKeyDisplay';

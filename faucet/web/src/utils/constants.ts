@@ -1,12 +1,13 @@
-import { FAUCET_BALANCE_REV_LIMIT } from "./config";
+import { FAUCET_BALANCE_LIMIT } from "./config";
 
-const BALANCE_FAUCET_CEILING: number = FAUCET_BALANCE_REV_LIMIT;
+const BALANCE_FAUCET_CEILING: number = FAUCET_BALANCE_LIMIT;
 const MINUTES_TO_MS_MULTIPLIER: number = 60 * 1000;
-const MAX_POLL_MS: number = 5 * MINUTES_TO_MS_MULTIPLIER;
+const MAX_POLL_MS: number = 7 * MINUTES_TO_MS_MULTIPLIER;
 const POLL_INTERVAL_SEC: number = 30;
 
 const enum FaucetCoins {
     REV = "REV",
+    ASI = "ASI",
 }
 
 const enum FaucetPhases {
