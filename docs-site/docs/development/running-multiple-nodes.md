@@ -224,7 +224,11 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rno
 ping -c 3 <container-ip>
 
 # Check Docker network details
+<<<<<<< HEAD
 docker network inspect f1r3fly
+=======
+docker network inspect docker_f1r3fly
+>>>>>>> 8bd637e14a61aa83bf5ca5130e8e094a914f73c6
 ```
 
 ## Network Health Verification
@@ -283,6 +287,7 @@ chmod +x check-network-health.sh
 # Complete startup sequence
 cd f1r3fly/docker
 
+<<<<<<< HEAD
 # 1. Create network
 docker network create f1r3fly 2>/dev/null || echo "Network already exists"
 
@@ -297,6 +302,19 @@ sleep 300
 docker compose -f observer.yml up -d
 
 # 5. Start additional validator (optional)
+=======
+# 1. Start main shard with auto-propose
+docker compose -f shard-with-autopropose.yml up -d
+
+# 2. Wait for genesis (important!)
+echo "Waiting for genesis ceremony..."
+sleep 300
+
+# 3. Start observer
+docker compose -f observer.yml up -d
+
+# 4. Start additional validator (optional)
+>>>>>>> 8bd637e14a61aa83bf5ca5130e8e094a914f73c6
 docker compose -f validator4.yml up -d
 
 echo "Multi-node network started successfully!"

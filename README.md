@@ -821,8 +821,6 @@ const wallet = await Wallet.importPrivateKey({
   password: password
 });
 
-```
-
 ### Transaction Management
 
 #### Balance Queries
@@ -862,9 +860,8 @@ cd rust-client
 3. Enter amount (in REV)
 4. Set gas limit (default: 100000)
 5. Review transaction details
-6. Confirm with password
-7. Sign transaction
-8. Broadcast to network
+6. Sign transaction
+7. Broadcast to network
 
 # Via Rust CLI
 cd rust-client
