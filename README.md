@@ -55,34 +55,34 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 ┌──────────────────────────────────────────────────────────────┐
 │                       ASI Chain Stack                        │
 ├──────────────────────────────────────────────────────────────┤
-│  Frontend Layer                                               │
-│    ├── ASI Wallet v2.2.0 (React 18, TypeScript, Redux)        │
-│    ├── Blockchain Explorer (React 19, Apollo GraphQL)         │
-│    └── Documentation Site (Docusaurus 3.8.1)                  │
+│  Frontend Layer                                              │
+│    ├── ASI Wallet v2.2.0 (React 18, TypeScript, Redux)       │
+│    ├── Blockchain Explorer (React 19, Apollo GraphQL)        │
+│    └── Documentation Site (Docusaurus 3.8.1)                 │
 ├──────────────────────────────────────────────────────────────┤
-│  API Layer                                                    │
-│    ├── REST API (Port 9090)                                   │
-│    ├── GraphQL via Hasura (Port 8080)                         │
-│    ├── gRPC Node Interface (Port 40403)                       │
-│    └── Faucet API (Port 5050)                                 │
+│  API Layer                                                   │
+│    ├── REST API (Port 9090)                                  │
+│    ├── GraphQL via Hasura (Port 8080)                        │
+│    ├── gRPC Node Interface (Port 40403)                      │
+│    └── Faucet API (Port 5050)                                │
 ├──────────────────────────────────────────────────────────────┤
-│  Data Layer                                                   │
-│    ├── Python Indexer with Rust CLI                           │
-│    ├── PostgreSQL 14+ Database                                │
-│    ├── Redis Primary/Replica Caching                          │
-│    └── Hasura GraphQL Engine                                  │
+│  Data Layer                                                  │
+│    ├── Python Indexer with Rust CLI                          │
+│    ├── PostgreSQL 14+ Database                               │
+│    ├── Redis Primary/Replica Caching                         │
+│    └── Hasura GraphQL Engine                                 │
 ├──────────────────────────────────────────────────────────────┤
-│  Blockchain Core (F1R3FLY)                                    │
-│    ├── CBC Casper PoS Consensus (Scala 2.12.15)               │
-│    ├── Rholang VM & Runtime                                   │
-│    ├── RSpace Parallel Execution                              │
-│    └── P2P Network Layer                                      │
+│  Blockchain Core (F1R3FLY)                                   │
+│    ├── CBC Casper PoS Consensus (Scala 2.12.15)              │
+│    ├── Rholang VM & Runtime                                  │
+│    ├── RSpace Parallel Execution                             │
+│    └── P2P Network Layer                                     │
 ├──────────────────────────────────────────────────────────────┤
-│  Infrastructure Layer                                         │
-│    ├── Docker & Kubernetes Orchestration                      │
-│    ├── Terraform AWS Infrastructure                           │
-│    ├── Prometheus/Grafana Monitoring                          │
-│    └── Security & Secrets Management                          │
+│  Infrastructure Layer                                        │
+│    ├── Docker & Kubernetes Orchestration                     │
+│    ├── Terraform AWS Infrastructure                          │
+│    ├── Prometheus/Grafana Monitoring                         │
+│    └── Security & Secrets Management                         │
 └──────────────────────────────────────────────────────────────┘
 ```
 
