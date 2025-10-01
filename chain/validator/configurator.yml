@@ -1,0 +1,10 @@
+name: validator
+
+services:
+  configurator:
+    image: 533793137436.dkr.ecr.us-east-1.amazonaws.com/asi-chain/validator-configurator:v0.0.2
+    container_name: validator-configurator-job
+    restart: "no"
+    volumes:
+      - ./conf:/home/node/conf
+      - ./.env:/home/node/.env

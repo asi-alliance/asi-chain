@@ -1,0 +1,9 @@
+name: validator
+# Will be deprecated soon as far as merged to validator.yml
+
+services:
+  connector:
+    image: 533793137436.dkr.ecr.us-east-1.amazonaws.com/asi-chain/validator-connector:v0.0.2
+    container_name: validator-connector-job
+    env_file: .env
+    restart: "no"
