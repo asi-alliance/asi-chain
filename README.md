@@ -45,45 +45,45 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** + **Documentation Site** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet REV tokens. Documentation Site at http://13.251.66.61:3003 with Docusaurus 3.8.1.
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** + **Documentation Site** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet ASI tokens. Documentation Site at http://13.251.66.61:3003 with Docusaurus 3.8.1.
 
 ## ⚙️ Technical Architecture
 
 <div align="center">
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    ASI Chain Stack                       │
-├─────────────────────────────────────────────────────────┤
-│  Frontend Layer                                          │
-│  ├── ASI Wallet v2.2.0 (React 18, TypeScript, Redux)   │
-│  ├── Blockchain Explorer (React 19, Apollo GraphQL)     │
-│  └── Documentation Site (Docusaurus 3.8.1)             │
-├─────────────────────────────────────────────────────────┤
-│  API Layer                                              │
-│  ├── REST API (Port 9090)                               │
-│  ├── GraphQL via Hasura (Port 8080)                     │
-│  ├── gRPC Node Interface (Port 40403)                   │
-│  └── Faucet API (Port 5050)                             │
-├─────────────────────────────────────────────────────────┤
-│  Data Layer                                             │
-│  ├── Python Indexer with Rust CLI                       │
-│  ├── PostgreSQL 14+ Database                            │
-│  ├── Redis Primary/Replica Caching                      │
-│  └── Hasura GraphQL Engine                              │
-├─────────────────────────────────────────────────────────┤
-│  Blockchain Core (F1R3FLY)                              │
-│  ├── CBC Casper PoS Consensus (Scala 2.12.15)          │
-│  ├── Rholang VM & Runtime                               │
-│  ├── RSpace Parallel Execution                          │
-│  └── P2P Network Layer                                  │
-├─────────────────────────────────────────────────────────┤
-│  Infrastructure Layer                                   │
-│  ├── Docker & Kubernetes Orchestration                  │
-│  ├── Terraform AWS Infrastructure                       │
-│  ├── Prometheus/Grafana Monitoring                      │
-│  └── Security & Secrets Management                      │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                       ASI Chain Stack                        │
+├──────────────────────────────────────────────────────────────┤
+│  Frontend Layer                                               │
+│    ├── ASI Wallet v2.2.0 (React 18, TypeScript, Redux)        │
+│    ├── Blockchain Explorer (React 19, Apollo GraphQL)         │
+│    └── Documentation Site (Docusaurus 3.8.1)                  │
+├──────────────────────────────────────────────────────────────┤
+│  API Layer                                                    │
+│    ├── REST API (Port 9090)                                   │
+│    ├── GraphQL via Hasura (Port 8080)                         │
+│    ├── gRPC Node Interface (Port 40403)                       │
+│    └── Faucet API (Port 5050)                                 │
+├──────────────────────────────────────────────────────────────┤
+│  Data Layer                                                   │
+│    ├── Python Indexer with Rust CLI                           │
+│    ├── PostgreSQL 14+ Database                                │
+│    ├── Redis Primary/Replica Caching                          │
+│    └── Hasura GraphQL Engine                                  │
+├──────────────────────────────────────────────────────────────┤
+│  Blockchain Core (F1R3FLY)                                    │
+│    ├── CBC Casper PoS Consensus (Scala 2.12.15)               │
+│    ├── Rholang VM & Runtime                                   │
+│    ├── RSpace Parallel Execution                              │
+│    └── P2P Network Layer                                      │
+├──────────────────────────────────────────────────────────────┤
+│  Infrastructure Layer                                         │
+│    ├── Docker & Kubernetes Orchestration                      │
+│    ├── Terraform AWS Infrastructure                           │
+│    ├── Prometheus/Grafana Monitoring                          │
+│    └── Security & Secrets Management                          │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 </div>
@@ -683,7 +683,7 @@ ASI Wallet v2 is a comprehensive blockchain wallet with enterprise-grade securit
 
 #### Core Features
 - **🔌 WalletConnect v2**: DApp connectivity
-- **💰 REV Token Management**: Native ASI Chain currency
+- **💰 ASI Token Management**: Native ASI Chain currency
 - **📱 Cross-Platform**: Web, mobile-responsive design
 - **🧠 Rholang IDE**: Built-in smart contract development
 - **🔄 Multi-Signature**: Enterprise wallet capabilities
@@ -762,7 +762,7 @@ const wallet = await Wallet.fromPrivateKey({
 
 #### Address Generation
 
-**REV Address Format:**
+**ASI Address Format:**
 ```bash
 # ASI Chain uses RChain-compatible addresses
 # Format: 1111xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -783,7 +783,7 @@ cargo run -- generate-key-pair
 # Output:
 # Private Key: 0x1234567890abcdef...
 # Public Key:  041234567890abcdef...
-# REV Address: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
+# ASI Address: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
 
 # Using wallet interface
 # 1. Open wallet settings
@@ -845,21 +845,21 @@ cd rust-client
 # Expected response:
 {
   "address": "1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8",
-  "balance": "1000000000",  // 10.0 REV (8 decimal places)
-  "balanceREV": "10.0"
+  "balance": "1000000000",  // 10.0 ASI (8 decimal places)
+  "balanceASI": "10.0"
 }
 ```
 
-#### REV Token Transfers
+#### ASI Token Transfers
 
-**Send REV Tokens:**
+**Send ASI Tokens:**
 ```bash
 # Via Web Interface
 1. Open wallet → Send tab
 2. Enter recipient address
-3. Enter amount (in REV)
+3. Enter amount (in ASI)
 4. Set gas limit (default: 100000)
-5. Review transaction details
+5. ASIiew transaction details
 6. Sign transaction
 7. Broadcast to network
 
@@ -886,8 +886,8 @@ curl http://13.251.66.61:9090/api/transaction/$TX_ID | jq .
   "blockNumber": 12345,
   "from": "1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8",
   "to": "11112D8Ex1PxNEKBkBHfnVKwDFMVQLf4NL8CwwjX3eALjx7gBjNaSP",
-  "amount": "500000000",  // 5.0 REV
-  "fee": "10000",         // 0.0001 REV
+  "amount": "500000000",  // 5.0 ASI
+  "fee": "10000",         // 0.0001 ASI
   "timestamp": "2025-01-15T10:30:00Z"
 }
 ```
@@ -1099,7 +1099,7 @@ asi-chain/
 | **⚡ Parallel Execution** | Namespace sharding via Rholang | ✅ Active |
 | **🤖 AI-Native** | Optimized for AI workloads | ✅ Active |
 | **🔗 Smart Contracts** | Process calculus based (100+ examples) | ✅ Active |
-| **💰 REV Token** | Native cryptocurrency with 8 decimals | ✅ Active |
+| **💰 ASI Token** | Native cryptocurrency with 8 decimals | ✅ Active |
 | **🔌 WalletConnect v2** | DApp connectivity | ✅ Active |
 | **🔄 Multi-Signature** | Enterprise wallets | ✅ Active |
 | **📊 GraphQL API** | Real-time subscriptions via Hasura | ✅ Active |
@@ -1313,7 +1313,7 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 | **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet with WalletConnect v2, Rholang IDE | ✅ Live |
 | **Blockchain Explorer** | http://13.251.66.61:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
 | **Documentation Site** | http://13.251.66.61:3003 | 3003 | Interactive Docusaurus documentation | ✅ Live |
-| **Token Faucet** | http://13.251.66.61:5050 | 5050 | Testnet REV token distribution (100 REV/request) | ✅ Live |
+| **Token Faucet** | http://13.251.66.61:5050 | 5050 | Testnet ASI token distribution (100 ASI/request) | ✅ Live |
 
 ---
 
@@ -1381,7 +1381,7 @@ BATCH_SIZE=50                # Process up to 50 blocks per batch
 START_FROM_BLOCK=0           # Start from genesis
 
 # Features
-ENABLE_REV_TRANSFER_EXTRACTION=true
+ENABLE_ASI_TRANSFER_EXTRACTION=true
 ENABLE_METRICS=true
 ENABLE_HEALTH_CHECK=true
 
@@ -1519,7 +1519,7 @@ cd rust-client && cargo build --release
 ./target/release/node_cli blocks -H 13.251.66.61 -p 40453 -n 10
 
 # Check balance
-./target/release/node_cli balance YOUR_REV_ADDRESS -H 13.251.66.61 -p 40453
+./target/release/node_cli balance YOUR_ASI_ADDRESS -H 13.251.66.61 -p 40453
 
 # Deploy contract (use validator1, 2, or 3)
 ./target/release/node_cli deploy -f contract.rho -H 13.251.66.61 -p 40413
@@ -1644,7 +1644,7 @@ The ASI Chain Explorer provides real-time blockchain data visualization and comp
 - **🔍 Real-time Block Explorer**: Live blockchain data with WebSocket updates
 - **📊 Transaction Analysis**: Detailed transaction inspection and history
 - **👥 Validator Monitoring**: Active validator tracking and performance metrics
-- **💰 REV Token Tracking**: Balance queries and transfer analysis
+- **💰 ASI Token Tracking**: Balance queries and transfer analysis
 - **📈 Network Statistics**: Health metrics and consensus monitoring
 - **🔗 Smart Contract Interaction**: Rholang contract deployment viewing
 
@@ -1660,7 +1660,7 @@ open http://13.251.66.61:3001
 # ✅ Transaction search
 # ✅ Validator information
 # ✅ Network statistics
-# ✅ REV token analytics
+# ✅ ASI token analytics
 ```
 
 **Local Development:**
@@ -1682,7 +1682,7 @@ npm start
 - **Latest Blocks**: Real-time block feed with timestamps
 - **Recent Transactions**: Live transaction stream
 - **Network Health**: Consensus status and validator count
-- **REV Statistics**: Token circulation and transfer volume
+- **ASI Statistics**: Token circulation and transfer volume
 
 #### Block Explorer
 
@@ -1723,7 +1723,7 @@ http://13.251.66.61:3001/transactions
 **Transaction Details:**
 - Transaction ID and status
 - From/To addresses
-- REV amount transferred
+- ASI amount transferred
 - Gas used and gas price
 - Block number and timestamp
 - Rholang contract code
@@ -1760,10 +1760,10 @@ http://13.251.66.61:3001/address/1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRf
 ```
 
 **Address Features:**
-- REV balance (current)
+- ASI balance (current)
 - Transaction history
 - Contract deployments
-- REV transfers (sent/received)
+- ASI transfers (sent/received)
 - QR code generation
 - Export transaction data
 
@@ -2098,7 +2098,7 @@ curl http://13.251.66.61:9090/api/balance/1111ocWg... | jq .
 # Get address transactions
 curl http://13.251.66.61:9090/api/address/1111ocWg.../transactions | jq .
 
-# Get REV transfers
+# Get ASI transfers
 curl http://13.251.66.61:9090/api/transfers?address=1111ocWg... | jq .
 ```
 
@@ -2230,7 +2230,7 @@ open http://13.251.66.61:8080/console
 
 #### Request Tokens
 
-**Get Testnet REV:**
+**Get Testnet ASI:**
 ```bash
 curl -X POST http://13.251.66.61:5050/api/request \
   -H "Content-Type: application/json" \
@@ -2242,7 +2242,7 @@ curl -X POST http://13.251.66.61:5050/api/request \
 {
   "success": true,
   "txId": "faucet_tx_123...",
-  "amount": "100000000000", // 100.0 REV
+  "amount": "100000000000", // 100.0 ASI
   "message": "Tokens sent successfully"
 }
 ```
@@ -2256,9 +2256,9 @@ curl http://13.251.66.61:5050/api/stats | jq .
 # Response:
 {
   "faucetAddress": "1111AtahZeefej4tvVR6ti9TJtv8yxLebT31SCEVDCKMNikBk5r3g",
-  "balance": "500000000000000", // 500M REV
-  "dailyLimit": "500000000000",  // 500 REV per day
-  "requestLimit": "100000000000", // 100 REV per request
+  "balance": "500000000000000", // 500M ASI
+  "dailyLimit": "500000000000",  // 500 ASI per day
+  "requestLimit": "100000000000", // 100 ASI per request
   "requestsToday": 25,
   "rateLimits": {
     "perHour": 20,
@@ -2385,7 +2385,7 @@ node_cli generate-key-pair
 # Output:
 Private Key: 0x1234567890abcdef...
 Public Key:  041234567890abcdef...
-REV Address: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
+ASI Address: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
 
 # Save to file
 node_cli generate-key-pair > my-keys.txt
@@ -2396,9 +2396,9 @@ node_cli generate-key-pair > my-keys.txt
 node_cli generate-public-key --private-key 0x1234567890abcdef...
 ```
 
-**Generate REV Address:**
+**Generate ASI Address:**
 ```bash
-node_cli generate-rev-address --public-key 041234567890abcdef...
+node_cli generate-asi-address --public-key 041234567890abcdef...
 ```
 
 #### Blockchain Queries
@@ -2474,10 +2474,10 @@ node_cli wallet-balance \
 
 # Output:
 Address: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
-Balance: 1000000000 dust (10.0 REV)
+Balance: 1000000000 dust (10.0 ASI)
 ```
 
-**Transfer REV Tokens:**
+**Transfer ASI Tokens:**
 ```bash
 node_cli transfer \
   --from 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8 \
@@ -2668,10 +2668,10 @@ PostgreSQL:           13.251.66.61:5432 (private)
 
 **Example Usage:**
 ```bash
-# Get testnet REV tokens
+# Get testnet ASI tokens
 curl -X POST http://13.251.66.61:5050/api/request \
   -H "Content-Type: application/json" \
-  -d '{"address": "YOUR_REV_ADDRESS"}'
+  -d '{"address": "YOUR_ASI_ADDRESS"}'
 
 # Deploy contract to testnet
 node_cli deploy \
@@ -3831,7 +3831,7 @@ curl -X POST http://localhost:5050/api/request \
   "success": true,
   "txId": "local_faucet_123...",
   "amount": "100000000000",
-  "message": "100.0 REV sent successfully"
+  "message": "100.0 ASI sent successfully"
 }
 ```
 
@@ -3854,7 +3854,7 @@ cd rust-client
 # Expected output:
 Private Key: 0xabcdef1234567890...
 Public Key:  04abcdef1234567890...
-REV Address: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
+ASI Address: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
 
 # 3. Check testnet status
 ./target/release/node_cli status -H 13.251.66.61 --http-port 40453
@@ -3875,7 +3875,7 @@ Node Status:
 **Scenario: Get testnet tokens and perform transfers**
 
 ```bash
-# 1. Request testnet REV tokens
+# 1. Request testnet ASI tokens
 curl -X POST http://13.251.66.61:5050/api/request \
   -H "Content-Type: application/json" \
   -d '{"address": "1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8"}'
@@ -3885,7 +3885,7 @@ curl -X POST http://13.251.66.61:5050/api/request \
   "success": true,
   "txId": "faucet_tx_abc123...",
   "amount": "100000000000",
-  "message": "100.0 REV sent to your address"
+  "message": "100.0 ASI sent to your address"
 }
 
 # 2. Wait for transaction confirmation
@@ -3899,10 +3899,10 @@ sleep 35
 
 # Expected output:
 Address: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
-Balance: 100000000000 dust (100.0 REV)
+Balance: 100000000000 dust (100.0 ASI)
 Block: 2157
 
-# 4. Transfer REV to another address
+# 4. Transfer ASI to another address
 ./target/release/node_cli transfer \
   --from 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8 \
   --to 11112D8Ex1PxNEKBkBHfnVKwDFMVQLf4NL8CwwjX3eALjx7gBjNaSP \
@@ -3916,7 +3916,7 @@ Transfer initiated
 Deploy ID: 0xdef456abc789...
 From: 1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
 To: 11112D8Ex1PxNEKBkBHfnVKwDFMVQLf4NL8CwwjX3eALjx7gBjNaSP
-Amount: 25.0 REV
+Amount: 25.0 ASI
 Status: Pending confirmation
 ```
 
@@ -4007,15 +4007,15 @@ Transaction Details:
 
 # Expected display:
 Address Overview:
-  Balance: 74.15 REV
+  Balance: 74.15 ASI
   Transactions: 3
   Contracts Deployed: 1
   Last Activity: 2 minutes ago
   
 Transaction History:
   1. Contract Deploy - 847,532 phlo - 2 min ago
-  2. REV Transfer - 25.0 REV sent - 5 min ago  
-  3. Faucet Request - 100.0 REV received - 8 min ago
+  2. ASI Transfer - 25.0 ASI sent - 5 min ago  
+  3. Faucet Request - 100.0 ASI received - 8 min ago
 ```
 
 ### GraphQL API Integration
@@ -4116,7 +4116,7 @@ Node Status:
   Network: asi-mainnet
   Block Height: 1,250,000
   Validators: 100+
-  Total Stake: 10B REV
+  Total Stake: 10B ASI
   Network Health: 99.9%
 ```
 
