@@ -85,48 +85,54 @@ For simple testing with just two nodes using containerized operations:
 #### Step 1: Start Bootstrap Container (rnode0)
 
 ```bash
+# Remove the old container
+sudo docker rm -f rnode0
+
 # Create and start bootstrap container in background
-docker run -d \
+sudo docker run -d \
   --name rnode0 \
-  --network f1r3fly \
+  --network docker_f1r3fly \
   -p 40400-40405:40400-40405 \
   -v $(pwd)/conf/bootstrap-ceremony.conf:/var/lib/rnode/rnode.conf \
   -v $(pwd)/genesis:/var/lib/rnode/genesis \
   -v $(pwd)/certs:/var/lib/rnode \
+  --restart unless-stopped \
   f1r3flyindustries/f1r3fly-scala-node:latest \
-  sleep infinity
-
-# Start the RChain node service inside the container
-docker exec -d rnode0 rnode \
   run \
-  --host rnode0 \
-  --allow-private-addresses \
-  --validator-private-key 30440220...
+    --host rnode0 \
+    --allow-private-addresses \
+    --validator-private-key /var/lib/rnode/validator0.pem
+
+
+# Verify it’s running
+sudo docker ps
+
 ```
 
 #### Step 2: Start Peer Container (rnode1)
 
 ```bash
 # Create and start peer container in background
-docker run -d \
+sudo docker run -d \
   --name rnode1 \
-  --network f1r3fly \
+  --network docker_f1r3fly \
   -p 40410-40415:40400-40405 \
-  -v $(pwd)/conf/validator1.conf:/var/lib/rnode/rnode.conf \
+  -v $(pwd)/conf/bootstrap-ceremony.conf:/var/lib/rnode/rnode.conf \
   -v $(pwd)/genesis:/var/lib/rnode/genesis \
   -v $(pwd)/certs:/var/lib/rnode \
+  --restart unless-stopped \
   f1r3flyindustries/f1r3fly-scala-node:latest \
-  sleep infinity
+  run \
+    --host rnode1 \
+    --allow-private-addresses \
+    --validator-private-key /var/lib/rnode/validator1.pem
+
+# Verify it’s running
+sudo docker ps
 
 # Get bootstrap node ID using docker exec
-BOOTSTRAP_ID=$(docker exec rnode0 cat /var/lib/rnode/.rnode/rnode_id)
+BOOTSTRAP_ID=$(grep '^BOOTSTRAP_NODE_ID=' f1r3node/docker/.env | cut -d '=' -f2)
 
-# Start the RChain node service inside the peer container
-docker exec -d rnode1 rnode \
-  run \
-  --host rnode1 \
-  --bootstrap "rnode://${BOOTSTRAP_ID}@rnode0" \
-  --validator-private-key 30440220...
 ```
 
 ⚠️ **Key Take-aways**
@@ -224,11 +230,7 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rno
 ping -c 3 <container-ip>
 
 # Check Docker network details
-<<<<<<< HEAD
-docker network inspect f1r3fly
-=======
 docker network inspect docker_f1r3fly
->>>>>>> 8bd637e14a61aa83bf5ca5130e8e094a914f73c6
 ```
 
 ## Network Health Verification
@@ -287,22 +289,6 @@ chmod +x check-network-health.sh
 # Complete startup sequence
 cd f1r3fly/docker
 
-<<<<<<< HEAD
-# 1. Create network
-docker network create f1r3fly 2>/dev/null || echo "Network already exists"
-
-# 2. Start main shard with auto-propose
-docker compose -f shard-with-autopropose.yml up -d
-
-# 3. Wait for genesis (important!)
-echo "Waiting for genesis ceremony..."
-sleep 300
-
-# 4. Start observer
-docker compose -f observer.yml up -d
-
-# 5. Start additional validator (optional)
-=======
 # 1. Start main shard with auto-propose
 docker compose -f shard-with-autopropose.yml up -d
 
@@ -314,7 +300,6 @@ sleep 300
 docker compose -f observer.yml up -d
 
 # 4. Start additional validator (optional)
->>>>>>> 8bd637e14a61aa83bf5ca5130e8e094a914f73c6
 docker compose -f validator4.yml up -d
 
 echo "Multi-node network started successfully!"
