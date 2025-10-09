@@ -398,14 +398,12 @@ echo "2" | ./deploy.sh
 - **Grafana**: http://localhost:3002
 
 #### Production Services (AWS Lightsail) ✅ LIVE
-- **💼 ASI Wallet v2**: http://13.251.66.61:3000 **(v2.2.0)**
-- **🌐 ASI Chain Explorer**: http://13.251.66.61:3001 **(v1.0.2)**
-- **📚 Documentation Site**: http://13.251.66.61:3003 **(Docusaurus 3.8.1)**
-- **🚰 Token Faucet**: http://13.251.66.61:5050 **(TypeScript)**
-- **GraphQL API**: http://13.251.66.61:8080/v1/graphql
-- **GraphQL Console**: http://13.251.66.61:8080/console
-- **Indexer API**: http://13.251.66.61:9090
-- **PostgreSQL**: 13.251.66.61:5432
+- **💼 ASI Wallet v2**: http://wallet.dev.asichain.io **(v2.2.0)**
+- **🌐 ASI Chain Explorer**: http://explorer.dev.asichain.io **(v1.0.2)**
+- **📚 Documentation Site**: http://docs.asichain.io **(Docusaurus 3.8.1)**
+- **🚰 Token Faucet**: http://faucet.dev.asichain.io **(TypeScript)**
+- **📇 Indexer API**: http://indexer.dev.asichain.io
+
 
 ```bash
 # Check service health
@@ -1310,10 +1308,10 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 
 | Service | URL | Port | Description | Status |
 |---------|-----|------|-------------|--------|
-| **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet with WalletConnect v2, Rholang IDE | ✅ Live |
-| **Blockchain Explorer** | http://13.251.66.61:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
-| **Documentation Site** | http://13.251.66.61:3003 | 3003 | Interactive Docusaurus documentation | ✅ Live |
-| **Token Faucet** | http://13.251.66.61:5050 | 5050 | Testnet ASI token distribution (100 ASI/request) | ✅ Live |
+| **ASI Wallet v2** | http://wallet.dev.asichain.io | Web wallet with WalletConnect v2, Rholang IDE | ✅ Live |
+| **Blockchain Explorer** | http://explorer.dev.asichain.io | Real-time blockchain explorer | ✅ Live |
+| **Documentation Site** | http://docs.asichain.io| Interactive Docusaurus documentation | ✅ Live |
+| **Token Faucet** | http://faucet.dev.asichain.io | Testnet ASI token distribution (100 ASI/request) | ✅ Live |
 
 ---
 
@@ -1352,7 +1350,7 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 | **Hasura GraphQL API** | http://13.251.66.61:8080/v1/graphql | 8080 | GraphQL queries & mutations | Public |
 | **GraphQL Console** | http://13.251.66.61:8080/console | 8080 | Hasura admin interface | Public |
 | **GraphQL WebSocket** | ws://13.251.66.61:8080/v1/graphql | 8080 | Real-time subscriptions | Public |
-| **Indexer REST API** | http://13.251.66.61:9090 | 9090 | Blockchain data indexer | Public |
+| **Indexer REST API** | http://indexer.dev.asichain.io | Blockchain data indexer | Public |
 | **PostgreSQL Database** | `13.251.66.61:5432` | 5432 | Direct database connection | Private |
 | **Autopropose Service** | Internal container | N/A | Automatic block creation | Internal |
 
@@ -1577,13 +1575,11 @@ autopropose        # Internal - Block Creation Service
 
 ### Production (AWS Lightsail) ✅ LIVE
 ```
-ASI Wallet v2: http://13.251.66.61:3000
-ASI Explorer: http://13.251.66.61:3001
-Documentation: http://13.251.66.61:3003
-Token Faucet: http://13.251.66.61:5050
-F1R3FLY Network: http://13.251.66.61:40403
-GraphQL API: http://13.251.66.61:8080/v1/graphql  
-Indexer API: http://13.251.66.61:9090
+ASI Wallet v2: http://wallet.dev.asichain.io
+ASI Explorer: http://explorer.dev.asichain.io
+Documentation: http://docs.asichain.io
+Token Faucet: http://faucet.dev.asichain.io
+Indexer API: http://indexer.dev.asichain.io
 ```
 
 ### Mainnet (Coming Soon)
@@ -1882,9 +1878,9 @@ ws.onmessage = (event) => {
 const config = {
   graphqlEndpoint: 'http://13.251.66.61:8080/v1/graphql',
   wsEndpoint: 'ws://13.251.66.61:8080/v1/graphql',
-  restApiEndpoint: 'http://13.251.66.61:9090/api',
-  walletUrl: 'http://13.251.66.61:3000',
-  faucetUrl: 'http://13.251.66.61:5050',
+  restApiEndpoint: 'http://indexer.dev.asichain.io',
+  walletUrl: 'http://wallet.dev.asichain.io',
+  faucetUrl: 'http://faucet.dev.asichain.io',
   networkName: 'ASI Testnet',
   blockTime: 30000, // 30 seconds
   refreshInterval: 5000 // 5 seconds
@@ -1943,9 +1939,9 @@ ASI Chain provides multiple API interfaces for comprehensive blockchain interact
 |----------|----------|---------|---------------|
 | **F1R3FLY gRPC** | `13.251.66.61:40412` | Node operations | [gRPC Reference](#grpc-api) |
 | **F1R3FLY HTTP** | `http://13.251.66.61:40413` | Transaction submission | [HTTP Reference](#http-api) |
-| **Indexer REST** | `http://13.251.66.61:9090` | Blockchain data | [REST Reference](#rest-api) |
+| **Indexer REST** | `http://indexer.dev.asichain.io` | Blockchain data | [REST Reference](#rest-api) |
 | **GraphQL** | `http://13.251.66.61:8080/v1/graphql` | Real-time queries | [GraphQL Reference](#graphql-api) |
-| **Faucet API** | `http://13.251.66.61:5050` | Token distribution | [Faucet Reference](#faucet-api) |
+| **Faucet API** | `http://faucet.dev.asichain.io` | Token distribution | [Faucet Reference](#faucet-api) |
 
 ### gRPC API
 
@@ -2649,10 +2645,10 @@ ASI Chain supports multiple network environments to accommodate different use ca
 **Service Endpoints:**
 ```bash
 # Web Applications
-ASI Wallet v2:        http://13.251.66.61:3000
-Blockchain Explorer:  http://13.251.66.61:3001
-Documentation:        http://13.251.66.61:3003
-Token Faucet:         http://13.251.66.61:5050
+ASI Wallet v2:        http://wallet.dev.asichain.io
+Blockchain Explorer:  http://explorer.dev.asichain.io
+Documentation:        http://docs.asichain.io
+Token Faucet:         http://faucet.dev.asichain.io
 
 # Blockchain Nodes
 Bootstrap:            http://13.251.66.61:40403 (discovery only)
@@ -2662,14 +2658,14 @@ Read-only:            http://13.251.66.61:40453 (queries)
 
 # APIs
 GraphQL:              http://13.251.66.61:8080/v1/graphql
-Indexer REST:         http://13.251.66.61:9090
+Indexer REST:         http://indexer.dev.asichain.io
 PostgreSQL:           13.251.66.61:5432 (private)
 ```
 
 **Example Usage:**
 ```bash
 # Get testnet ASI tokens
-curl -X POST http://13.251.66.61:5050/api/request \
+curl -X POST http://faucet.dev.asichain.io/api/request \
   -H "Content-Type: application/json" \
   -d '{"address": "YOUR_ASI_ADDRESS"}'
 
@@ -2776,8 +2772,8 @@ export const testnetConfig = {
   chainId: 'asi-testnet',
   nodeUrl: 'http://13.251.66.61:40413',
   readOnlyUrl: 'http://13.251.66.61:40453',
-  explorerUrl: 'http://13.251.66.61:3001',
-  faucetUrl: 'http://13.251.66.61:5050',
+  explorerUrl: 'http://explorer.dev.asichain.io',
+  faucetUrl: 'http://faucet.dev.asichain.io',
   graphqlUrl: 'http://13.251.66.61:8080/v1/graphql',
   wsUrl: 'ws://13.251.66.61:8080/v1/graphql'
 };
@@ -3876,7 +3872,7 @@ Node Status:
 
 ```bash
 # 1. Request testnet ASI tokens
-curl -X POST http://13.251.66.61:5050/api/request \
+curl -X POST http://faucet.dev.asichain.io/api/request \
   -H "Content-Type: application/json" \
   -d '{"address": "1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8"}'
 
@@ -3987,10 +3983,10 @@ Data: DApp registry deployed successfully
 
 ```bash
 # 1. Access live explorer
-open http://13.251.66.61:3001
+open http://explorer.dev.asichain.io
 
 # 2. Search for transaction by ID
-# Navigate to: http://13.251.66.61:3001/transaction/0x789abc123def...
+# Navigate to: http://explorer.dev.asichain.io/transaction/0x789abc123def...
 
 # Expected display:
 Transaction Details:
@@ -4003,7 +3999,7 @@ Transaction Details:
   Contract Code: [View Rholang source]
   
 # 3. Check address activity
-# Navigate to: http://13.251.66.61:3001/address/1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
+# Navigate to: http://explorer.dev.asichain.io/address/1111ocWgUJb5QqnYCvKiPtzcmMyfvD3gS5Eg84NtaLkUtRfw3TDS8
 
 # Expected display:
 Address Overview:
@@ -4269,4 +4265,4 @@ kill $STATS_PID
 # asi-explorer       5.1%     64MB / 256MB
 ```
 
-This comprehensive documentation now covers all major operations across development, testnet, and mainnet environments with detailed command references, expected outputs, and practical usage scenarios for developers and operators.
+This comprehensive documentation covers all major operations across development, testnet, and mainnet environments with detailed command references, expected outputs, and practical usage scenarios for developers and operators.
