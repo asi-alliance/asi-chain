@@ -1,0 +1,13 @@
+name: deployer
+
+services:
+  deployer:
+    image: deployer-bot:v3
+    container_name: deployer
+    networks:
+      - devnet
+
+networks:
+  devnet:
+    external: true
+    name: devnet
