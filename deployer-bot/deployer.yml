@@ -2,8 +2,10 @@ name: deployer
 
 services:
   deployer:
-    image: deployer-bot:v3
+    image: deployer-bot:v4
     container_name: deployer
+    env_file:
+      - .env
     networks:
       - devnet
 
