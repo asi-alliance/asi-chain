@@ -2,7 +2,7 @@ name: deployer
 
 services:
   deployer:
-    image: deployer-bot:v4
+    image: deployer-bot:latest
     container_name: deployer
     env_file:
       - .env

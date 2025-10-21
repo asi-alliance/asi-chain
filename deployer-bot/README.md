@@ -5,7 +5,7 @@ Setup bot's settings in `.env`. Use `.env.example` for reference.
 
 ## Step 2: Build
 ```bash
-docker build --tag deployer-bot:v4 .
+docker build --tag deployer-bot:latest .
 ```
 
 ## Step 3: Run
