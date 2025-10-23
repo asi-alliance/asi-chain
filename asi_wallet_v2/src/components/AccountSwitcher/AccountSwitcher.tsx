@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'store';
 import { selectAccount, fetchBalance } from 'store/walletSlice';
+import { truncateText } from 'utils/textUtils';
+import { formatBalanceCompact } from 'utils/balanceUtils';
 
 const SwitcherContainer = styled.div`
   position: relative;
@@ -50,6 +52,14 @@ const AccountName = styled.span`
   font-weight: 500;
   font-size: 14px;
   color: ${({ theme }) => theme.text.primary};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+  
+  @media (max-width: 768px) {
+    max-width: 80px;
+  }
 `;
 
 const AccountAddress = styled.span`
@@ -139,12 +149,7 @@ const formatAddress = (address: string): string => {
   return `${address.substring(0, 8)}...${address.substring(address.length - 6)}`;
 };
 
-const formatBalance = (balance: string): string => {
-  const num = parseFloat(balance);
-  if (num === 0) return '0 REV';
-  if (num < 0.0001) return '<0.0001 REV';
-  return `${num.toFixed(4)} REV`;
-};
+// Remove the old formatBalance function since we're using the utility now
 
 export const AccountSwitcher: React.FC = () => {
   const dispatch = useDispatch();
@@ -222,7 +227,9 @@ export const AccountSwitcher: React.FC = () => {
         <AccountInfo>
           {selectedAccount ? (
             <>
-              <AccountName>{selectedAccount.name}</AccountName>
+              <AccountName title={selectedAccount.name}>
+                {truncateText(selectedAccount.name, 20)}
+              </AccountName>
               <AccountAddress>{formatAddress(selectedAccount.revAddress)}</AccountAddress>
             </>
           ) : (
@@ -231,7 +238,7 @@ export const AccountSwitcher: React.FC = () => {
         </AccountInfo>
         {selectedAccount && (
           <AccountBalance>
-            {isLoadingBalances ? <LoadingSpinner /> : formatBalance(selectedAccount.balance)}
+            {isLoadingBalances ? <LoadingSpinner /> : formatBalanceCompact(selectedAccount.balance)}
           </AccountBalance>
         )}
         <ChevronIcon $isOpen={isOpen}>▼</ChevronIcon>
@@ -246,11 +253,13 @@ export const AccountSwitcher: React.FC = () => {
               onClick={() => handleAccountSelect(account.id)}
             >
               <AccountInfo>
-                <AccountName>{account.name}</AccountName>
+                <AccountName title={account.name}>
+                  {truncateText(account.name, 25)}
+                </AccountName>
                 <AccountAddress>{formatAddress(account.revAddress)}</AccountAddress>
               </AccountInfo>
               <AccountBalance>
-                {isLoadingBalances ? <LoadingSpinner /> : formatBalance(account.balance)}
+                {isLoadingBalances ? <LoadingSpinner /> : formatBalanceCompact(account.balance)}
               </AccountBalance>
             </DropdownItem>
           ))

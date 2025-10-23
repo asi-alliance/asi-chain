@@ -105,6 +105,12 @@ p {
 }
 
 /* ASI Wallet v2 Card Component */
+.live-activity {
+    min-width: 300px;
+    max-width: 400px;
+    flex: auto;
+}
+
 .asi-card {
     background: var(--charcoal-700);
     border-radius: 8px;
@@ -173,12 +179,36 @@ tbody tr:last-child td {
 
 /* Navigation Tabs - ASI Wallet v2 Style */
 .nav-tabs {
+    overflow: auto;
+    width: 100%;
     display: flex;
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-lg);
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 0;
+    scrollbar-width: none;
 }
+
+/* .nav-tabs:hover {
+    scrollbar-width: auto;
+} */
+
+.nav-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+/* .nav-tabs::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+.nav-tabs:hover::-webkit-scrollbar {
+   display: block; 
+}
+
+.nav-tabs:hover::-webkit-scrollbar-thumb {
+   display: block; 
+} */
+
 
 .nav-tab {
     padding: var(--spacing-sm) var(--spacing-md);
@@ -192,6 +222,7 @@ tbody tr:last-child td {
     transition: all 0.2s ease;
     position: relative;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .nav-tab:hover {
@@ -545,13 +576,37 @@ code, .code {
 .header-left {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
+    background-color: transparent;
+}
+
+.header-left .logo-image {
+    height: 45px;
+    width: 68px;
+}
+
+.header-left .logo-image svg {
+    width: 100%;
+    height: 100%;
+}
+
+.header-left:hover {
+    cursor: pointer;
 }
 
 .header-right {
     display: flex;
     gap: 1.5rem;
     align-items: center;
+    z-index: 5;
+}
+
+.advanced-searcher option{
+    background-color: #121313;
+}
+
+.pagination-controls option{
+    background-color: rgb(54, 54, 54);
 }
 
 /* Logo styling */
@@ -673,6 +728,16 @@ code, .code {
     gap: 1rem;
     flex-wrap: wrap;
     margin-top: 2rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.pagination-controls input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .pagination-info {

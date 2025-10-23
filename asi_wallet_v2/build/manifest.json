@@ -1,0 +1,59 @@
+{
+  "name": "ASI Wallet - Decentralized Multi-Chain Wallet",
+  "short_name": "ASI Wallet",
+  "description": "Secure, private, multi-chain wallet with integrated Rholang IDE",
+  "icons": [
+    {
+      "src": "asi-icon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#93E27C",
+  "background_color": "#0D1012",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "categories": ["finance", "blockchain", "cryptocurrency"],
+  "shortcuts": [
+    {
+      "name": "Send Transaction",
+      "short_name": "Send",
+      "url": "./#/send",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "IDE",
+      "short_name": "IDE",
+      "url": "./#/ide",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "wc",
+      "url": "./?uri=%s"
+    },
+    {
+      "protocol": "asiwallet",
+      "url": "./?action=%s"
+    }
+  ]
+}

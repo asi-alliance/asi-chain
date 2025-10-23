@@ -76,7 +76,8 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
   embedded = false
 }) => {
   // State
-  const [activeTab, setActiveTab] = useState<'all' | 'deployments' | 'transfers'>('all');
+  const [activeTab, setActiveTab] = useState<'deployments' | 'transfers'>('deployments');
+  // const [activeTab, setActiveTab] = useState<'all' | 'deployments' | 'transfers'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [searchQuery, setSearchQuery] = useState('');
@@ -115,7 +116,8 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
     const results: any[] = [];
     
     // Add deployments
-    if (activeTab === 'all' || activeTab === 'deployments') {
+    // if (activeTab === 'all' || activeTab === 'deployments') {
+    if (activeTab === 'deployments') {
       transactionData.deployments?.forEach((deployment: any) => {
         results.push({
           ...deployment,
@@ -129,7 +131,8 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
     }
     
     // Add transfers
-    if (activeTab === 'all' || activeTab === 'transfers') {
+    // if (activeTab === 'all' || activeTab === 'transfers') {
+    if (activeTab === 'transfers') {
       transactionData.transfers?.forEach((transfer: any) => {
         results.push({
           ...transfer,
@@ -168,12 +171,13 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
       };
     }
     
-    if (activeTab === 'all') {
-      return {
-        title: "All Transactions",
-        subtitle: `Showing ${startIndex}-${Math.min(endIndex, transactions.length)} of ${totalTransactions} total (${totalDeployments} deployments, ${totalTransfers} transfers)`
-      };
-    } else if (activeTab === 'deployments') {
+    // if (activeTab === 'all') {
+    //   return {
+    //     title: "All Transactions",
+    //     subtitle: `Showing ${startIndex}-${Math.min(endIndex, transactions.length)} of ${totalTransactions} total (${totalDeployments} deployments, ${totalTransfers} transfers)`
+    //   };
+    // } else if (activeTab === 'deployments') {
+    if (activeTab === 'deployments') {
       return {
         title: "Smart Contract Deployments",
         subtitle: `Showing ${startIndex}-${endIndex} of ${totalDeployments} total deployments`
@@ -230,7 +234,8 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         marginBottom: '2rem'
       }}>
-        {(['all', 'deployments', 'transfers'] as const).map((tab) => (
+        {/* {(['all', 'deployments', 'transfers'] as const).map((tab) => ( */}
+        {(['deployments', 'transfers'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => {
@@ -248,9 +253,10 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
               fontWeight: activeTab === tab ? '600' : '400'
             }}
           >
-            {tab === 'all' ? `All (${totalTransactions})` 
+            {/* {tab === 'all' ? `All (${totalTransactions})` 
               : tab === 'deployments' ? `Deployments (${totalDeployments})`
-              : `Transfers (${totalTransfers})`}
+              : `Transfers (${totalTransfers})`} */}
+              {tab === 'deployments' ? `Deployments (${totalDeployments})` : `Transfers (${totalTransfers})`}
           </button>
         ))}
       </div>
@@ -368,76 +374,78 @@ const TransactionTrackerImproved: React.FC<TransactionTrackerImprovedProps> = ({
       </div>
       
       {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '1rem',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-        }}>
-          <div style={{ color: '#9ca3af', fontSize: '0.875rem' }}>
-            Showing {startIndex}-{Math.min(endIndex, transactions.length)} of {totalItemsForTab} items
+      <div className='pagination-controls'>
+        {totalPages > 1 && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '1rem',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+          }}>
+            <div style={{ color: '#9ca3af', fontSize: '0.875rem' }}>
+              Showing {startIndex}-{Math.min(endIndex, transactions.length)} of {totalItemsForTab} items
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <button
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                style={{
+                  padding: '0.5rem',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  backgroundColor: 'transparent',
+                  color: currentPage === 1 ? '#4b5563' : '#fff',
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              
+              <span style={{ padding: '0 1rem' }}>
+                Page {currentPage} of {totalPages}
+              </span>
+              
+              <button
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                style={{
+                  padding: '0.5rem',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  backgroundColor: 'transparent',
+                  color: currentPage === totalPages ? '#4b5563' : '#fff',
+                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <ChevronRight size={16} />
+              </button>
+              
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                style={{
+                  marginLeft: '1rem',
+                  padding: '0.5rem',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  color: '#fff'
+                }}
+              >
+                <option value="10">10 per page</option>
+                <option value="20">20 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+              </select>
+            </div>
           </div>
-          
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <button
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              style={{
-                padding: '0.5rem',
-                borderRadius: '4px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backgroundColor: 'transparent',
-                color: currentPage === 1 ? '#4b5563' : '#fff',
-                cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              <ChevronLeft size={16} />
-            </button>
-            
-            <span style={{ padding: '0 1rem' }}>
-              Page {currentPage} of {totalPages}
-            </span>
-            
-            <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-              style={{
-                padding: '0.5rem',
-                borderRadius: '4px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backgroundColor: 'transparent',
-                color: currentPage === totalPages ? '#4b5563' : '#fff',
-                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-              }}
-            >
-              <ChevronRight size={16} />
-            </button>
-            
-            <select
-              value={itemsPerPage}
-              onChange={(e) => {
-                setItemsPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              style={{
-                marginLeft: '1rem',
-                padding: '0.5rem',
-                borderRadius: '4px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                color: '#fff'
-              }}
-            >
-              <option value="10">10 per page</option>
-              <option value="20">20 per page</option>
-              <option value="50">50 per page</option>
-              <option value="100">100 per page</option>
-            </select>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
