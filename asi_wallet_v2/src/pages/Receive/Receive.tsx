@@ -4,26 +4,26 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { QRCodeCanvas } from 'qrcode.react';
 import { RootState } from 'store';
-import { Card, CardHeader, CardTitle, CardContent, Button } from 'components';
+import { Card, CardHeader, CardTitle, CardContent, Button, AccountRequiredStub } from 'components';
 
 const ReceiveContainer = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
+    max-width: 600px;
+    margin: 0 auto;
 `;
 
 const AddressContainer = styled.div`
-  background: ${({ theme }) => theme.surface};
-  padding: 24px;
-  border-radius: 12px;
-  margin-bottom: 24px;
-  text-align: center;
+    background: ${({ theme }) => theme.surface};
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    text-align: center;
 `;
 
 const AddressLabel = styled.div`
-  font-size: 16px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.text.primary};
-  margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.text.primary};
+    margin-bottom: 16px;
 `;
 
 const AddressValue = styled.div`
@@ -39,7 +39,7 @@ const AddressValue = styled.div`
 `;
 
 const CopyButton = styled(Button)`
-  margin-top: 16px;
+    margin-top: 16px;
 `;
 
 const QRCodeContainer = styled.div`
@@ -56,9 +56,9 @@ const QRCodeContainer = styled.div`
 `;
 
 const TabContainer = styled.div`
-  display: flex;
-  margin-bottom: 24px;
-  border-bottom: 2px solid ${({ theme }) => theme.border};
+    display: flex;
+    margin-bottom: 24px;
+    border-bottom: 2px solid ${({ theme }) => theme.border};
 `;
 
 const Tab = styled.button<{ active: boolean }>`
@@ -114,7 +114,7 @@ const InfoList = styled.ul`
 
 export const Receive: React.FC = () => {
   const navigate = useNavigate();
-  const { selectedAccount } = useSelector((state: RootState) => state.wallet);
+  const { selectedAccount, selectedNetwork } = useSelector((state: RootState) => state.wallet);
   const [activeTab, setActiveTab] = useState<'rev' | 'eth'>('rev');
   const [copyMessage, setCopyMessage] = useState('');
 
@@ -127,14 +127,18 @@ export const Receive: React.FC = () => {
 
   if (!selectedAccount) {
     return (
-      <ReceiveContainer>
-        <Card>
-          <CardContent>
-            <p>Please select an account first.</p>
-            <Button onClick={() => navigate('/accounts')}>Select Account</Button>
-          </CardContent>
-        </Card>
-      </ReceiveContainer>
+      <AccountRequiredStub
+        title="Receive REV"
+        description="Get your REV address to receive tokens from others. Share your address or QR code for easy transfers."
+        features={[
+          "Generate QR codes for easy sharing",
+          "Copy address to clipboard",
+          "Display both REV and ETH addresses",
+          "Share via various methods",
+          "Real-time address generation"
+        ]}
+        icon="📥"
+      />
     );
   }
 
@@ -168,7 +172,7 @@ export const Receive: React.FC = () => {
           <AddressContainer>
             <AddressLabel>{addressLabel}</AddressLabel>
             <AddressValue>{currentAddress}</AddressValue>
-            
+
             <QRCodeContainer>
               <QRCodeCanvas
                 value={currentAddress}
@@ -187,7 +191,7 @@ export const Receive: React.FC = () => {
             >
               Copy {activeTab.toUpperCase()} Address
             </CopyButton>
-            
+
             <Button
               variant="ghost"
               onClick={() => {
@@ -213,7 +217,7 @@ export const Receive: React.FC = () => {
               <li>Only send REV tokens to the REV address</li>
               <li>The ETH address is for compatibility - mainly for address derivation</li>
               <li>Always double-check the address before sending</li>
-              <li>Make sure you're on the correct network: {selectedAccount.name}</li>
+              <li>Make sure you're on the correct network: {selectedNetwork?.name || 'Unknown Network'}</li>
             </InfoList>
           </InfoBox>
 

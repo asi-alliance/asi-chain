@@ -6,12 +6,11 @@ import { fetchBalance } from 'store/walletSlice';
 import { setSessionProposal, addSessionRequest } from 'store/walletConnectSlice';
 import { Card, CardHeader, CardTitle, CardContent, Button } from 'components';
 import { useNavigate } from 'react-router-dom';
-import { formatBalanceDashboard } from 'utils/balanceUtils';
-import { 
-  WalletConnectModalV2, 
-  SessionProposalModal, 
-  TransactionApprovalModal, 
-  ConnectedDApps 
+import {
+  WalletConnectModalV2,
+  SessionProposalModal,
+  TransactionApprovalModal,
+  ConnectedDApps
 } from 'components/WalletConnect';
 import { SendIcon, ReceiveIcon, AccountsIcon, ContractIcon, IDEIcon, ClipboardIcon, WalletConnectIcon } from 'components/Icons';
 
@@ -60,9 +59,12 @@ const BalanceCard = styled(Card)`
 `;
 
 const BalanceAmount = styled.div`
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 700;
   margin-bottom: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 48px;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   color: white !important;
 `;
@@ -259,7 +261,7 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     const checkNetwork = async () => {
       if (!selectedNetwork) return;
-      
+
       setNetworkStatus('checking');
       try {
         const response = await fetch(selectedNetwork.readOnlyUrl + '/api/status', {
@@ -338,7 +340,7 @@ export const Dashboard: React.FC = () => {
 
   const formatRelativeTime = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    
+
     if (seconds < 60) return 'just now';
     if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
@@ -376,14 +378,14 @@ export const Dashboard: React.FC = () => {
           <span>{selectedNetwork.name}</span>
           <span>•</span>
           <span>
-            {networkStatus === 'checking' ? 'Checking...' : 
+            {networkStatus === 'checking' ? 'Checking...' :
              networkStatus === 'connected' ? 'Connected' : 'Disconnected'}
           </span>
           <span>•</span>
           <LastUpdated>Updated {formatRelativeTime(lastRefresh)}</LastUpdated>
         </NetworkInfo>
       </NetworkStatusBar>
-      
+
       <DashboardContainer>
         <BalanceCard>
           <CardContent>

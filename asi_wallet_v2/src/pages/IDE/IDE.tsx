@@ -6,7 +6,7 @@ import Editor from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import { RootState } from 'store';
 import { RChainService } from 'services/rchain';
-import { Button, PasswordModal, DeploymentConfirmationModal } from 'components';
+import { Button, PasswordModal, DeploymentConfirmationModal, AccountRequiredStub } from 'components';
 import { FileIcon, FolderIcon, FolderOpenIcon, PlusIcon, DownloadIcon, ChevronRightIcon, ChevronDownIcon, SuccessIcon, ErrorIcon, PendingIcon } from 'components/Icons';
 import { registerRholangLanguage, RHOLANG_LANGUAGE_ID } from './rholangLanguage';
 import IDEStorageService, { IDEItem, IDEFile, IDEFolder } from 'services/ideStorage';
@@ -830,12 +830,18 @@ export const IDE: React.FC = () => {
 
   if (!selectedAccount) {
     return (
-      <IDEContainer>
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          <p>Please select an account to use the IDE.</p>
-          <Button onClick={() => navigate('/accounts')}>Select Account</Button>
-        </div>
-      </IDEContainer>
+      <AccountRequiredStub
+        title="Rholang IDE"
+        description="Develop, test, and deploy Rholang smart contracts with our integrated development environment. Write code, manage files, and deploy to the blockchain."
+        features={[
+          "Monaco editor with Rholang syntax highlighting",
+          "File management and project organization",
+          "Direct deployment to RChain blockchain",
+          "Code completion and error checking",
+          "Integrated with wallet for seamless deployment"
+        ]}
+        icon="💻"
+      />
     );
   }
 

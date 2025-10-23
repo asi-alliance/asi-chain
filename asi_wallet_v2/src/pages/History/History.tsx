@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from 'store';
-import { Card, CardHeader, CardTitle, CardContent, Button } from 'components';
+import { Card, CardHeader, CardTitle, CardContent, Button, AccountRequiredStub } from 'components';
 import TransactionHistoryService, { Transaction, TransactionFilter } from 'services/transactionHistory';
 import { RChainService } from 'services/rchain';
 
@@ -167,6 +167,20 @@ const RefreshInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+    @media (max-width: 768px) {
+        justify-content: center;
+        flex-direction: column;
+        gap: 4px;
+    }
+`;
+
+const ButtonsWrapper = styled.div`
+    display: flex;
+    gap: 8px;
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 4px;
+    }
 `;
 
 const formatAddress = (address: string): string => {
@@ -200,9 +214,9 @@ export const History: React.FC = () => {
 
   const checkPendingTransactionStatuses = useCallback(async () => {
     if (!selectedNetwork) return;
-    
+
     console.log('[History] Checking pending transaction statuses...');
-    
+
     // Create RChain service instance
     const rchain = new RChainService(
       selectedNetwork.url,
@@ -211,14 +225,14 @@ export const History: React.FC = () => {
       selectedNetwork.shardId,
       selectedNetwork.graphqlUrl
     );
-    
+
     // Get all pending transactions
     const pendingTxs = TransactionHistoryService.getFilteredTransactions({
       status: 'pending'
     });
-    
+
     console.log(`[History] Found ${pendingTxs.length} pending transactions to check`);
-    
+
     // Check status for each pending transaction
     for (const tx of pendingTxs) {
       if (tx.deployId) {
@@ -226,7 +240,7 @@ export const History: React.FC = () => {
           console.log(`[History] Checking status for deploy ${tx.deployId}`);
           // Use shorter timeout for status checks
           const result = await rchain.waitForDeployResult(tx.deployId, 1);
-          
+
           if (result.status === 'completed') {
             console.log(`[History] Deploy ${tx.deployId} is now confirmed!`);
             TransactionHistoryService.updateTransaction(tx.id, {
@@ -249,11 +263,11 @@ export const History: React.FC = () => {
 
   const loadTransactions = useCallback(() => {
     let txs: Transaction[];
-    
+
     // Get transactions for the selected account only
     if (selectedAccount) {
       txs = TransactionHistoryService.getAccountTransactions(selectedAccount.revAddress);
-      
+
       // Apply additional filters
       if (filter.type) {
         txs = txs.filter(tx => tx.type === filter.type);
@@ -324,6 +338,23 @@ export const History: React.FC = () => {
     }));
   };
 
+  if (!selectedAccount) {
+    return (
+      <AccountRequiredStub
+        title="Transaction History"
+        description="View and manage your transaction history. Track all your REV transfers, contract deployments, and other blockchain activities."
+        features={[
+          "View all incoming and outgoing transactions",
+          "Filter transactions by type, status, and date",
+          "Export transaction data as JSON or CSV",
+          "Track transaction status and confirmations",
+          "View detailed transaction information"
+        ]}
+        icon="📊"
+      />
+    );
+  }
+
   return (
     <HistoryContainer>
       <Card>
@@ -343,9 +374,9 @@ export const History: React.FC = () => {
               <span>Auto-refresh: every 30s</span>
               <span>•</span>
               <span>Last: {lastRefresh.toLocaleTimeString()}</span>
-              <Button 
-                size="small" 
-                variant="ghost" 
+              <Button
+                size="small"
+                variant="ghost"
                 onClick={async () => {
                   console.log('[History] Manual refresh triggered');
                   await checkPendingTransactionStatuses();
@@ -356,7 +387,7 @@ export const History: React.FC = () => {
                 🔄 Refresh
               </Button>
             </RefreshInfo>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <ButtonsWrapper >
               <Button size="small" variant="ghost" onClick={handleExportJSON}>
                 Export JSON
               </Button>
@@ -366,7 +397,7 @@ export const History: React.FC = () => {
               <Button size="small" variant="ghost" onClick={handleClearHistory}>
                 Clear History
               </Button>
-            </div>
+            </ButtonsWrapper>
           </ActionButtons>
 
           <FilterSection>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { RootState } from 'store';
 import { RChainService } from 'services/rchain';
-import { Card, CardHeader, CardTitle, CardContent, Button, Input, DeploymentConfirmationModal } from 'components';
+import { Card, CardHeader, CardTitle, CardContent, Button, Input, DeploymentConfirmationModal, AccountRequiredStub } from 'components';
 import TransactionHistoryService from 'services/transactionHistory';
 import { SuccessIcon, ErrorIcon, PendingIcon } from 'components/Icons';
 
@@ -282,14 +282,18 @@ export const Deploy: React.FC = () => {
 
   if (!selectedAccount) {
     return (
-      <DeployContainer>
-        <Card>
-          <CardContent>
-            <p>Please select an account first.</p>
-            <Button onClick={() => navigate('/accounts')}>Select Account</Button>
-          </CardContent>
-        </Card>
-      </DeployContainer>
+      <AccountRequiredStub
+        title="Deploy Contract"
+        description="Deploy Rholang smart contracts to the RChain blockchain. Write, test, and deploy your custom contracts."
+        features={[
+          "Deploy Rholang smart contracts",
+          "Set custom phlo limits and prices",
+          "Real-time deployment status tracking",
+          "Contract deployment history",
+          "Integration with RChain IDE"
+        ]}
+        icon="🚀"
+      />
     );
   }
 

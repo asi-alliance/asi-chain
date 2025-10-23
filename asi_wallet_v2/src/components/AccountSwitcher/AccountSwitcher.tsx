@@ -51,6 +51,8 @@ const AccountInfo = styled.div`
 const AccountName = styled.span`
   font-weight: 500;
   font-size: 14px;
+  white-space: pre-wrap;  
+  word-break: break-all; 
   color: ${({ theme }) => theme.text.primary};
   overflow: hidden;
   text-overflow: ellipsis;
@@ -177,14 +179,14 @@ export const AccountSwitcher: React.FC = () => {
 
   const fetchAllBalances = async () => {
     if (!selectedNetwork || accounts.length === 0) return;
-    
+
     setIsLoadingBalances(true);
-    
+
     // Fetch balances for all accounts
-    const balancePromises = accounts.map(account => 
+    const balancePromises = accounts.map(account =>
       dispatch(fetchBalance({ account, network: selectedNetwork }) as any)
     );
-    
+
     try {
       await Promise.all(balancePromises);
     } catch (error) {
@@ -197,7 +199,7 @@ export const AccountSwitcher: React.FC = () => {
   const handleToggle = () => {
     const newIsOpen = !isOpen;
     setIsOpen(newIsOpen);
-    
+
     // Fetch balances when dropdown opens
     if (newIsOpen) {
       // Small delay to ensure dropdown is open before fetching
