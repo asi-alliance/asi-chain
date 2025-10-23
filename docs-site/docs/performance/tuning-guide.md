@@ -475,7 +475,7 @@ alerts:
     action: notify
     
   - name: low_memory
-    condition: memory_available < 2GB
+    condition: memory_available < 2lt;2GB
     duration: 10m
     action: restart_container
 ```

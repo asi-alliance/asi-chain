@@ -319,6 +319,7 @@ Designed for high throughput:
 ### Programming Languages
 - **Scala 2.12**: Primary implementation language
 - **Rholang**: Smart contract language
+- **Rust**: CLI language
 - **Protocol Buffers**: Data serialization
 
 ### Frameworks & Libraries

@@ -175,7 +175,7 @@ If an ASIP is rejected:
 
 ## Resources
 
-- [ASIP Template](.github/ISSUE_TEMPLATE/asip_proposal.md)
+- [ASIP Template](https://github.com/asi-alliance/asi-chain/blob/feature/docs-site-updates/docs-site/docs/asip_proposal.md)
 - [GitHub Discussions](https://github.com/asi-alliance/asi-chain/discussions)
 - [Technical Committee Members](GOVERNANCE.md#technical-committee)
 - [ASI Alliance Documentation](https://docs.superintelligence.io)

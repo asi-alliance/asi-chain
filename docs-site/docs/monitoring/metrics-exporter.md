@@ -1,8 +1,8 @@
-# F1R3FLY Blockchain Metrics Exporter
+# ASI Chain Blockchain Metrics Exporter
 
 ## Overview
 
-The Blockchain Metrics Exporter is a custom Python-based metrics collector that exposes F1R3FLY blockchain metrics in Prometheus format. It runs as a Docker container alongside the blockchain nodes and provides real-time metrics about the network's health and performance.
+The Blockchain Metrics Exporter is a custom Python-based metrics collector that exposes ASI Chain blockchain metrics in Prometheus format. It runs as a Docker container alongside the blockchain nodes and provides real-time metrics about the network's health and performance.
 
 ## Architecture
 
@@ -16,12 +16,12 @@ The Blockchain Metrics Exporter is a custom Python-based metrics collector that 
 
 | Metric Name | Type | Description | Labels |
 |------------|------|-------------|--------|
-| `f1r3fly_block_height` | Gauge | Current block height of each node | `node` |
-| `f1r3fly_peer_count` | Gauge | Number of connected peers per node | `node` |
-| `f1r3fly_node_count` | Gauge | Total number of known nodes | `node` |
-| `f1r3fly_validator_count` | Gauge | Number of bonded validators | - |
-| `f1r3fly_total_stake` | Gauge | Total amount staked in the network | - |
-| `f1r3fly_api_errors_total` | Counter | Total API errors encountered | `node` |
+| `asi_chain_block_height` | Gauge | Current block height of each node | `node` |
+| `asi_chain_peer_count` | Gauge | Number of connected peers per node | `node` |
+| `asi_chain_node_count` | Gauge | Total number of known nodes | `node` |
+| `asi_chain_validator_count` | Gauge | Number of bonded validators | - |
+| `asi_chain_total_stake` | Gauge | Total amount staked in the network | - |
+| `asi_chain_api_errors_total` | Counter | Total API errors encountered | `node` |
 
 ## Installation
 
@@ -31,14 +31,14 @@ The metrics exporter runs as a Docker container in the same network as the block
 
 ```bash
 # Build the Docker image
-docker build -f Dockerfile.metrics -t f1r3fly-metrics-exporter .
+docker build -f Dockerfile.metrics -t asi-chain-metrics-exporter .
 
 # Run the container
 docker run -d \
   --name metrics-exporter \
   --network docker_f1r3fly \
   -p 9091:9091 \
-  f1r3fly-metrics-exporter
+  asi-chain-metrics-exporter
 ```
 
 ### Manual Installation
@@ -72,7 +72,7 @@ Add the following job to your `prometheus.yml`:
 
 ```yaml
 scrape_configs:
-  - job_name: 'f1r3fly-blockchain-metrics'
+  - job_name: 'asi-chain-blockchain-metrics'
     static_configs:
       - targets: ['metrics-exporter:9091']
         labels:
@@ -95,16 +95,16 @@ docker network connect docker_f1r3fly prometheus
 curl http://localhost:9091/metrics | grep f1r3fly_
 
 # Example output:
-# f1r3fly_block_height{node="bootstrap"} 325.0
-# f1r3fly_peer_count{node="bootstrap"} 5.0
-# f1r3fly_validator_count 3.0
+# asi_chain_block_height{node="bootstrap"} 325.0
+# asi_chain_peer_count{node="bootstrap"} 5.0
+# asi_chain_validator_count 3.0
 ```
 
 ### Query in Prometheus
 
 ```bash
 # Check if metrics are being collected
-curl http://localhost:9090/api/v1/query?query=f1r3fly_block_height
+curl http://localhost:9090/api/v1/query?query=asi_chain_block_height
 
 # Check target health
 curl http://localhost:9090/api/v1/targets | grep blockchain
@@ -115,9 +115,9 @@ curl http://localhost:9090/api/v1/targets | grep blockchain
 1. Access Grafana at http://54.254.197.253:3000
 2. Create a new dashboard
 3. Add queries for F1R3FLY metrics:
-   - `f1r3fly_block_height{node="$node"}`
-   - `f1r3fly_peer_count{node="$node"}`
-   - `rate(f1r3fly_api_errors_total[5m])`
+   - `asi_chain_block_height{node="$node"}`
+   - `asi_chain_peer_count{node="$node"}`
+   - `rate(asi_chain_api_errors_total[5m])`
 
 ## Monitoring
 
@@ -182,22 +182,22 @@ docker logs --tail 50 metrics-exporter
 
 ### Block Height Chart
 ```promql
-f1r3fly_block_height{node=~"validator.*"}
+asi_chain_block_height{node=~"validator.*"}
 ```
 
 ### Network Peers
 ```promql
-sum(f1r3fly_peer_count)
+sum(asi_chain_peer_count)
 ```
 
 ### API Error Rate
 ```promql
-rate(f1r3fly_api_errors_total[5m])
+rate(asi_chain_api_errors_total[5m])
 ```
 
 ### Validator Status
 ```promql
-f1r3fly_validator_count
+asi_chain_validator_count
 ```
 
 ## Files

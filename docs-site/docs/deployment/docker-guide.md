@@ -14,7 +14,7 @@ This guide covers Docker configurations for ASI Chain deployment, including moni
 ```
 docker/
 ├── grafana/
-│   └── asi-dashboard.json         # Grafana dashboard configuration
+│   └── f1r3fly-dashboard.json         # Grafana dashboard configuration
 └── metrics/
     ├── Dockerfile.metrics         # Docker image for metrics exporter
     └── docker-compose-metrics.yml # Compose file for metrics stack
@@ -22,7 +22,7 @@ docker/
 
 ## Components
 
-### 1. Grafana Dashboard (`grafana/asi-dashboard.json`)
+### 1. Grafana Dashboard (`grafana/f1r3fly-dashboard.json`)
 
 Custom Grafana dashboard for visualizing blockchain metrics:
 
@@ -198,10 +198,10 @@ docker-compose -f docker-compose-metrics.yml up -d
 
 ## Related Documentation
 
-- [Configuration Guide](CONFIG_GUIDE.MD)
-- [Monitoring Stack](monitoring/MONITORING_STACK.MD)
-- [Deployment Guide](deployment/AWS_LIGHTSAIL_DEPLOYMENT.MD)
-- [Network Status](NETWORK_STATUS.MD)
+- [Configuration Guide](development/configuration.md)
+- [Monitoring Stack](monitoring/stack.md)
+- [Deployment Guide](deployment/aws-lightsail.md)
+- [Network Status](monitoring/network-status.md)
 
 ---
 

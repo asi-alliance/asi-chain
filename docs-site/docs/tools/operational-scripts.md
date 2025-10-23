@@ -99,7 +99,7 @@ docker run -d --name metrics-exporter \
   f1r3fly-metrics-exporter
 ```
 
-**Documentation:** See [docs/monitoring/BLOCKCHAIN_METRICS_EXPORTER.md](../docs/monitoring/BLOCKCHAIN_METRICS_EXPORTER.MD)
+**Documentation:** See [docs/monitoring/BLOCKCHAIN_METRICS_EXPORTER.md](monitoring/metrics-exporter.md)
 
 ### `network_stress_test.sh`
 Comprehensive network stress testing script for F1R3FLY blockchain:
@@ -150,7 +150,7 @@ User-friendly wrapper for network stress testing with multiple configurations:
 - Comprehensive final reports
 - Detailed logging to `/tmp/stress_test_*.log`
 
-**Documentation:** See [docs/monitoring/NETWORK_STRESS_TESTING.md](../docs/monitoring/NETWORK_STRESS_TESTING.MD)
+**Documentation:** See [docs/monitoring/NETWORK_STRESS_TESTING.md](monitoring/stress-testing.md)
 
 ## Security Scripts (`security/`)
 
@@ -276,7 +276,7 @@ git commit -m "Update operational script: script_name.sh"
 For issues with operational scripts:
 1. Check script logs in `/var/log/`
 2. Verify file permissions and dependencies
-3. Review [troubleshooting documentation](../docs/troubleshooting/COMMON_ISSUES.MD)
+3. Review [troubleshooting documentation](troubleshooting/common-issues.md)
 4. Open GitHub issue with error details
 
 ---
