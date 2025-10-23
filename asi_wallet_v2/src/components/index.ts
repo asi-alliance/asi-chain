@@ -10,5 +10,4 @@ export { AccountSwitcher } from './AccountSwitcher';
 export { AccountRequiredStub } from './AccountRequiredStub';
 export { AIHint } from './AIHint';
 export { Switch } from './Switch';
-export { HardwareWalletModal } from './HardwareWallet';
-export { QRScannerModal } from './QRScanner';
+export { PrivateKeyDisplay } from './PrivateKeyDisplay';

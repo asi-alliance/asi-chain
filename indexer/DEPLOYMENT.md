@@ -1,15 +1,20 @@
 # ASI-Chain Indexer Deployment Guide
 
-This guide covers various deployment scenarios for the ASI-Chain Indexer v2.0 with network-agnostic genesis support.
+**Version**: 2.1.1 | **Updated**: January 2025
 
-## ✨ v2.1 Features (Latest - Enhanced Transfer Detection)
+This guide covers various deployment scenarios for the ASI-Chain Indexer with network-agnostic genesis support and zero-touch deployment.
 
+## ✨ v2.1.1 Features (Latest - Data Quality & Bond Detection)
+
+- **Zero-Touch Deployment**: One-command setup with automatic configuration
+- **Validator Bond Detection**: Fixed regex pattern for new CLI output format
+- **Data Quality**: Proper NULL handling for deployment error messages
 - **Network-Agnostic Genesis Processing**: Automatic validator bond and REV allocation extraction
 - **Full Blockchain Sync**: Index from genesis (block 0) without limitations
 - **Enhanced REV Transfer Detection**: Supports both variable-based and match-based Rholang patterns
 - **Balance State Tracking**: Separate bonded and unbonded balances per address
-- **GraphQL API Integration**: Automatic Hasura configuration with bash script (no Python dependencies)
-- **Rust CLI Integration**: Direct blockchain access via native client
+- **GraphQL API Integration**: Automatic Hasura relationship configuration
+- **Rust CLI Integration**: Built from source inside Docker (cross-platform)
 - **Address Validation**: Supports 53-56 character REV addresses
 - **10 Comprehensive Tables**: Complete blockchain data model
 
@@ -44,19 +49,20 @@ Deploy with the automated deployment script:
 git clone <repository-url>
 cd indexer
 
-# Run deployment script (recommended)
-./deploy.sh
+# One-command deployment (recommended)
+echo "1" | ./deploy.sh  # Choose option 1 for remote F1R3FLY node
 
 # The script will:
 # - Pre-pull Docker images with retry logic
+# - Build Rust CLI from source (10-15 min first time, cached thereafter)
 # - Check Docker and network connectivity
 # - Build and start all services (PostgreSQL, Indexer, Hasura)
-# - Configure Hasura GraphQL automatically using bash/curl
-# - Verify genesis block processing
+# - Configure Hasura relationships automatically
+# - Verify genesis block processing with validator bonds
 # - Display service URLs and status
-# - Optional: Run functionality tests
+# - Run functionality tests
 
-# When prompted, choose 'y' to flush database for clean start
+# When prompted for fresh database, choose 'y' for clean start
 ```
 
 Or deploy manually:
@@ -73,13 +79,26 @@ bash scripts/configure-hasura.sh
 
 ## Rust CLI Setup
 
-### Using Pre-compiled Binary (Recommended)
+### Build from Source (Default - Cross-platform)
 
-The indexer includes a pre-compiled Linux x86_64 binary:
+The indexer now builds the Rust CLI from source inside Docker:
 
 ```bash
-# Binary is included at: indexer/node_cli_linux
-# No additional setup required for Docker deployment
+# Automatic build with docker-compose.rust.yml
+# Uses Dockerfile.rust-builder which:
+# - Builds Rust CLI from rust-client submodule
+# - Cross-compiles for Linux inside container
+# - Takes 10-15 minutes first time, cached thereafter
+# - No manual Rust setup required
+```
+
+### Using Pre-compiled Binary (Alternative)
+
+```bash
+# If you have a pre-compiled binary:
+# 1. Place it at: indexer/node_cli_linux
+# 2. Update docker-compose.rust.yml to use Dockerfile.rust-simple
+# 3. Deploy normally
 ```
 
 ### Building from Source
@@ -129,11 +148,11 @@ docker run -d \
   -v $(pwd)/migrations:/docker-entrypoint-initdb.d \
   postgres:14-alpine
 
-# Configure environment
+# Configure environment for remote F1R3FLY node
 export RUST_CLI_PATH=/path/to/rust-client/target/release/node_cli
-export NODE_HOST=localhost
-export GRPC_PORT=40412
-export HTTP_PORT=40413
+export NODE_HOST=13.251.66.61  # Remote F1R3FLY node
+export GRPC_PORT=40452          # Observer gRPC port
+export HTTP_PORT=40453          # Observer HTTP port
 export DATABASE_URL=postgresql://indexer:indexer_pass@localhost:5432/asichain
 
 # Run indexer
@@ -527,7 +546,7 @@ docker restart asi-rust-indexer
 3. **Schema Migration Errors**
    ```bash
    # Manually apply migrations
-   docker exec -i asi-indexer-db psql -U indexer -d asichain < migrations/002_add_enhanced_tables.sql
+   docker exec -i asi-indexer-db psql -U indexer -d asichain < migrations/000_comprehensive_initial_schema.sql
    
    # Check schema
    docker exec asi-indexer-db psql -U indexer -d asichain -c "\dt"

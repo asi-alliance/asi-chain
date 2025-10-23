@@ -207,36 +207,23 @@ echo "🧪 Testing relationships..."
 test_response=$(curl -s -X POST "$HASURA_URL/v1/graphql" \
     -H "Content-Type: application/json" \
     -H "x-hasura-admin-secret: $ADMIN_SECRET" \
-    -d '{
-        "query": "{ 
-            blocks(limit: 1, order_by: {block_number: desc}) { 
-                block_number 
-                deployments { deploy_id } 
-                transfers { id } 
-            } 
-            transfers(limit: 1) {
-                id
-                block { block_number }
-                deployment { deploy_id }
-            }
-        }"
-    }' 2>/dev/null)
+    -d '{"query": "{ blocks(limit: 1, order_by: {block_number: desc}) { block_number deployments { deploy_id } transfers { id } } transfers(limit: 1) { id block { block_number } deployment { deploy_id } } }"}' 2>/dev/null)
 
 if echo "$test_response" | grep -q '"data"'; then
     echo "✅ Relationships are working!"
     
-    # Extract some stats
+    # Extract some stats with better error handling
     blocks_count=$(curl -s -X POST "$HASURA_URL/v1/graphql" \
         -H "Content-Type: application/json" \
         -H "x-hasura-admin-secret: $ADMIN_SECRET" \
         -d '{"query":"{ blocks_aggregate { aggregate { count } } }"}' 2>/dev/null | \
-        grep -o '"count":[0-9]*' | cut -d: -f2)
+        grep -o '"count":[0-9]*' | cut -d: -f2 || echo "0")
     
     transfers_count=$(curl -s -X POST "$HASURA_URL/v1/graphql" \
         -H "Content-Type: application/json" \
         -H "x-hasura-admin-secret: $ADMIN_SECRET" \
         -d '{"query":"{ transfers_aggregate { aggregate { count } } }"}' 2>/dev/null | \
-        grep -o '"count":[0-9]*' | cut -d: -f2)
+        grep -o '"count":[0-9]*' | cut -d: -f2 || echo "0")
     
     echo ""
     echo "📊 Current statistics:"

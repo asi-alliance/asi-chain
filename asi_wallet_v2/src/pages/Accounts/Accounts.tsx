@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from 'store';
-import { selectAccount, removeAccount, syncAccounts, fetchBalance, loadAccountsFromStorage } from 'store/walletSlice';
+import { selectAccount, removeAccount, syncAccounts, fetchBalance } from 'store/walletSlice';
 import { createAccountWithPassword, importAccountWithPassword, exportAccountKeyfile } from 'store/authSlice';
-import { Card, CardHeader, CardTitle, CardContent, Button, Input } from 'components';
+import { Card, CardHeader, CardTitle, CardContent, Button, Input, PrivateKeyDisplay } from 'components';
 import { PasswordSetup } from 'components/PasswordSetup';
-import { WarningIcon } from 'components/Icons';
+import { SecureStorage } from 'services/secureStorage';
+import { validateAccountName } from 'utils/textUtils';
+import { formatBalanceCard } from 'utils/balanceUtils';
 
 const AccountsContainer = styled.div`
     max-width: 800px;
@@ -191,7 +193,9 @@ export const Accounts: React.FC = () => {
 
   const [showPasswordSetup, setShowPasswordSetup] = useState(false);
   const [showImportPassword, setShowImportPassword] = useState(false);
+  const [showPrivateKey, setShowPrivateKey] = useState(false);
   const [pendingAccountName, setPendingAccountName] = useState('');
+  const [pendingPrivateKey, setPendingPrivateKey] = useState('');
   const [pendingImport, setPendingImport] = useState<{
     name: string;
     value: string;
@@ -217,7 +221,6 @@ export const Accounts: React.FC = () => {
     }
   }, [unlockedAccounts, dispatch]);
 
-  // Fetch balances for all accounts when component mounts or accounts/network changes
   useEffect(() => {
     if (accounts.length > 0 && selectedNetwork) {
       accounts.forEach(account => {
@@ -226,15 +229,13 @@ export const Accounts: React.FC = () => {
     }
   }, [accounts, selectedNetwork, dispatch]);
 
-  // Auto-refresh balances every 30 seconds
   useEffect(() => {
     if (accounts.length > 0 && selectedNetwork) {
       const interval = setInterval(() => {
         accounts.forEach(account => {
           dispatch(fetchBalance({ account, network: selectedNetwork }) as any);
         });
-      }, 30000); // 30 seconds
-
+      }, 30000); 
       return () => clearInterval(interval);
     }
   }, [accounts, selectedNetwork, dispatch]);
@@ -248,10 +249,17 @@ export const Accounts: React.FC = () => {
   };
 
   const handleCreateAccount = () => {
-    if (newAccountName.trim()) {
-      setPendingAccountName(newAccountName.trim());
-      setShowPasswordSetup(true);
+    const trimmedName = newAccountName.trim();
+    const validation = validateAccountName(trimmedName);
+    
+    if (!validation.isValid) {
+      setNewAccountNameError(validation.error || 'Invalid account name');
+      return;
     }
+    
+    setNewAccountNameError('');
+    setPendingAccountName(trimmedName);
+    setShowPasswordSetup(true);
   };
 
   const handlePasswordSet = async (password: string) => {
@@ -279,7 +287,6 @@ export const Accounts: React.FC = () => {
       }) as any);
 
       if (importAccountWithPassword.fulfilled.match(resultAction)) {
-        // Sync the new account to wallet state
         dispatch(syncAccounts([resultAction.payload.account]));
         // Show success message
         setSuccessMessage(`Account "${pendingImport.name}" imported successfully!`);
@@ -291,6 +298,18 @@ export const Accounts: React.FC = () => {
       setPendingImport(null);
       setShowImportPassword(false);
     }
+  };
+
+  const handlePrivateKeyAcknowledged = () => {
+    dispatch(syncAccounts(SecureStorage.getEncryptedAccounts().map(acc => ({
+      ...acc,
+      privateKey: undefined, 
+    }))));
+    
+    setNewAccountName('');
+    setPendingAccountName('');
+    setPendingPrivateKey('');
+    setShowPrivateKey(false);
   };
 
   const handleImportAccount = () => {
@@ -379,6 +398,23 @@ export const Accounts: React.FC = () => {
             />
           </CardContent>
         </Card>
+      </AccountsContainer>
+    );
+  }
+
+  if (showPrivateKey) {
+    return (
+      <AccountsContainer>
+        <PrivateKeyDisplay
+          privateKey={pendingPrivateKey}
+          accountName={pendingAccountName}
+          onContinue={handlePrivateKeyAcknowledged}
+          onBack={() => {
+            setShowPrivateKey(false);
+            setShowPasswordSetup(true);
+          }}
+          showBackButton={true}
+        />
       </AccountsContainer>
     );
   }
@@ -500,7 +536,7 @@ export const Accounts: React.FC = () => {
             <CardContent>
               {hasAccounts && !isAuthenticated && (
                 <WarningMessage>
-                  <span className="icon"><WarningIcon size={16} color="currentColor" /></span>
+                  <span className="icon">⚠️</span>
                   <span>
                     You have existing accounts. Creating a new account will not automatically log you in.
                     You'll need to unlock your existing accounts with your password.
@@ -510,8 +546,15 @@ export const Accounts: React.FC = () => {
               <Input
                 label="Account Name"
                 value={newAccountName}
-                onChange={(e) => setNewAccountName(e.target.value)}
-                placeholder="Enter account name"
+                onChange={(e) => {
+                  setNewAccountName(e.target.value);
+                  if (newAccountNameError) {
+                    setNewAccountNameError('');
+                  }
+                }}
+                placeholder="Enter account name (max 30 characters)"
+                error={newAccountNameError}
+                maxLength={30}
               />
               <Button
                 onClick={handleCreateAccount}
@@ -532,7 +575,7 @@ export const Accounts: React.FC = () => {
             <CardContent>
               {hasAccounts && !isAuthenticated && (
                 <WarningMessage>
-                  <span className="icon"><WarningIcon size={16} color="currentColor" /></span>
+                  <span className="icon">⚠️</span>
                   <span>
                     You have existing accounts. Importing a new account will not automatically log you in.
                     You'll need to unlock your existing accounts with your password.
@@ -542,8 +585,15 @@ export const Accounts: React.FC = () => {
               <Input
                 label="Account Name"
                 value={importName}
-                onChange={(e) => setImportName(e.target.value)}
-                placeholder="Enter account name"
+                onChange={(e) => {
+                  setImportName(e.target.value);
+                  if (importNameError) {
+                    setImportNameError('');
+                  }
+                }}
+                placeholder="Enter account name (max 30 characters)"
+                error={importNameError}
+                maxLength={30}
               />
 
               <ImportTypeSelector

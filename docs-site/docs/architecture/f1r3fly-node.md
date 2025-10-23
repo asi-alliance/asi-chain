@@ -26,6 +26,9 @@ When cloning the ASI Chain repository, initialize submodules:
 # Clone with submodules
 git clone --recursive https://github.com/asi-alliance/asi-chain.git
 
+# Navigate to directory
+cd asi-chain
+
 # Or if already cloned, initialize submodules
 git submodule init
 git submodule update
@@ -51,7 +54,7 @@ ASI Chain operates multiple node types in the network:
 
 ### 1. Bootstrap Node
 - **Purpose**: Initial network entry point
-- **Port**: 40403 (API), 40402 (P2P)
+- **Port**: 40403 (API), 40400 (P2P)
 - **Container**: `rnode.bootstrap`
 
 ### 2. Validator Nodes
@@ -91,11 +94,11 @@ rnode {
   }
   grpc {
     host = "0.0.0.0"
-    port = 40401
+    port = 40403 
   }
   http {
     host = "0.0.0.0"
-    port = 40403
+    port = 40413
   }
   casper {
     validator-private-key = "path/to/key"
@@ -140,7 +143,7 @@ services:
 
 ## API Endpoints
 
-### gRPC API (Port 40401/40411/40421...)
+### gRPC API (Port 40402/40412/40422...)
 - Deploy smart contracts
 - Propose blocks
 - Query blockchain state
@@ -253,11 +256,11 @@ sbt it:test  # Integration tests
 
 ## Related Documentation
 
-- [Architecture Overview](architecture-overview.md)
-- [Casper Consensus Guide](casper-consensus-guide.md)
-- [Rholang Programming Guide](rholang-programming-guide.md)
-- [Deployment Guide](deployment/AWS_LIGHTSAIL_DEPLOYMENT.md)
-- [Rust Client Guide](tools/RUST_CLIENT_GUIDE.md)
+- [Architecture Overview](architecture/overview.md)
+- [Casper Consensus Guide](smart-contracts/casper-consensus.md)
+- [Rholang Programming Guide](smart-contracts/rholang-guide.md)
+- [Deployment Guide](deployment/aws-lightsail.md)
+- [Rust Client Guide](tools/rust-client.md)
 
 ---
 

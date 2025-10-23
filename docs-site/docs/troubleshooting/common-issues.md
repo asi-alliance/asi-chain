@@ -33,7 +33,7 @@ docker logs autopropose --tail 20 | grep "proposed"
 healthcheck:
   test: ["CMD", "test", "-f", "/proc/1/exe"]
 ```
-[See detailed fix](./AUTOPROPOSE_HEALTH_FIX.MD)
+[See detailed fix](autopropose-fix.md)
 
 ### Problem: Container Keeps Restarting
 **Symptoms**: 
@@ -448,8 +448,8 @@ docker network inspect f1r3fly > network.json
 ```
 
 2. **Check Documentation**:
-- [Deployment Guide](../deployment/AWS_LIGHTSAIL_DEPLOYMENT.MD)
-- [Operational Runbook](../operations/RUNBOOK.MD)
+- [Deployment Guide](deployment/aws-lightsail.md)
+- [Operational Runbook](operations/runbook.md)
 - Project repository issues (URL to be determined)
 
 3. **Open GitHub Issue** with:

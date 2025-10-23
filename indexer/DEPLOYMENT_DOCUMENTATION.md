@@ -1,19 +1,23 @@
 # ASI-Chain Indexer & Explorer Deployment Guide
 
+**Version**: 2.1.1 | **Updated**: January 2025
+
 ## 🎯 **Overview**
 
-This guide documents the successful deployment of the ASI-Chain Indexer and Explorer infrastructure, providing blockchain data indexing and visualization capabilities for the ASI testnet.
+This guide documents the successful deployment of the ASI-Chain Indexer and Explorer infrastructure, providing blockchain data indexing and visualization capabilities for the ASI/F1R3FLY network with zero-touch deployment and automatic configuration.
 
 ## 🏗️ **Architecture**
 
 ```
-Live ASI Testnet (54.254.197.253:40453)
+Remote F1R3FLY Network (13.251.66.61:40453)
               ↓
-         ASI Indexer (localhost:9090)
+     Rust CLI Client (inside Docker)
+              ↓
+    Python Indexer with asyncio (localhost:9090)
               ↓
     PostgreSQL + Hasura GraphQL (localhost:8080)
               ↓
-         Explorer Frontend (localhost:3000)
+         Explorer Frontend (localhost:3001)
 ```
 
 ## ✅ **Deployment Status**
@@ -26,12 +30,16 @@ Live ASI Testnet (54.254.197.253:40453)
 4. **✅ Explorer Frontend** - `localhost:3000`
 
 ### **Working Features:**
+- ✅ Zero-touch deployment with automatic configuration
+- ✅ Rust CLI built from source inside Docker (cross-platform)
+- ✅ Automatic Hasura relationship configuration
+- ✅ Full blockchain sync from genesis (block 0)
+- ✅ Validator bond detection with new CLI format support
+- ✅ Enhanced data quality with NULL handling
 - ✅ Health monitoring endpoints
-- ✅ GraphQL API with proper schema
-- ✅ Database relationships configured
+- ✅ GraphQL API with nested relationships
 - ✅ Frontend compilation and serving
-- ✅ Testnet connectivity validated
-- ✅ Rust CLI client properly configured
+- ✅ Remote F1R3FLY connectivity validated
 
 ## 🚀 **Quick Start**
 
@@ -42,70 +50,51 @@ Live ASI Testnet (54.254.197.253:40453)
 
 ### Deployment Steps
 
-1. **Clone and Setup:**
+1. **One-Command Deployment:**
    ```bash
    cd /path/to/asi-chain/indexer
+   echo "1" | ./deploy.sh  # Choose option 1 for remote F1R3FLY node
    ```
 
-2. **Configure Environment:**
+   The deploy.sh script automatically:
+   - Pre-pulls Docker images with retry logic
+   - Builds Rust CLI from source (10-15 min first time, cached thereafter)
+   - Creates proper .env configuration
+   - Sets up PostgreSQL with comprehensive schema
+   - Configures Hasura GraphQL relationships
+   - Starts indexing from genesis
+   - Validates all services are healthy
+
+2. **Alternative: Manual Docker Compose:**
    ```bash
-   # Configure .env file
-   cat > .env << EOF
-   NODE_URL=http://54.254.197.253:40453
-   NODE_TIMEOUT=30
-   RUST_CLI_PATH=/app/node_cli_linux
-   NODE_HOST=54.254.197.253
-   GRPC_PORT=40451
-   HTTP_PORT=40450
-   DATABASE_POOL_SIZE=20
-   SYNC_INTERVAL=5
-   BATCH_SIZE=50
-   START_FROM_BLOCK=0
-   LOG_LEVEL=INFO
-   LOG_FORMAT=json
-   ENABLE_REV_TRANSFER_EXTRACTION=true
-   ENABLE_METRICS=true
-   ENABLE_HEALTH_CHECK=true
-   EOF
+   # For pre-compiled binary method
+   docker-compose -f docker-compose.rust.yml up -d
+   
+   # Monitor deployment
+   docker-compose -f docker-compose.rust.yml logs -f
+   
+   # Check service health
+   docker-compose -f docker-compose.rust.yml ps
    ```
 
-3. **Build and Deploy:**
+3. **Verify Deployment:**
    ```bash
-   # Build indexer image
-   docker build -t asi-indexer .
+   # Check indexer status
+   curl http://localhost:9090/status | jq .
    
-   # Start PostgreSQL
-   docker run -d --name asi-indexer-db --network indexer-network \
-     -p 5432:5432 \
-     -e POSTGRES_DB=asichain \
-     -e POSTGRES_USER=indexer \
-     -e POSTGRES_PASSWORD=indexer_pass \
-     -v postgres_data:/var/lib/postgresql/data \
-     -v ./migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql \
-     postgres:14-alpine
-   
-   # Start Hasura GraphQL
-   docker run -d --name asi-hasura --network indexer-network \
-     -p 8080:8080 \
-     -e HASURA_GRAPHQL_DATABASE_URL=postgresql://indexer:indexer_pass@postgres:5432/asichain \
-     -e HASURA_GRAPHQL_ENABLE_CONSOLE=true \
-     -e HASURA_GRAPHQL_ADMIN_SECRET=myadminsecretkey \
-     -e HASURA_GRAPHQL_UNAUTHORIZED_ROLE=public \
-     hasura/graphql-engine:v2.36.0
-   
-   # Start Indexer
-   docker run -d --name asi-indexer --network indexer-network \
-     -p 9090:9090 \
-     --env-file .env \
-     -e DATABASE_URL=postgresql://indexer:indexer_pass@postgres:5432/asichain \
-     asi-indexer
+   # Test GraphQL with nested query
+   curl http://localhost:8080/v1/graphql \
+     -X POST \
+     -H "Content-Type: application/json" \
+     -H "x-hasura-admin-secret: myadminsecretkey" \
+     -d '{"query":"{ blocks(limit: 1) { block_number deployments { deploy_id } validator_bonds { stake } } }"}'
    ```
 
 4. **Deploy Explorer:**
    ```bash
    cd ../explorer
-   npm install --legacy-peer-deps
-   npm start
+   npm install
+   npm start  # Runs on port 3001
    ```
 
 ## 🔗 **Service URLs**
@@ -116,7 +105,7 @@ Live ASI Testnet (54.254.197.253:40453)
 | **Indexer Status** | http://localhost:9090/status | ✅ Working | System status |
 | **GraphQL API** | http://localhost:8080/v1/graphql | ✅ Working | Data queries |
 | **Hasura Console** | http://localhost:8080/console | ✅ Working | GraphQL admin |
-| **Explorer Frontend** | http://localhost:3000 | ✅ Working | Blockchain explorer |
+| **Explorer Frontend** | http://localhost:3001 | ✅ Working | Blockchain explorer |
 
 ## 📊 **GraphQL API Examples**
 
@@ -170,13 +159,17 @@ Live ASI Testnet (54.254.197.253:40453)
 - `BATCH_SIZE` - Blocks per batch
 - `LOG_LEVEL` - Logging verbosity
 
-### Database Schema:
-- **blocks** - Block headers and metadata
-- **deployments** - Smart contract deployments
-- **transfers** - REV token transfers
-- **validators** - Network validators
-- **validator_bonds** - Validator bonding information
-- **indexer_state** - Sync progress tracking
+### Database Schema (10 Tables):
+- **blocks** - Block headers with JSONB bonds_map and justifications
+- **deployments** - Smart contracts with full Rholang code and type classification
+- **transfers** - REV token transfers (variable and match-based patterns)
+- **validators** - Validator registry with full public keys (130+ chars)
+- **validator_bonds** - Historical stake records per block
+- **balance_states** - Address balances (bonded vs unbonded)
+- **block_validators** - Block signers/justifications
+- **network_stats** - Network health snapshots
+- **epoch_transitions** - Epoch boundaries
+- **indexer_state** - Sync metadata
 
 ## 🏥 **Health Monitoring**
 
@@ -234,8 +227,11 @@ docker ps | grep asi-
 ## 📈 **Performance**
 
 - **GraphQL Response Time**: <100ms for simple queries
-- **Database Performance**: 50,000+ reads/second (LMDB)
-- **Indexer Sync Rate**: Configurable (5 second intervals)
+- **Database Performance**: 50,000+ reads/second
+- **Indexer Sync Rate**: 50 blocks per batch, 5 second intervals
+- **CLI Command Latency**: 10-50ms per command
+- **Memory Usage**: ~80MB (indexer) + ~50MB (database)
+- **Full Chain Sync**: 100 blocks in ~2 seconds
 - **Frontend Load Time**: <3 seconds initial load
 
 ## 🔒 **Security**

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import TransactionTracker from '../components/TransactionTracker';
+import TransactionTrackerImproved from '../components/TransactionTrackerImproved';
 
 const TransactionsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const TransactionsPage: React.FC = () => {
 
   return (
     <div>
-      <TransactionTracker 
+      <TransactionTrackerImproved 
         onTransactionSelect={handleTransactionSelect}
         embedded={false}
       />

@@ -393,7 +393,7 @@ export const Dashboard: React.FC = () => {
               <LoadingSkeleton height="48px" />
             ) : (
               <BalanceAmount>
-                {parseFloat(selectedAccount.balance).toFixed(2)} REV
+                {formatBalanceDashboard(selectedAccount.balance)}
               </BalanceAmount>
             )}
             <BalanceLabel>Current Balance</BalanceLabel>

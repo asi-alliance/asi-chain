@@ -1,0 +1,40 @@
+services:
+  asi-explorer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+      args:
+        REACT_APP_GRAPHQL_URL: ${REACT_APP_GRAPHQL_URL}
+        REACT_APP_GRAPHQL_WS_URL: ${REACT_APP_GRAPHQL_WS_URL}
+        REACT_APP_INDEXER_API_URL: ${REACT_APP_INDEXER_API_URL}
+        REACT_APP_HASURA_ADMIN_SECRET: ${REACT_APP_HASURA_ADMIN_SECRET}
+    container_name: asi-explorer
+    image: asi-explorer:latest
+    env_file:
+      - .env
+    ports:
+      - "3001:80"  # Map to port 3001 on host (explorer default)
+    networks:
+      - asi-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.asichain.service=explorer"
+      - "com.asichain.description=ASI Chain Blockchain Explorer"
+      - "com.asichain.version=1.0.0"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  asi-network:
+    driver: bridge
+    name: asi-network

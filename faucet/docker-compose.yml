@@ -1,20 +1,18 @@
-version: '3.8'
-
 services:
   faucet:
     build: .
     container_name: asi-chain-faucet
     ports:
-      - "5000:5000"
+      - "5050:5000"
     environment:
       # Faucet Configuration
       - FAUCET_PRIVATE_KEY=${FAUCET_PRIVATE_KEY:-}
       - FAUCET_AMOUNT=${FAUCET_AMOUNT:-100}
       
       # Network Configuration
-      - VALIDATOR_URL=${VALIDATOR_URL:-http://18.142.221.192:40413}
-      - READONLY_URL=${READONLY_URL:-http://18.142.221.192:40453}
-      - GRAPHQL_URL=${GRAPHQL_URL:-http://18.142.221.192:8080/v1/graphql}
+      - VALIDATOR_URL=${VALIDATOR_URL:-http://13.251.66.61:40413}
+      - READONLY_URL=${READONLY_URL:-http://13.251.66.61:40453}
+      - GRAPHQL_URL=${GRAPHQL_URL:-http://13.251.66.61:8080/v1/graphql}
       
       # Security Configuration  
       - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY:-}

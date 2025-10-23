@@ -8,9 +8,56 @@ const ValidatorsPage: React.FC = () => {
     pollInterval: 5000, // Poll every 5 seconds
   });
 
-  const validators = data?.validators || [];
+  const rawValidators = data?.validators || [];
   const validatorBonds = data?.validator_bonds || [];
   const allBlocks = data?.blocks || [];
+  
+  // Function to normalize validator keys for comparison
+  // We need to extract just the first 8 and last 8 chars for comparison
+  const normalizeValidatorKey = (key: string): string => {
+    if (!key) return '';
+    
+    // If it's an abbreviated key (contains ellipsis like "04837a4c...b2df065f")
+    if (key.includes('...')) {
+      const parts = key.split('...');
+      if (parts.length === 2) {
+        // Extract first 8 and last 8 chars from abbreviated format
+        return `${parts[0]}${parts[1]}`;
+      }
+    }
+    
+    // If it's a full key (64+ chars), extract first 8 and last 8
+    if (key.length >= 64) {
+      return `${key.slice(0, 8)}${key.slice(-8)}`;
+    }
+    
+    // Return as-is if neither format matches
+    return key;
+  };
+  
+  // Deduplicate validators by normalized key prefix
+  const validatorMap = new Map<string, any>();
+  rawValidators.forEach((validator: any) => {
+    const normalizedKey = normalizeValidatorKey(validator.public_key);
+    const existing = validatorMap.get(normalizedKey);
+    
+    if (!existing) {
+      validatorMap.set(normalizedKey, validator);
+    } else {
+      // Prefer the entry with more complete data
+      // Keep the one with the full key if available
+      if (validator.public_key.length > existing.public_key.length) {
+        validatorMap.set(normalizedKey, validator);
+      } else if (validator.public_key.length === existing.public_key.length) {
+        // If both have same key length, keep the one with higher stake or more recent activity
+        if ((validator.last_seen_block || 0) > (existing.last_seen_block || 0)) {
+          validatorMap.set(normalizedKey, validator);
+        }
+      }
+    }
+  });
+  
+  const validators = Array.from(validatorMap.values());
   
   // Debug logging
   if (!loading) {
@@ -18,21 +65,35 @@ const ValidatorsPage: React.FC = () => {
       console.error('ValidatorsPage error:', error);
     } else {
       console.log('ValidatorsPage data:', {
-        validators: validators.length,
+        rawValidators: rawValidators.length,
+        deduplicatedValidators: validators.length,
         validatorBonds: validatorBonds.length,
         blocks: allBlocks.length,
         sampleValidator: validators[0],
         sampleBond: validatorBonds[0]
       });
+      
     }
   }
   
   // Create a map of validator public key to their latest bond
+  // Map both full and normalized keys to handle duplicates
   const bondsByValidator: { [key: string]: any } = {};
+  const bondsByNormalizedKey: { [key: string]: any } = {};
+  
   validatorBonds.forEach((bond: any) => {
+    const normalizedKey = normalizeValidatorKey(bond.validator_public_key);
+    
+    // Store by original key
     const existingBond = bondsByValidator[bond.validator_public_key];
     if (!existingBond || bond.block_number > existingBond.block_number) {
       bondsByValidator[bond.validator_public_key] = bond;
+    }
+    
+    // Also store by normalized key for lookup
+    const existingNormalizedBond = bondsByNormalizedKey[normalizedKey];
+    if (!existingNormalizedBond || bond.block_number > existingNormalizedBond.block_number) {
+      bondsByNormalizedKey[normalizedKey] = bond;
     }
   });
   
@@ -73,8 +134,9 @@ const ValidatorsPage: React.FC = () => {
 
   // Calculate total stake using the latest bond stake for each validator
   const totalStake = validators.reduce((sum: number, validator: Validator) => {
-    // Use the stake from the latest bond if available, otherwise use total_stake
-    const latestBond = bondsByValidator[validator.public_key];
+    // Try to find bond by both original key and normalized key
+    const normalizedKey = normalizeValidatorKey(validator.public_key);
+    const latestBond = bondsByValidator[validator.public_key] || bondsByNormalizedKey[normalizedKey];
     let stake = 0;
     
     if (latestBond?.stake !== undefined && latestBond?.stake !== null) {
@@ -100,8 +162,10 @@ const ValidatorsPage: React.FC = () => {
 
   // Sort validators by their stake (bond or total_stake)
   const sortedValidators = [...validators].sort((a, b) => {
-    const aLatestBond = bondsByValidator[a.public_key];
-    const bLatestBond = bondsByValidator[b.public_key];
+    const aNormalizedKey = normalizeValidatorKey(a.public_key);
+    const bNormalizedKey = normalizeValidatorKey(b.public_key);
+    const aLatestBond = bondsByValidator[a.public_key] || bondsByNormalizedKey[aNormalizedKey];
+    const bLatestBond = bondsByValidator[b.public_key] || bondsByNormalizedKey[bNormalizedKey];
     
     let aStake = 0;
     if (aLatestBond?.stake !== undefined && aLatestBond?.stake !== null) {
@@ -209,7 +273,8 @@ const ValidatorsPage: React.FC = () => {
                 </thead>
                 <tbody>
                   {sortedValidators.map((validator: Validator) => {
-                    const latestBond = bondsByValidator[validator.public_key];
+                    const normalizedKey = normalizeValidatorKey(validator.public_key);
+                    const latestBond = bondsByValidator[validator.public_key] || bondsByNormalizedKey[normalizedKey];
                     const blocksProposed = blockProposedCounts[validator.public_key] || 0;
                     
                     // Use the same logic as total calculation

@@ -19,7 +19,7 @@ This document provides comprehensive performance benchmarks for ASI Chain, demon
 - Validators: 4 active validators
 - Observer Nodes: 1
 - Bootstrap Node: 1
-- Geographic Distribution: Single region (< 10ms latency)
+- Geographic Distribution: Single region (< 1lt;10ms latency)
 
 ## Consensus Performance
 

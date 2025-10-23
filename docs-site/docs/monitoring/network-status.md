@@ -66,8 +66,8 @@ Key metrics to monitor:
 - **Validator Participation**: All bonded validators should be proposing
 - **Peer Connectivity**: Each node should have 5+ peers
 - **Resource Usage**: 
-  - CPU: < 50% average
-  - Memory: < 80% of available
+  - CPU: < 5lt;50% average
+  - Memory: < 8lt;80% of available
   - Disk: Monitor growth rate
 
 ### API Endpoints
@@ -104,7 +104,7 @@ Key metrics to monitor:
    - Action: Monitor network latency, check validator performance
 
 2. **Low Peer Count**
-   - Condition: Peers < 3
+   - Condition: Peers < 3lt;3
    - Action: Check network connectivity, bootstrap node status
 
 ## Troubleshooting Guide
@@ -220,10 +220,10 @@ docker cp prometheus:/tmp/prometheus-backup.tar.gz ./backups/
 
 ## References
 
-- [ASI Chain Documentation](../README.md)
-- [Monitoring Stack Guide](monitoring/MONITORING_STACK.MD)
-- [Troubleshooting Guide](troubleshooting/COMMON_ISSUES.MD)
-- [Performance Tuning](performance/PERFORMANCE_TUNING_GUIDE.MD)
+- [ASI Chain Documentation](intro.md)
+- [Monitoring Stack Guide](monitoring/stack.md)
+- [Troubleshooting Guide](troubleshooting/common-issues.md)
+- [Performance Tuning](performance/tuning-guide.md)
 
 ---
 

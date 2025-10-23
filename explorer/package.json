@@ -4,7 +4,6 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "2": "^3.0.0",
     "@apollo/client": "^3.13.9",
     "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/typescript": "^4.1.6",
@@ -27,7 +26,6 @@
     "react": "^19.1.1",
     "react-csv": "^2.2.2",
     "react-dom": "^19.1.1",
-    "react-helmet-async": "^2.0.5",
     "react-intersection-observer": "^9.13.1",
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^7.7.1",

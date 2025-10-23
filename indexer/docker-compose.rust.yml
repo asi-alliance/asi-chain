@@ -10,8 +10,7 @@ services:
       POSTGRES_PASSWORD: indexer_pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql
-      - ./migrations/002_add_enhanced_tables.sql:/docker-entrypoint-initdb.d/002_add_enhanced_tables.sql
+      - ./migrations/000_comprehensive_initial_schema.sql:/docker-entrypoint-initdb.d/000_comprehensive_initial_schema.sql
     ports:
       - "5432:5432"
     healthcheck:
@@ -25,7 +24,7 @@ services:
   rust-indexer:
     build:
       context: .
-      dockerfile: Dockerfile.rust-simple
+      dockerfile: Dockerfile
     container_name: asi-rust-indexer
     depends_on:
       postgres:
@@ -33,9 +32,9 @@ services:
     environment:
       # Rust CLI Configuration (using built-in CLI)
       RUST_CLI_PATH: /usr/local/bin/node_cli
-      NODE_HOST: ${NODE_HOST:-host.docker.internal}
-      GRPC_PORT: ${GRPC_PORT:-40412}
-      HTTP_PORT: ${HTTP_PORT:-40413}
+      NODE_HOST: ${NODE_HOST:-44.198.8.24}
+      GRPC_PORT: ${GRPC_PORT:-40451}
+      HTTP_PORT: ${HTTP_PORT:-40453}
       
       # Database
       DATABASE_URL: postgresql://indexer:indexer_pass@postgres:5432/asichain

@@ -959,7 +959,7 @@ contract Oracle(dataSource, action, return) = {
       for (c <- cache) {
         match c.get(key) {
           {"value": v, "timestamp": t} => {
-            if (getCurrentTime() - t < 3600) {  // 1 hour cache
+            if (getCurrentTime() - t < 3lt;3600) {  // 1 hour cache
               cache!(c) |
               ack!(v)
             } else {

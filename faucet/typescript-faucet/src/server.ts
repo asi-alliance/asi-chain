@@ -14,9 +14,9 @@ dotenv.config();
 const config: FaucetConfig = {
   privateKey: process.env.FAUCET_PRIVATE_KEY || '',
   faucetAmount: parseInt(process.env.FAUCET_AMOUNT || '100'),
-  validatorUrl: process.env.VALIDATOR_URL || 'http://18.142.221.192:40413',
-  readOnlyUrl: process.env.READONLY_URL || 'http://18.142.221.192:40453',
-  graphqlUrl: process.env.GRAPHQL_URL || 'http://18.142.221.192:8080/v1/graphql',
+  validatorUrl: process.env.VALIDATOR_URL || 'http://13.251.66.61:40413',
+  readOnlyUrl: process.env.READONLY_URL || 'http://13.251.66.61:40453',
+  graphqlUrl: process.env.GRAPHQL_URL || 'http://13.251.66.61:8080/v1/graphql',
   phloLimit: parseInt(process.env.PHLO_LIMIT || '500000'),
   phloPrice: parseInt(process.env.PHLO_PRICE || '1'),
   maxRequestsPerDay: parseInt(process.env.MAX_REQUESTS_PER_DAY || '5'),
@@ -37,16 +37,12 @@ const faucetService = new FaucetService(config);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Middleware - Disable HSTS and upgrade-insecure-requests for HTTP-only service
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://www.google.com"],
-      frameSrc: ["https://www.google.com"],
-    },
-  },
+  contentSecurityPolicy: false, // Disable CSP entirely to avoid upgrade-insecure-requests
+  crossOriginOpenerPolicy: false,
+  originAgentCluster: false,
+  hsts: false, // Disable HSTS completely
 }));
 app.use(cors());
 app.use(express.json());
@@ -241,6 +237,12 @@ app.get('/', (_req: Request, res: Response) => {
             font-size: 14px;
         }
     </style>
+    <script>
+        // Immediately redirect HTTPS to HTTP
+        if (window.location.protocol === 'https:') {
+            window.location.href = 'http://' + window.location.host + window.location.pathname;
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -333,6 +335,17 @@ app.get('/', (_req: Request, res: Response) => {
         // Load stats
         async function loadStats() {
             try {
+                // Force HTTP if browser is using HTTPS
+                const host = window.location.host;
+                const protocol = window.location.protocol === 'https:' ? 'http:' : window.location.protocol;
+                const baseUrl = protocol + '//' + host;
+                
+                // If we're on HTTPS, redirect to HTTP
+                if (window.location.protocol === 'https:') {
+                    window.location.href = 'http://' + host + window.location.pathname;
+                    return;
+                }
+                
                 const response = await fetch('/api/stats');
                 const data = await response.json();
                 document.getElementById('status').textContent = data.status === 'online' ? '🟢 Online' : '🔴 Offline';

@@ -10,11 +10,11 @@ services:
       POSTGRES_PASSWORD: indexer_pass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql
+      - ./migrations/000_comprehensive_initial_schema.sql:/docker-entrypoint-initdb.d/000_comprehensive_initial_schema.sql
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U indexer -d asichain"]
+      test: [ "CMD-SHELL", "pg_isready -U indexer -d asichain" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,14 +29,14 @@ services:
         condition: service_healthy
     environment:
       # RChain Node
-      NODE_URL: ${NODE_URL:-http://host.docker.internal:40453}
+      NODE_URL: ${NODE_URL:-44.198.8.24:40453}
       NODE_TIMEOUT: ${NODE_TIMEOUT:-30}
       
       # Rust CLI Configuration
       RUST_CLI_PATH: ${RUST_CLI_PATH:-/app/node_cli_linux}
-      NODE_HOST: ${NODE_HOST:-localhost}
-      GRPC_PORT: ${GRPC_PORT:-40412}
-      HTTP_PORT: ${HTTP_PORT:-40413}
+      NODE_HOST: ${NODE_HOST:-44.198.8.24:40453}
+      GRPC_PORT: ${GRPC_PORT:-40451}
+      HTTP_PORT: ${HTTP_PORT:-40453}
       
       # Database
       DATABASE_URL: postgresql://indexer:indexer_pass@postgres:5432/asichain
@@ -103,7 +103,7 @@ services:
     networks:
       - indexer-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 5

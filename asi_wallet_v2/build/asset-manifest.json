@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.js": "./static/js/main.b801bbe1.js",
+    "static/js/540.1754f834.chunk.js": "./static/js/540.1754f834.chunk.js",
+    "static/js/614.47f8ecd8.chunk.js": "./static/js/614.47f8ecd8.chunk.js",
+    "monaco-editor.css": "./static/css/monaco-editor.3d7d3319.css",
+    "monaco-editor.js": "./static/js/monaco-editor.a7f37b48.js",
+    "vendors.js": "./static/js/vendors.bd0ed086.js",
+    "static/media/codicon.ttf": "./static/media/codicon.f6283f7ccaed1249d9eb.ttf",
+    "index.html": "./index.html",
+    "main.b801bbe1.js.map": "./static/js/main.b801bbe1.js.map",
+    "614.47f8ecd8.chunk.js.map": "./static/js/614.47f8ecd8.chunk.js.map",
+    "monaco-editor.3d7d3319.css.map": "./static/css/monaco-editor.3d7d3319.css.map",
+    "monaco-editor.a7f37b48.js.map": "./static/js/monaco-editor.a7f37b48.js.map",
+    "vendors.bd0ed086.js.map": "./static/js/vendors.bd0ed086.js.map"
+  },
+  "entrypoints": [
+    "static/css/monaco-editor.3d7d3319.css",
+    "static/js/monaco-editor.a7f37b48.js",
+    "static/js/vendors.bd0ed086.js",
+    "static/js/main.b801bbe1.js"
+  ]
+}

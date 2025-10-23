@@ -14,6 +14,7 @@ title: AWS Lightsail
 6. [Verification & Testing](#verification--testing)
 7. [Troubleshooting](#troubleshooting)
 8. [Maintenance Operations](#maintenance-operations)
+9. [Validator4 Bonding Process](#validator4-bonding-process)
 
 ## Overview
 
@@ -464,6 +465,43 @@ openssl ecparam -name secp256k1 -genkey -out validator.key
 openssl ec -in validator.key -pubout -out validator.pub
 ```
 
+## Validator4 Bonding Process 
+
+### Current Status
+Validator4 is running but not bonded to the network. It operates as a read-only node until bonded.
+
+### Bonding Requirements
+1. Stake amount (minimum required by network)
+2. Validator public key
+3. Bonding contract deployment
+
+### Bonding Steps
+
+```bash
+# 1. Check current validators
+curl http://localhost:40413/api/bonds
+
+# 2. Prepare bonding contract
+cat > bond_validator4.rho << 'EOF'
+new bond, stdout(`rho:io:stdout`) in {
+  // Bonding logic here
+  stdout!("Bonding validator4 with stake")
+}
+EOF
+
+# 3. Deploy bonding contract
+docker exec rnode.validator1 rnode deploy \
+  --phlo-limit 1000000 \
+  --phlo-price 1 \
+  bond_validator4.rho
+
+# 4. Propose block
+docker exec rnode.validator1 rnode propose
+
+# 5. Verify bonding
+curl http://localhost:40443/api/bonds
+```
+
 ## References
 
 - GitHub Repository: [https://github.com/asi-alliance/asi-chain]
@@ -475,7 +513,7 @@ openssl ec -in validator.key -pubout -out validator.pub
 
 For deployment issues:
 1. Check this documentation thoroughly
-2. Review [Troubleshooting Guide](../troubleshooting/COMMON_ISSUES.MD)
+2. Review [Troubleshooting Guide](troubleshooting/common-issues.md)
 3. Check container logs for specific errors
 4. Open an issue on the project repository (URL to be determined)
 

@@ -154,43 +154,6 @@ docker exec rnode.validator1 rnode show-deploy <deploy_id>
 curl http://localhost:40413/api/blocks
 ```
 
-## Validator4 Bonding Process
-
-### Current Status
-Validator4 is running but not bonded to the network. It operates as a read-only node until bonded.
-
-### Bonding Requirements
-1. Stake amount (minimum required by network)
-2. Validator public key
-3. Bonding contract deployment
-
-### Bonding Steps
-
-```bash
-# 1. Check current validators
-curl http://localhost:40413/api/bonds
-
-# 2. Prepare bonding contract
-cat > bond_validator4.rho << 'EOF'
-new bond, stdout(`rho:io:stdout`) in {
-  // Bonding logic here
-  stdout!("Bonding validator4 with stake")
-}
-EOF
-
-# 3. Deploy bonding contract
-docker exec rnode.validator1 rnode deploy \
-  --phlo-limit 1000000 \
-  --phlo-price 1 \
-  bond_validator4.rho
-
-# 4. Propose block
-docker exec rnode.validator1 rnode propose
-
-# 5. Verify bonding
-curl http://localhost:40443/api/bonds
-```
-
 ## Advanced Contract Examples
 
 ### 1. Multi-Signature Wallet
@@ -366,7 +329,7 @@ docker logs rnode.validator1 --tail 50 | grep -A5 "stdout"
 - [gRPC API Documentation](https://github.com/rchain/rchain/tree/dev/models/src/main/protobuf)
 
 ### Examples
-- [Official Examples](https://github.com/rchain/rchain/tree/dev/casper/src/test/resources/rholang-examples)
+- [Official Examples](https://github.com/rchain/rchain/tree/dev/casper/src/test/resources)
 - [Community Contracts](https://github.com/rchain-community)
 
 ---

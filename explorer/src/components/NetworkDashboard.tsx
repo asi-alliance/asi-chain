@@ -521,16 +521,23 @@ const NetworkDashboard: React.FC = () => {
       </div>
 
       {/* Detailed Charts */}
-      <div style={{
+      {/* <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
         gap: '2rem',
         marginBottom: '2rem'
+      }}> */}
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: '2rem',
+        marginBottom: '2rem'
       }}>
         {/* Block Time & TPS Chart */}
-        <div className="asi-card">
+        <div className="asi-card" style={{flex: "auto"}} >
           <h3 style={{ marginBottom: '1rem' }}>Performance Metrics</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} minWidth={300}>
             <ComposedChart data={historicalData}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
               <XAxis 
@@ -577,9 +584,9 @@ const NetworkDashboard: React.FC = () => {
         </div>
 
         {/* Validator Activity */}
-        <div className="asi-card">
+        <div className="asi-card" style={{flex: "auto"}} >
           <h3 style={{ marginBottom: '1rem' }}>Network Activity</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} minWidth={300}>
             <AreaChart data={historicalData}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
               <XAxis 
