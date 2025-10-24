@@ -21,21 +21,21 @@ The testnet portal provides detailed documentation, network status, tutorials, a
 ## 🚀 Quick Links
 
 ### Getting Started
-- **[Quick Start Guide](docs-external/GETTING_STARTED.md)** - Get running in 5 minutes
+- **[Quick Start Guide](docs/GETTING_STARTED.md)** - Get running in 5 minutes
 - **[Interactive Quick Start](docs/quick-start/index.md)** - Step-by-step interactive guide
 - **[ASI Wallet](http://184.73.0.34:3000)** - Access the ASI:Chain wallet for managing your tokens and transactions
 - **[Message Exchange Scenarios](docs/quick-start/messages/index.md)** - Common communication patterns
 - **[Common Errors](docs/quick-start/troubleshooting/index.md)** - Quick troubleshooting reference
 
 ### Documentation
-- **[Documentation Index](docs-external/INDEX.md)** - Complete documentation overview
-- **[Architecture Overview](docs-external/ARCHITECTURE.md)** - System design and components
+- **[Documentation Index](docs/INDEX.md)** - Complete documentation overview
+- **[Architecture Overview](docs/ARCHITECTURE.md)** - System design and components
 - **[Network Configuration](docs/network-configuration/index.md)** - Network setup and topology
 - **[Interaction Examples](docs/interaction-examples/index.md)** - Practical usage examples
 
 ### Operations & Maintenance
-- **[Troubleshooting Guide](docs-external/TROUBLESHOOTING.md)** - Common issues and solutions
-- **[Repository Operations](docs-external/REPO_OPERATIONS_AND_MAINTENANCE.md)** - Git workflow and maintenance
+- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Repository Operations](docs/REPO_OPERATIONS_AND_MAINTENANCE.md)** - Git workflow and maintenance
 - **[Validator Setup](docs/node-image/validator/index.md)** - Become a validator node
 - **[Network Access](docs/network-access/index.md)** - RPC endpoints and explorer access
 
@@ -44,8 +44,8 @@ The testnet portal provides detailed documentation, network status, tutorials, a
 The workspace is organized into the following directories:
 
 ### Core Components
--   **`asi_wallet_v2/`**: Modern React-based cryptocurrency wallet with WalletConnect support. See [Wallet Documentation](docs-external/WALLET.md).
--   **`block-explorer/`**: Python-based blockchain explorer with web interface (Docker supported). See [Explorer Documentation](docs-external/BLOCK_EXPLORER.md).
+-   **`asi_wallet_v2/`**: Modern React-based cryptocurrency wallet with WalletConnect support. See [Wallet Documentation](docs/WALLET.md).
+-   **`block-explorer/`**: Python-based blockchain explorer with web interface (Docker supported). See [Explorer Documentation](docs/BLOCK_EXPLORER.md).
 -   **`chain/`**: ASI Chain configuration and setup files
     - **`conf/`**: Node configuration files
     - **`.env.example`**: Example environment variables configuration
@@ -61,7 +61,7 @@ The workspace is organized into the following directories:
 -   **`scripts/`**: Contains deployment and utility scripts (`deploy.sh`, `docker-flush.sh`).
 
 ### Documentation
--   **`docs-external/`**: Contains all project documentation. See [Documentation Index](docs-external/INDEX.md).
+-   **`docs-external/`**: Contains all project documentation. See [Documentation Index](docs/INDEX.md).
 -   **`docs/`**: VitePress documentation site source files
     - **[`quick-start/`](docs/quick-start/index.md)**: Getting started guides, message exchange scenarios, and troubleshooting common errors
     - **[`node-image/`](docs/node-image/index.md)**: Node image source information and validator node setup instructions
@@ -344,27 +344,27 @@ For testing the network functionality:
 
 ### 5.2. Documentation
 
-The project includes comprehensive documentation in the `docs-external/` directory. Start with the [Documentation Index](docs-external/INDEX.md) for easy navigation.
+The project includes comprehensive documentation in the `docs-external/` directory. Start with the [Documentation Index](docs/INDEX.md) for easy navigation.
 
 #### Essential Documentation
--   **[Getting Started Guide](docs-external/GETTING_STARTED.md)**: Get running in 5 minutes
--   **[Architecture Overview](docs-external/ARCHITECTURE.md)**: System design, components, and data flow diagrams
--   **[Getting Started Guide](docs-external/GETTING_STARTED.md#cli-tutorial)**: Comprehensive guide for the `node-cli` tool
--   **[Troubleshooting Guide](docs-external/TROUBLESHOOTING.md)**: Solutions for common issues
+-   **[Getting Started Guide](docs/GETTING_STARTED.md)**: Get running in 5 minutes
+-   **[Architecture Overview](docs/ARCHITECTURE.md)**: System design, components, and data flow diagrams
+-   **[Getting Started Guide](docs/GETTING_STARTED.md#cli-tutorial)**: Comprehensive guide for the `node-cli` tool
+-   **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)**: Solutions for common issues
 
 #### Development & Operations
--   **[Documentation Index](docs-external/INDEX.md)**: Overview of all available documentation
--   **[Repository Operations](docs-external/REPO_OPERATIONS_AND_MAINTENANCE.md)**: Git workflow and CI/CD processes
--   **[Troubleshooting Guide](docs-external/TROUBLESHOOTING.md)**: Solutions and known limitations
+-   **[Documentation Index](docs/INDEX.md)**: Overview of all available documentation
+-   **[Repository Operations](docs/REPO_OPERATIONS_AND_MAINTENANCE.md)**: Git workflow and CI/CD processes
+-   **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)**: Solutions and known limitations
 
 #### Technical Analysis
--   **[Block Explorer](docs-external/BLOCK_EXPLORER.md)**: Real-time blockchain monitoring
--   **[Wallet Guide](docs-external/WALLET.md)**: ASI Wallet v2 documentation
+-   **[Block Explorer](docs/BLOCK_EXPLORER.md)**: Real-time blockchain monitoring
+-   **[Wallet Guide](docs/WALLET.md)**: ASI Wallet v2 documentation
 
 #### Deprecated Documentation
--   **[Architecture Overview](docs-external/ARCHITECTURE.md)**: System design and data flow
+-   **[Architecture Overview](docs/ARCHITECTURE.md)**: System design and data flow
 
-For a complete overview of all documentation, see the [Documentation Index](docs-external/INDEX.md).
+For a complete overview of all documentation, see the [Documentation Index](docs/INDEX.md).
 
 ## 6. Additional Tools
 
@@ -383,7 +383,7 @@ A modern, secure cryptocurrency wallet for the ASI Chain:
 - **LocalStorage Integration**: Automatic synchronization between Redux store and browser storage
 - **Build Optimization**: Excluded test files from production builds for smaller bundle size
 
-See the [Wallet Documentation](docs-external/WALLET.md) for usage instructions and installation guide.
+See the [Wallet Documentation](docs/WALLET.md) for usage instructions and installation guide.
 
 ### Block Explorer
 
@@ -416,7 +416,7 @@ python parser/enhanced_parser.py &  # Start the parser
 python web/app.py                   # Start the web server (http://localhost:8080)
 ```
 
-See the [Block Explorer Documentation](docs-external/BLOCK_EXPLORER.md) for more information.
+See the [Block Explorer Documentation](docs/BLOCK_EXPLORER.md) for more information.
 
 ## 7. Troubleshooting
 
@@ -498,8 +498,8 @@ See the [Block Explorer Documentation](docs-external/BLOCK_EXPLORER.md) for more
 ### Getting Help
 
 If you encounter issues not covered here:
-1. Check the detailed [Troubleshooting Guide](docs-external/TROUBLESHOOTING.md)
-2. Review the [Troubleshooting Guide](docs-external/TROUBLESHOOTING.md) for known limitations
+1. Check the detailed [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
+2. Review the [Troubleshooting Guide](docs/TROUBLESHOOTING.md) for known limitations
 3. Check container logs: `docker logs <container-name>`
 4. Open an issue on GitHub with:
    - Error messages
@@ -510,7 +510,7 @@ If you encounter issues not covered here:
 
 **Current Version**: Pre-Alpha Testnet v1.1 (July 2025)
 
-See the [Documentation Index](docs-external/INDEX.md) for detailed information about the project status and available features.
+See the [Documentation Index](docs/INDEX.md) for detailed information about the project status and available features.
 
 ### Key Working Features
 - ✅ Automated deployment with `deploy.sh`
