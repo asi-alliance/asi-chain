@@ -35,7 +35,7 @@ while true; do
     echo "Working with $node: (node: $i, host: $host, port: $port)"
     echo "=========================================================="
     # ----------------- DEPLOY ———————————————— #
-    deploy_out=$(cargo run -- deploy -f ./rho_examples/stdout.rho --private-key $private_key -H $host -p $port 2>&1)
+    deploy_out=$(cargo run -- deploy -f ./rho_examples/stdout.rho --private-key $private_key -H $host --grpc-port $port 2>&1)
     deploy_status=$?
     printf '%s' "$deploy_out" | tee -a "$LOGFILE"
     [[ $deploy_out == *$'\n' ]] || printf '\n' | tee -a "$LOGFILE"
@@ -48,7 +48,7 @@ while true; do
     echo | tee -a "$LOGFILE"
     sleep $DELAY_AFTER_DEPLOY
     # ----------------- PROPOSE ———————————————— #
-    propose_out=$(cargo run -- propose --private-key $private_key -H $host -p $port 2>&1)
+    propose_out=$(cargo run -- propose --private-key $private_key -H $host --grpc-port $port 2>&1)
     propose_status=$?
     printf '%s' "$propose_out" | tee -a "$LOGFILE"
     [[ $propose_out == *$'\n' ]] || printf '\n' | tee -a "$LOGFILE"
