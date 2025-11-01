@@ -164,7 +164,7 @@ git submodule update --init --recursive
 
 ### Build F1R3FLY Node
 
-The automated deployment script handles this, but to build manually:
+To build manually:
 
 ```bash
 cd node
@@ -207,7 +207,7 @@ cd ..
 
 ## Manual Deployment
 
-The automated `scripts/deploy.sh` handles all deployment steps. For manual deployment or understanding the process:
+**Note:** Automated deployment scripts (including `scripts/deploy.sh`) are currently in development and reference components not included in this repository. The manual deployment steps below provide a working setup without external dependencies.
 
 ### Step 1: Clone Dependencies
 

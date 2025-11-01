@@ -260,13 +260,7 @@ chmod 600 .env
 
 ### With Local Development Network
 
-The automated deployment script includes the bot:
-```bash
-# From repository root
-./scripts/deploy.sh
-```
-
-This starts the entire network including the deployer bot.
+**Note:** Automated deployment scripts are currently in development. For manual deployment of the complete network including the deployer bot, see [Development Guide](../DEVELOPMENT.md#manual-deployment).
 
 ### With External Validators
 

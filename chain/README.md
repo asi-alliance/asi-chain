@@ -77,13 +77,7 @@ Each genesis node directory contains:
 
 ### Launch Genesis Network
 
-The automated deployment script handles this:
-```bash
-# From repository root
-./scripts/deploy.sh
-```
-
-For manual deployment, see [Development Guide](../DEVELOPMENT.md#manual-deployment).
+**Note:** Automated deployment scripts are currently in development. For manual deployment steps, see [Development Guide](../DEVELOPMENT.md#manual-deployment).
 
 ---
 

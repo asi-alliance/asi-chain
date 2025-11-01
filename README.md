@@ -1,6 +1,6 @@
 <div align="center">
 
-# ASI Chain: Node Infrastructure
+# ASI Chain
 
 [![Status](https://img.shields.io/badge/Status-BETA-FFA500?style=for-the-badge)](https://github.com/asi-alliance/asi-chain)
 [![Version](https://img.shields.io/badge/Version-0.1.0-A8E6A3?style=for-the-badge)](https://github.com/asi-alliance/asi-chain/releases)
@@ -21,11 +21,12 @@ Part of the [**Artificial Superintelligence Alliance**](https://superintelligenc
 
 1. [Overview](#overview)
 2. [Key Features](#key-features)
-3. [Quick Start](#quick-start)
-4. [Architecture](#architecture)
-5. [Project Structure](#project-structure)
-6. [Documentation](#documentation)
-7. [License](#license)
+3. [Related Repositories](#related-repositories)
+4. [Quick Start](#quick-start)
+5. [Architecture](#architecture)
+6. [Project Structure](#project-structure)
+7. [Documentation](#documentation)
+8. [License](#license)
 
 ---
 
@@ -39,11 +40,30 @@ The platform uses the CBC Casper consensus mechanism with Proof of Stake, enabli
 
 ## Key Features
 
-- **Automated Deployment** - Deploy a complete testnet with bootstrap, validators, and observer nodes using a single script
 - **Validator Configuration** - Complete setup for running validator nodes with bonding support
 - **Wallet Generation** - TypeScript utility for generating secp256k1 key pairs compatible with ASI Chain
 - **Docker Support** - Containerized deployment for all node types (bootstrap, validator, observer)
 - **Deployment Automation** - Bot for continuous contract deployment and block proposal
+- **Node Configurations** - Pre-configured genesis nodes (bootstrap, validators, observer) for DevNet
+
+---
+
+## Related Repositories
+
+ASI Chain ecosystem consists of multiple components working together:
+
+| Repository | Description | Status |
+|------------|-------------|--------|
+| **[asi-chain-wallet](https://github.com/asi-alliance/asi-chain-wallet)** | Web-based wallet with Rholang IDE | ✅ Active |
+| **[asi-chain-explorer](https://github.com/asi-alliance/asi-chain-explorer)** | Blockchain explorer and indexer | ✅ Active |
+| **[asi-chain-faucet](https://github.com/asi-alliance/asi-chain-faucet)** | Testnet token distribution service | ✅ Active |
+| **[asi-chain-docs-portal](https://github.com/asi-alliance/asi-chain-docs-portal)** | Official documentation portal | ✅ Active |
+
+**Production Services:**
+- **ASI Wallet:** https://wallet.dev.asichain.io
+- **Block Explorer:** https://explorer.dev.asichain.io
+- **Faucet:** https://faucet.dev.asichain.io
+- **Documentation:** https://docs.asichain.io
 
 ---
 
@@ -61,34 +81,26 @@ The platform uses the CBC Casper consensus mechanism with Proof of Stake, enabli
 
 System requirements: 16GB RAM minimum, 4+ CPU cores, 50GB free storage
 
-### Deploy Local Network
-
-The automated deployment script handles the complete setup:
+### Manual Network Setup
 
 ```bash
 # Clone with submodules
 git clone --recursive https://github.com/asi-alliance/asi-chain.git
 cd asi-chain
 
-# Make script executable
-chmod +x scripts/deploy.sh
-
-# Run automated deployment
-./scripts/deploy.sh
+# Initialize submodule (F1R3FLY node)
+git submodule update --init --recursive
 ```
 
-The script will:
-- Clone the node and CLI repositories (if not present)
-- Build the F1R3FLY node Docker image
-- Build the Rust CLI tool
-- Start all network services (bootstrap, validators, observer)
-- Verify network operational status
+**Note:** Automated deployment scripts are planned for future releases. Currently, use manual deployment steps outlined in [DEVELOPMENT.md](DEVELOPMENT.md#manual-deployment).
 
-Monitor deployment progress with:
-```bash
-docker ps
-docker logs -f rnode.bootstrap
-```
+**Manual deployment requires:**
+1. Building F1R3FLY node Docker image from `node/` submodule
+2. Building Rust CLI from external repository
+3. Configuring and starting network services
+4. Verifying network operational status
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for complete manual deployment instructions.
 
 ---
 
@@ -98,18 +110,33 @@ docker logs -f rnode.bootstrap
 
 The DevNet consists of multiple node types working in coordination:
 
-**Bootstrap Node**
+```
+┌─────────────┐
+│  Bootstrap  │ ← Genesis node, network entry point
+│  (Genesis)  │
+└─────┬───────┘
+      │
+      ├──────────┬──────────┬──────────┐
+      │          │          │          │
+      ▼          ▼          ▼          ▼
+┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
+│Validator │ │Validator │ │Validator │ │ Observer │
+│    1     │ │    2     │ │    3     │ │(Read-only)│
+└──────────┘ └──────────┘ └──────────┘ └──────────┘
+```
+
+**Bootstrap Node:**
 - Genesis node that initializes the network
 - Coordinates peer discovery for new nodes
 - Maintains network topology information
 
-**Validator Nodes (3 Active)**
+**Validator Nodes (3 Active):**
 - Participate in consensus through CBC Casper
 - Produce and finalize blocks
 - Accept transaction submissions from users and developers
 - Interconnected for block propagation and consensus
 
-**Observer Node**
+**Observer Node:**
 - Read-only access to blockchain state
 - Handles query requests from client applications
 - Does not participate in consensus or block production
@@ -181,8 +208,8 @@ asi-chain/
 │   ├── deployer.yml
 │   └── .env.example
 │
-├── scripts/                   # Utility scripts
-│   ├── deploy.sh             # Automated network deployment
+├── scripts/                   # Utility scripts (automation planned)
+│   ├── deploy.sh             # Network deployment (in development)
 │   ├── block-generator.sh
 │   └── docker-flush.sh
 │
@@ -213,6 +240,11 @@ asi-chain/
 
 ### Component Documentation
 
+**[chain/README.md](chain/README.md)** - Node configurations
+- Genesis nodes overview
+- DevNet structure
+- External validator setup
+
 **[chain/validator/README.md](chain/validator/README.md)** - External validator setup
 - Complete validator deployment guide
 - Docker image building
@@ -236,11 +268,6 @@ asi-chain/
 - **Quick Start:** https://docs.asichain.io/quick-start/join-validator/
 - **DevNet Structure:** https://docs.asichain.io/shard-nodes/devnet-structure/
 
-**Web Applications:**
-- **ASI Wallet:** https://wallet.dev.asichain.io
-- **Block Explorer:** https://explorer.dev.asichain.io
-- **Faucet:** https://faucet.dev.asichain.io
-
 **Network Endpoints:**
 - **Bootstrap Node:** `rnode://e5e6faf012f36a30176d459ddc0db81435f6f1dc@54.152.57.201?protocol=40400&discovery=40404`
 - **Validator HTTP:** http://54.152.57.201:40413
@@ -252,6 +279,7 @@ asi-chain/
 - **Block Explorer:** https://github.com/asi-alliance/asi-chain-explorer
 - **Web Wallet:** https://github.com/asi-alliance/asi-chain-wallet
 - **Faucet:** https://github.com/asi-alliance/asi-chain-faucet
+- **Documentation Portal:** https://github.com/asi-alliance/asi-chain-docs-portal
 
 ---
 
