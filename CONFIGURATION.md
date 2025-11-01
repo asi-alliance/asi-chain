@@ -12,7 +12,6 @@ This guide covers all configuration options for ASI Chain node infrastructure co
 2. [Deployer Bot Configuration](#deployer-bot-configuration)
 3. [Network Configuration](#network-configuration)
 4. [Docker Configuration](#docker-configuration)
-5. [Security Best Practices](#security-best-practices)
 
 ---
 
@@ -225,46 +224,6 @@ networks:
     external: true
     name: devnet
 ```
-
----
-
-## Security Best Practices
-
-### Private Key Management
-
-**Storage:**
-- Never commit private keys to version control
-- Use environment variables or secure secret management
-- Store backup copies in encrypted secure storage
-
-**Access Control:**
-- Restrict file permissions: `chmod 600 .env`
-- Limit access to deployment machines
-- Use separate keys for different environments
-
-### Network Security
-
-**Firewall Configuration:**
-- Allow incoming connections only on required ports (40440-40445)
-- Block administrative ports (40445) from public access
-- Use VPN or IP whitelisting for administrative access
-
-**Docker Security:**
-- Run containers as non-root user when possible
-- Keep Docker images updated
-- Use specific image tags, avoid `latest` in production
-
-### Credential Generation
-
-**Key Generation:**
-- Use the provided `wallet-generator` utility for secp256k1 keys
-- Verify key format before use
-- Test with small amounts before staking large values
-
-**Backup:**
-- Store wallet backup files in multiple secure locations
-- Use encrypted storage for backups
-- Document key recovery procedures
 
 ---
 

@@ -94,12 +94,6 @@ docker logs -f rnode.bootstrap
 
 ## Architecture
 
-### Ecosystem Overview
-
-ASI Chain is a complete blockchain ecosystem with distinct layers for participants, infrastructure, and applications:
-
-![ASI Chain Ecosystem](docs/ecosystem.png)
-
 ### Network Topology
 
 The DevNet consists of multiple node types working in coordination:
@@ -209,7 +203,6 @@ asi-chain/
 **[CONFIGURATION.md](CONFIGURATION.md)** - Configuration guide
 - Environment variables for all components
 - Network configuration parameters
-- Security best practices
 - Docker deployment settings
 
 **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development guide
