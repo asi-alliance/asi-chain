@@ -26,7 +26,7 @@ These parameters define the network connection settings and should not be change
 **BOOTSTRAP**
 - Description: Bootstrap node connection string for network entry
 - Format: `rnode://<public_key>@<host>?protocol=<port>&discovery=<port>`
-- Default: `rnode://138410b5da898936ec1dc13fafd4893950eb191b@44.198.8.24?protocol=40400&discovery=40404`
+- Default: `rnode://138410b5da898936ec1dc13fafd4893950eb191b@54.152.57.201?protocol=40400&discovery=40404`
 
 **FAUCET_API_URL**
 - Description: API endpoint for testnet faucet service

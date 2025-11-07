@@ -108,35 +108,49 @@ See [DEVELOPMENT.md](DEVELOPMENT.md) for complete manual deployment instructions
 
 ### Network Topology
 
-The DevNet consists of multiple node types working in coordination:
+The DevNet consists of multiple node types with decentralized peer-to-peer communication:
 
 ```
-┌─────────────┐
-│  Bootstrap  │ ← Genesis node, network entry point
-│  (Genesis)  │
-└─────┬───────┘
-      │
-      ├──────────┬──────────┬──────────┐
-      │          │          │          │
-      ▼          ▼          ▼          ▼
-┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
-│Validator │ │Validator │ │Validator │ │ Observer │
-│    1     │ │    2     │ │    3     │ │(Read-only)│
-└──────────┘ └──────────┘ └──────────┘ └──────────┘
+                    ┌─────────────┐
+                    │  Bootstrap  │ ← Network entry point
+                    └─────┬───────┘    for peer discovery
+                          │
+            ┌─────────────┼─────────────┐
+            │             │             │
+            ▼             ▼             ▼
+      ┌──────────┐  ┌──────────┐  ┌──────────┐
+      │Validator │  │Validator │  │Validator │
+      │    1     │  │    2     │  │    3     │
+      └──────────┘  └──────────┘  └──────────┘
+            │             │             │
+            └─────────────┼─────────────┘
+                          │
+              Direct P2P mesh network            ┌──────────────────┐
+           (consensus & block production) =====> │     Observer     │
+                                                 │   (Read-only)    │
+                                                 │                  │
+                                                 │ Syncs & indexes  │
+                                                 │ blocks from all  │
+                                                 │ validator nodes  │
+                                                 └──────────────────┘
 ```
 
 **Bootstrap Node:**
 - Genesis node that initializes the network
-- Coordinates peer discovery for new nodes
-- Maintains network topology information
+- Provides initial peer discovery for new nodes
+- Nodes learn about each other through bootstrap, then communicate directly
+- Not a central coordinator - peers form independent mesh network
 
 **Validator Nodes (3 Active):**
+- Discover peers via bootstrap, then communicate directly with each other
+- Form decentralized P2P mesh for consensus and block propagation
 - Participate in consensus through CBC Casper
-- Produce and finalize blocks
+- Produce and finalize blocks independently
 - Accept transaction submissions from users and developers
-- Interconnected for block propagation and consensus
 
 **Observer Node:**
+- Connects to network via bootstrap for peer discovery
+- Receives blocks from all validators across the network (read-only synchronization)
 - Read-only access to blockchain state
 - Handles query requests from client applications
 - Does not participate in consensus or block production
