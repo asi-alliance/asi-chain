@@ -124,7 +124,7 @@ For detailed instructions and troubleshooting, see [validator/README.md](validat
 **Official DevNet:**
 - **Bootstrap Node:** `rnode://e5e6faf012f36a30176d459ddc0db81435f6f1dc@54.152.57.201?protocol=40400&discovery=40404`
 - **Validator HTTP:** http://54.152.57.201:40413
-- **Observer HTTP:** http://54.152.57.201:40453
+- **Observer HTTP:** http://54.235.138.68:40402
 
 **Documentation Portal:**
 - **Main:** https://docs.asichain.io

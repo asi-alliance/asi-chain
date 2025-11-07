@@ -28,9 +28,13 @@ These parameters define the network connection settings and should not be change
 - Format: `rnode://<public_key>@<host>?protocol=<port>&discovery=<port>`
 - Default: `rnode://e5e6faf012f36a30176d459ddc0db81435f6f1dc@54.152.57.201?protocol=40400&discovery=40404`
 
+**OBSERVER_HOST**
+- Description: Observer node's host IP address for blockchain queries
+- Default: `54.235.138.68`
+
 **FAUCET_API_URL**
 - Description: API endpoint for testnet faucet service
-- Default: `https://asi-testnet-faucet.singularitynet.io/api`
+- Default: `https://ffyp8igwwc.execute-api.us-east-1.amazonaws.com`
 - Purpose: Automatic wallet funding during validator setup
 
 **BOOTSTRAP_PUBLIC_GRPC_PORT**
@@ -39,7 +43,7 @@ These parameters define the network connection settings and should not be change
 
 **OBSERVER_INTERNAL_GRPC_PORT**
 - Description: Observer node's internal gRPC port for blockchain queries
-- Default: `40452`
+- Default: `40402`
 
 **STAKE**
 - Description: Amount of tokens to stake when bonding the validator
@@ -190,7 +194,7 @@ networks:
 Docker Compose file: `chain/validator/validator.yml`
 
 **Image:**
-- Source: `amamata/asi-scala-node:latest`
+- Source: `public.ecr.aws/f6y9h6x4/asi-chain/node:latest`
 - Platform: Linux/amd64
 - Base: OpenJDK 17
 

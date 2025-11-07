@@ -61,24 +61,14 @@ Expected output should include:
 | configurator | latest |
 | connector    | latest |
 
-### 1.4 Updating Docker Compose Files
+### 1.4 Docker Images
 
-The compose files reference ECR images by default. Update them to use local images:
+The compose files reference public ECR images by default:
+- Configurator: `public.ecr.aws/f6y9h6x4/asi-chain/validator-configurator:latest`
+- Connector: `public.ecr.aws/f6y9h6x4/asi-chain/validator-connector:latest`
+- Node: `public.ecr.aws/f6y9h6x4/asi-chain/node:latest`
 
-**In [`configurator.yml`](./configurator.yml):**
-```yaml
-image: configurator:latest
-```
-
-**In [`connector.yml`](./connector.yml) (if using manual bonding):**
-```yaml
-image: connector:latest
-```
-
-**In [`validator.yml`](./validator.yml) (connector service):**
-```yaml
-image: connector:latest
-```
+You can use these public images directly, or build local images as described above and update the compose files to use `configurator:latest` and `connector:latest`.
 
 ---
 
@@ -192,7 +182,7 @@ docker compose -f ./validator.yml up -d
 
 1. **Check the observer's latest finalized block:**
    ```
-   http://54.152.57.201:40453/api/last-finalized-block
+   http://54.235.138.68:40402/api/last-finalized-block
    ```
    If the response contains at least one block, the network is operational.
 
@@ -294,6 +284,7 @@ The validator uses the following ports:
 
 **Chain Config:**
 - `BOOTSTRAP` — Bootstrap node connection string
+- `OBSERVER_HOST` — Observer node host IP address
 - `FAUCET_API_URL` — Testnet faucet for automatic funding
 - `BOOTSTRAP_PUBLIC_GRPC_PORT` — Bootstrap gRPC port
 - `OBSERVER_INTERNAL_GRPC_PORT` — Observer internal port
@@ -307,6 +298,6 @@ The validator uses the following ports:
 
 ### Network Endpoints
 
-- **Observer API:** http://54.152.57.201:40453/api/last-finalized-block
+- **Observer API:** http://54.235.138.68:40402/api/last-finalized-block
 - **Faucet:** https://ffyp8igwwc.execute-api.us-east-1.amazonaws.com
 - **Repository:** [ASI Chain - External Validator](https://github.com/asi-alliance/asi-chain/chain/validator)

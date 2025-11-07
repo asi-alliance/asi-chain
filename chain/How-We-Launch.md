@@ -118,7 +118,7 @@ asichain/
 
 Check current bonds:
 ```bash
-cargo run -- bonds -p 40453
+cargo run -- bonds -p 40402
 ```
 
 We already have 4 bonds, so we can launch one more validator.
@@ -151,7 +151,7 @@ cargo run -- is-finalized -b <block_hash>
 We check that bonds after some time.  Must be run against observer node. Should now see 5 bonds.
 
 ```bash
-cargo run -- bonds -p 40453
+cargo run -- bonds -p 40402
 ```
 
 Last step - launch one more validator in separate terminal:

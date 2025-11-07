@@ -268,7 +268,7 @@ docker ps
 Query bond status from observer:
 ```bash
 cd cli/node-cli
-cargo run -- bonds -p 40453
+cargo run -- bonds -p 40402
 ```
 
 ---
@@ -425,13 +425,13 @@ docker network inspect devnet
 
 Verify node is synchronized:
 ```bash
-curl http://54.152.57.201:40453/api/last-finalized-block
+curl http://54.235.138.68:40402/api/last-finalized-block
 ```
 
 Check if validators are active:
 ```bash
 cd cli/node-cli
-cargo run -- bonds -p 40453
+cargo run -- bonds -p 40402
 ```
 
 ### Common Errors
