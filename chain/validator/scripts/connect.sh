@@ -15,7 +15,7 @@ echo "Observer API: $OBSERVER_HOST:$OBSERVER_INTERNAL_GRPC_PORT"
 
 # Define function to check validator bonding status
 is_validator_bonded() {
-  local CMD_OUT=$(cargo run -q -- validator-status -k "$VALIDATOR_PUBLIC_KEY" -H "$OBSERVER_HOST" -p "$OBSERVER_INTERNAL_GRPC_PORT")
+  local CMD_OUT=$(cargo run -q -- validator-status -k "$VALIDATOR_PUBLIC_KEY" -H "$OBSERVER_HOST" --grpc-port "$OBSERVER_GRPC_PORT" --http-port "$OBSERVER_HTTP_PORT")
   if echo "$CMD_OUT" | grep "Bonded:" | grep -q "Yes" && \
      echo "$CMD_OUT" | grep "Active:" | grep -q "Yes"; then
     echo "$CMD_OUT"
@@ -81,7 +81,7 @@ if is_validator_bonded; then
 else
   echo "Bonding Validator to the network"
   {
-    cargo run -q -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$BOOTSTRAP_HOST" -p "$BOOTSTRAP_PUBLIC_GRPC_PORT"
+    cargo run -q -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$BOOTSTRAP_HOST" --grpc-port "$BOOTSTRAP_GRPC_PORT" --http-port "$BOOTSTRAP_HTTP_PORT"
   } || {
     echo "Failed to bond validator"
     exit 1
