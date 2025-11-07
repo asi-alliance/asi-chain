@@ -3,7 +3,7 @@ name: validator
 
 services:
   connector:
-    image: 533793137436.dkr.ecr.us-east-1.amazonaws.com/asi-chain/validator-connector:v0.0.2
+    image: public.ecr.aws/f6y9h6x4/asi-chain/validator-connector:latest
     container_name: validator-connector-job
     env_file: .env
     restart: "no"

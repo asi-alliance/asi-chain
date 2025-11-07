@@ -2,7 +2,7 @@ name: validator
 
 services:
   configurator:
-    image: 533793137436.dkr.ecr.us-east-1.amazonaws.com/asi-chain/validator-configurator:v0.0.2
+    image: public.ecr.aws/f6y9h6x4/asi-chain/validator-configurator:latest
     container_name: validator-configurator-job
     restart: "no"
     volumes:

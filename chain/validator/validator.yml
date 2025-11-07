@@ -1,14 +1,14 @@
 name: validator
 
 x-rnode: &default-rnode
-  image: amamata/snet-scala-node:optimized
+  image: public.ecr.aws/f6y9h6x4/asi-chain/node:latest
   user: root
   networks:
-    - f1r3fly
+    - devnet
 
 services:
   connector:
-    image: 533793137436.dkr.ecr.us-east-1.amazonaws.com/asi-chain/validator-connector:v0.0.2
+    image: public.ecr.aws/f6y9h6x4/asi-chain/validator-connector:latest
     container_name: validator-connector-job
     env_file: .env
     restart: "no"
@@ -45,6 +45,6 @@ services:
       - ./data:/var/lib/rnode/
 
 networks:
-  f1r3fly:
+  devnet:
     external: false
-    name: docker_f1r3fly
+    name: devnet
