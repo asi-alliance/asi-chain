@@ -192,7 +192,7 @@ docker compose -f ./validator.yml up -d
 
 1. **Check the observer's latest finalized block:**
    ```
-   http://44.198.8.24:40453/api/last-finalized-block
+   http://54.152.57.201:40453/api/last-finalized-block
    ```
    If the response contains at least one block, the network is operational.
 
