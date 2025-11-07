@@ -8,14 +8,14 @@ VALIDATOR_CHECK_DELAY=60
 
 cd /app/rust-client
 
-# Get shard host from validator url
-# ! We assume here that shard includes bootstrap, validators and observer on the same host
-SHARD_HOST=$(echo "$BOOTSTRAP" | cut -d"@" -f2 | cut -d"?" -f1)
-echo "Shard Host: $SHARD_HOST"
+# Get bootstrap host from bootstrap url
+BOOTSTRAP_HOST=$(echo "$BOOTSTRAP" | cut -d"@" -f2 | cut -d"?" -f1)
+echo "Bootstrap API: $BOOTSTRAP_HOST:$BOOTSTRAP_PUBLIC_GRPC_PORT"
+echo "Observer API: $OBSERVER_HOST:$OBSERVER_INTERNAL_GRPC_PORT"
 
 # Define function to check validator bonding status
 is_validator_bonded() {
-  local CMD_OUT=$(cargo run -q -- validator-status -k "$VALIDATOR_PUBLIC_KEY" -H "$SHARD_HOST" -p "$OBSERVER_INTERNAL_GRPC_PORT")
+  local CMD_OUT=$(cargo run -q -- validator-status -k "$VALIDATOR_PUBLIC_KEY" -H "$OBSERVER_HOST" -p "$OBSERVER_INTERNAL_GRPC_PORT")
   if echo "$CMD_OUT" | grep "Bonded:" | grep -q "Yes" && \
      echo "$CMD_OUT" | grep "Active:" | grep -q "Yes"; then
     echo "$CMD_OUT"
@@ -81,7 +81,7 @@ if is_validator_bonded; then
 else
   echo "Bonding Validator to the network"
   {
-    cargo run -q -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$SHARD_HOST" -p "$BOOTSTRAP_PUBLIC_GRPC_PORT"
+    cargo run -q -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$BOOTSTRAP_HOST" -p "$BOOTSTRAP_PUBLIC_GRPC_PORT"
   } || {
     echo "Failed to bond validator"
     exit 1
