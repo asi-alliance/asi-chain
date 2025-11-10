@@ -1,62 +1,156 @@
-# ASI:Chain - Testnet
-## Context and Overview
+# ASI Chain: Node Configurations
 
-Testnet portal, detailed documentation and information about testnet is available at the link:
+← [Back to Main README](../README.md)
 
-https://asi-testnet.singularitynet.io/
+This directory contains node configurations for the ASI Chain network, including genesis nodes (bootstrap, validators, observer) and external validator setup.
 
-Please use the following credentials to access the developer portal:
+For detailed configuration instructions, see:
+- **[Configuration Guide](../CONFIGURATION.md)** - Environment variables and network settings
+- **[Development Guide](../DEVELOPMENT.md)** - Building and deployment procedures
 
-Login: `website_user`
+---
 
-Password: `tYfrgWp4D5CyGM8U`
+## DevNet Configuration
 
-## Network Configuration
+ASI Chain DevNet consists of the following node types:
 
-We have launched a custom blockchain based on F1R3FLY with the following node types:
-
-* 1 Bootstrap Node
-
-* 4 Validator Nodes
-
-* 1 Observer Node
-
+**Network Topology:**
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Bootstrap  │ ──▶ │ Validator 1 │ ──▶ | Validator 2 │
-│  (Genesis)  │     │             │     |             │
-└─────────────┘     └─────────────┘     └─────────────┘
-       │                   │                   │
-       ▼                   ▼                   ▼
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│ Validator 3 │ ──▶ │ Validator 4 │ ──▶ │  Observer   │
-│             │     │  (Extra)    │     │ (Read-only) │
-└─────────────┘     └─────────────┘     └─────────────┘
+┌─────────────┐
+│  Bootstrap  │ ← Genesis node, network entry point
+│  (Genesis)  │
+└─────┬───────┘
+      │
+      ├──────────┬──────────┬──────────┐
+      │          │          │          │
+      ▼          ▼          ▼          ▼
+┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
+│Validator │ │Validator │ │Validator │ │ Observer │
+│    1     │ │    2     │ │    3     │ │(Read-only)│
+└──────────┘ └──────────┘ └──────────┘ └──────────┘
 ```
 
-Bootstrap Node
+**Node Roles:**
+- **Bootstrap (Genesis)** - Initial node that starts the network and coordinates peer discovery
+- **Validators 1-3** - Participate in consensus, produce and finalize blocks
+- **Observer** - Read-only node for querying blockchain state without participating in consensus
+
+---
+
+## Directory Structure
 
 ```
-bootstrap: `rnode://138410b5da898936ec1dc13fafd4893950eb191b@44.198.8.24?protocol=40400&discovery=40404`
+chain/
+├── genesis/                    # Genesis node configurations
+│   ├── devnet-bootstrap/      # Bootstrap node
+│   ├── devnet-validator1/     # Validator 1
+│   ├── devnet-validator2/     # Validator 2
+│   ├── devnet-validator3/     # Validator 3
+│   ├── devnet-observer/       # Observer node
+│   └── shard.yml              # Genesis nodes Docker Compose
+│
+├── validator/                  # External validator setup
+│   ├── conf/                  # Configuration files
+│   ├── scripts/               # Setup scripts
+│   ├── configurator.Dockerfile
+│   ├── connector.Dockerfile
+│   ├── validator.yml
+│   └── README.md              # External validator guide
+│
+├── testnet-wallets.txt        # Pre-generated wallet keys
+├── How-We-Launch.md           # Network launch procedures
+└── README.md                  # This file
 ```
 
-## Explorer
+---
 
-You can explore the chain via the testnet block explorer:
-Link to explorer: http://44.198.8.24:5173/
+## Genesis Nodes
 
-⚠️ At the moment, access to validator nodes is only possible via this [guide](https://github.com/asi-alliance/asi-chain/blob/master/Become-ASI-Chain-Validator.md)
+Genesis nodes are pre-configured in the `genesis/` directory and launched together to form the initial network.
 
-## External Validators Status
+### Configuration Files
 
-External validator joining is currently disabled and under testing. The connection with bonding process from external nodes is being validated. We're coordinating this work with the official F1R3FLY and MetaCycle teams.
+Each genesis node directory contains:
+- `conf/` - Node configuration files (RNode config, logging)
+- `genesis/` - Genesis state files (wallets, bonds)
+- `*.yml` - Docker Compose configuration
 
-Once stable support for external validators is enabled, we will:
+### Launch Genesis Network
 
-* Update this documentation
+**Note:** Automated deployment scripts are currently in development. For manual deployment steps, see [Development Guide](../DEVELOPMENT.md#manual-deployment).
 
-* Provide additional step-by-step instructions to full setup from your side
+---
 
-* Open the network for bonding from outside nodes with new generated wallets
+## External Validators
 
-For advanced users who want to dive in early, we welcome your feedback. Stay tuned for updates as we finalize external validator onboarding!
+External validators can join the existing network after genesis.
+
+**Complete Setup Guide:** [validator/README.md](validator/README.md)
+
+**Quick Overview:**
+
+1. **Build Docker Images**
+   ```bash
+   cd validator
+   docker build -f configurator.Dockerfile -t configurator:latest ../..
+   docker build -f connector.Dockerfile -t connector:latest .
+   ```
+
+2. **Configure Environment**
+   ```bash
+   cp conf/validator.env .env
+   # Edit .env with validator settings
+   ```
+
+3. **Generate or Provide Credentials**
+   - Auto-generate: Leave validator parameters empty, run configurator
+   - Manual: Provide VALIDATOR_PRIVATE_KEY, VALIDATOR_PUBLIC_KEY, VALIDATOR_ADDRESS
+
+4. **Start Validator**
+   ```bash
+   docker compose -f validator.yml up -d
+   ```
+
+5. **Verify Synchronization**
+   - Check local finalized block: `http://localhost:40443/api/last-finalized-block`
+   - Compare with network: `http://54.152.57.201:40453/api/last-finalized-block`
+
+For detailed instructions and troubleshooting, see [validator/README.md](validator/README.md).
+
+---
+
+## Network Information
+
+**Official DevNet:**
+- **Bootstrap Node:** `rnode://e5e6faf012f36a30176d459ddc0db81435f6f1dc@54.152.57.201?protocol=40400&discovery=40404`
+- **Validator HTTP:** http://54.152.57.201:40413
+- **Observer HTTP:** http://54.235.138.68:40402
+
+**Documentation Portal:**
+- **Main:** https://docs.asichain.io
+- **Quick Start:** https://docs.asichain.io/quick-start/join-validator/
+- **DevNet Structure:** https://docs.asichain.io/shard-nodes/devnet-structure/
+
+**Web Applications:**
+- **ASI Wallet:** https://wallet.dev.asichain.io
+- **Block Explorer:** https://explorer.dev.asichain.io
+- **Faucet:** https://faucet.dev.asichain.io
+
+---
+
+## Configuration
+
+For detailed configuration options:
+- **[Configuration Guide](../CONFIGURATION.md)** - All environment variables
+- **[validator/conf/validator.env](validator/conf/validator.env)** - Validator configuration template
+
+---
+
+## Additional Resources
+
+**Validator Setup:**
+- [validator/README.md](validator/README.md) - Complete external validator guide
+- [validator/Become-ASI-Chain-Validator.md](validator/Become-ASI-Chain-Validator.md) - Validator onboarding (legacy)
+
+**Network Launch:**
+- [How-We-Launch.md](How-We-Launch.md) - Network launch procedures

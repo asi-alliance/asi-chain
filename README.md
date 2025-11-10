@@ -1,523 +1,318 @@
-<table>
-  <tr>
-    <td><img src="https://static.cryptobriefing.com/wp-content/uploads/2024/09/11085854/ASI-Alliance-Token-Merger-Reschedule-800x449.png" width="200"></td>
-    <td><h1>ASI-Chain Workspace</h1></td>
-  </tr>
-</table>
+<div align="center">
 
-This workspace provides the scripts and configuration to deploy a local ASI-Chain test network.
+# ASI Chain
 
-## 🌐 Testnet Portal
+[![Status](https://img.shields.io/badge/Status-BETA-FFA500?style=for-the-badge)](https://github.com/asi-alliance/asi-chain)
+[![Version](https://img.shields.io/badge/Version-0.1.0-A8E6A3?style=for-the-badge)](https://github.com/asi-alliance/asi-chain/releases)
+[![License](https://img.shields.io/badge/License-Apache%202.0-1A1A1A?style=for-the-badge)](LICENSE)
+[![Docs](https://img.shields.io/badge/Docs-Available-C4F0C1?style=for-the-badge)](https://docs.asichain.io)
 
-**Comprehensive testnet documentation and developer resources are available at:**
-**https://asi-testnet.singularitynet.io/**
+<h3>Blockchain node infrastructure and deployment tools for the ASI Chain network</h3>
 
-**Developer Portal Access:**
-- **Login:** `website_user`
-- **Password:** `tYfrgWp4D5CyGM8U`
+Part of the [**Artificial Superintelligence Alliance**](https://superintelligence.io) ecosystem
 
-The testnet portal provides detailed documentation, network status, tutorials, and additional developer tools beyond what's available in this workspace.
+*Uniting Fetch.ai, SingularityNET, and CUDOS*
 
-## 🚀 Quick Links
-
-### Getting Started
-- **[Quick Start Guide](docs/GETTING_STARTED.md)** - Get running in 5 minutes
-- **[Interactive Quick Start](docs/quick-start/index.md)** - Step-by-step interactive guide
-- **[ASI Wallet](http://184.73.0.34:3000)** - Access the ASI:Chain wallet for managing your tokens and transactions
-- **[Message Exchange Scenarios](docs/quick-start/messages/index.md)** - Common communication patterns
-- **[Common Errors](docs/quick-start/troubleshooting/index.md)** - Quick troubleshooting reference
-
-### Documentation
-- **[Documentation Index](docs/INDEX.md)** - Complete documentation overview
-- **[Architecture Overview](docs/ARCHITECTURE.md)** - System design and components
-- **[Network Configuration](docs/network-configuration/index.md)** - Network setup and topology
-- **[Interaction Examples](docs/interaction-examples/index.md)** - Practical usage examples
-
-### Operations & Maintenance
-- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Common issues and solutions
-- **[Repository Operations](docs/REPO_OPERATIONS_AND_MAINTENANCE.md)** - Git workflow and maintenance
-- **[Validator Setup](docs/node-image/validator/index.md)** - Become a validator node
-- **[Network Access](docs/network-access/index.md)** - RPC endpoints and explorer access
-
-## 📁 Repository Structure
-
-The workspace is organized into the following directories:
-
-### Core Components
--   **`asi_wallet_v2/`**: Modern React-based cryptocurrency wallet with WalletConnect support. See [Wallet Documentation](docs/WALLET.md).
--   **`block-explorer/`**: Python-based blockchain explorer with web interface (Docker supported). See [Explorer Documentation](docs/BLOCK_EXPLORER.md).
--   **`chain/`**: ASI Chain configuration and setup files
-    - **`conf/`**: Node configuration files
-    - **`.env.example`**: Example environment variables configuration
-    - **[`Become-ASI-Chain-Validator.md`](chain/validator/Become-ASI-Chain-Validator.md)**: Guide for becoming a validator on the ASI Chain
-    - **[`How-We-Launch.md`](chain/How-We-Launch.md)**: Detailed launch process documentation
-    - **`README.md`**: Chain-specific documentation
-    - **`testnet-wallets.txt`**: List of testnet wallet addresses
-    - **`validator.yml`**: Validator configuration template
--   **`contracts/`**: Contains sample Rholang smart contracts.
--   **`finalizer-bot/`**: Contains the Python-based automated finalizer bot and Docker configuration.
--   **`logs/`**: Contains log files from test runs.
--   **`patches/`**: Contains Git patches for fixing upstream issues, particularly the VABN CLI patch.
--   **`scripts/`**: Contains deployment and utility scripts (`deploy.sh`, `docker-flush.sh`).
-
-### Documentation
--   **`docs-external/`**: Contains all project documentation. See [Documentation Index](docs/INDEX.md).
--   **`docs/`**: VitePress documentation site source files
-    - **[`quick-start/`](docs/quick-start/index.md)**: Getting started guides, message exchange scenarios, and troubleshooting common errors
-    - **[`node-image/`](docs/node-image/index.md)**: Node image source information and validator node setup instructions
-    - **[`yaml-configuration/`](docs/yaml-configuration/index.md)**: YAML configuration file documentation, parameters, and examples
-    - **[`network-access/`](docs/network-access/index.md)**: Explorer and RPC endpoint information, RNode address generation guides
-    - **[`network-configuration/`](docs/network-configuration/index.md)**: Network configuration overview, parameters, and topology documentation
-    - **[`interaction-examples/`](docs/interaction-examples/index.md)**: Practical examples including smart contracts, block history viewing, and balance checking
-
-### Generated Directories
-The `deploy.sh` script will automatically clone the required external repositories:
-- **`node/`**: F1R3FLY Scala node from https://github.com/F1R3FLY-io/f1r3fly/
-- **`cli/`**: F1R3FLY Rust CLI from https://github.com/F1R3FLY-io/f1r3fly/ (branch: preston/rholang_rust)
-
-The script also applies the VABN patch from `patches/cli-vabn-support.patch` for block 50 compatibility and configures the network during the setup process.
-
-### Race Condition and Resolution
-
-A significant challenge during development was a race condition where the `finalizer-bot` container would start and attempt to communicate with the validator nodes before they were fully initialized. This resulted in two primary errors:
-
-1.  `Connection refused`: The node's gRPC server was not yet listening.
-2.  `Error: Could not deploy, casper instance was not available yet.`: The gRPC server was up, but the internal Casper consensus engine was not ready to process requests.
-
-The issue was resolved by implementing a robust retry mechanism in the bot's `run_command` function (`finalizer-bot/finalizer.py`). The bot will now attempt to connect up to 10 times with a 2-second delay, specifically catching and retrying on both of the errors mentioned above. This makes the startup sequence resilient to network and service timing issues, allowing the bot to wait patiently until the validators are fully operational.
-
-## Overview of the Blockchain
-
-ASICHAIN (F1R3FLY) is a blockchain platform based on RChain technology using the CBC Casper consensus mechanism. This guide provides comprehensive instructions for deploying and managing a local testnet.
-
-### Key Technical Details
-
--   **Language**: Scala (node) + Rust (CLI)
--   **Consensus**: CBC Casper with Proof of Stake
--   **Smart Contracts**: Rholang
-
-### Network Port Architecture
-
-The testnet is composed of several node containers, each with specific roles and port mappings. The `node-cli` tool interacts with the nodes by connecting to their external host ports.
-
-| Node Name | Role | External gRPC Port | Internal gRPC Port | CLI Service | Purpose & Usage |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| **`boot`** | Bootstrap | `40401` | `40401` | `Deploy` | Send a transaction (e.g., `cargo run -- bond-validator -p 40401 ...`). |
-| | | `40402` | `40402` | `Propose` | Request the node to create a block (e.g., `cargo run -- propose -p 40402`). |
-| **`validator1`**| Validator | `40411` | `40401` | `Deploy` | Send a transaction directly to this validator. |
-| | | `40412` | `40402` | `Propose` | Request this specific validator to create a block. |
-| **`validator2`**| Validator | `40421` | `40401` | `Deploy` | Send a transaction directly to this validator. |
-| | | `40422` | `40402` | `Propose` | Request this specific validator to create a block. |
-| **`validator3`**| Validator | `40431` | `40401` | `Deploy` | Send a transaction directly to this validator. |
-| | | `40432` | `40402` | `Propose` | Request this specific validator to create a block. |
-| **`readonly`** | **Observer**| **`40453`** | **`40403`** | **`Query`** | **Read blockchain state (e.g., `cargo run -- bonds -p 40453`).** |
+</div>
 
 ---
 
-**Key Architectural Points:**
+## Table of Contents
 
-*   **P2P Communication (`40400`, `40404`)**: The Protocol (`40400`) and Discovery (`40404`) ports are used for internal communication *between* the Docker containers for consensus and peer discovery. They are mapped to external ports (e.g., `40410`, `40414`) but are not typically interacted with directly by the CLI.
-*   **Deploying & Proposing (Any Validator)**: While it's common to send initial transactions to the bootstrap node, any validator in the network is capable of accepting a `deploy` or `propose` request on its respective external port. The transaction will then be gossiped to the rest of the network for inclusion in a block.
-*   **Querying (Observer Only)**: As demonstrated by the `Exploratory deploy can only be executed on read-only RNode` error, state queries (`bonds`) are a specialized function that **must** be handled by an observer node. The validators' gRPC servers are configured to reject such read-only requests. This is a deliberate design choice to separate the workload of transaction processing from state querying, ensuring network stability and performance.
+1. [Overview](#overview)
+2. [Key Features](#key-features)
+3. [Related Repositories](#related-repositories)
+4. [Quick Start](#quick-start)
+5. [Architecture](#architecture)
+6. [Project Structure](#project-structure)
+7. [Documentation](#documentation)
+8. [License](#license)
 
-## 1. Getting Started: Workspace Setup
+---
 
-The first step is to clone this workspace repository, which contains all the necessary scripts, contracts, and configuration files.
+## Overview
+
+ASI Chain is a blockchain platform providing infrastructure for the ASI Alliance ecosystem. This repository contains the node configuration, deployment automation, and utilities needed to run and interact with the ASI Chain network.
+
+The platform uses the CBC Casper consensus mechanism with Proof of Stake, enabling validators to participate in block production and network security. Smart contracts are written in Rholang, a concurrent programming language designed for blockchain applications.
+
+---
+
+## Key Features
+
+- **Validator Configuration** - Complete setup for running validator nodes with bonding support
+- **Wallet Generation** - TypeScript utility for generating secp256k1 key pairs compatible with ASI Chain
+- **Docker Support** - Containerized deployment for all node types (bootstrap, validator, observer)
+- **Deployment Automation** - Bot for continuous contract deployment and block proposal
+- **Node Configurations** - Pre-configured genesis nodes (bootstrap, validators, observer) for DevNet
+
+---
+
+## Related Repositories
+
+ASI Chain ecosystem consists of multiple components working together:
+
+| Repository | Description | Status |
+|------------|-------------|--------|
+| **[asi-chain-wallet](https://github.com/asi-alliance/asi-chain-wallet)** | Web-based wallet with Rholang IDE | ✅ Active |
+| **[asi-chain-explorer](https://github.com/asi-alliance/asi-chain-explorer)** | Blockchain explorer and indexer | ✅ Active |
+| **[asi-chain-faucet](https://github.com/asi-alliance/asi-chain-faucet)** | Testnet token distribution service | ✅ Active |
+| **[asi-chain-docs-portal](https://github.com/asi-alliance/asi-chain-docs-portal)** | Official documentation portal | ✅ Active |
+
+**Production Services:**
+- **ASI Wallet:** https://wallet.dev.asichain.io
+- **Block Explorer:** https://explorer.dev.asichain.io
+- **Faucet:** https://faucet.dev.asichain.io
+- **Documentation:** https://docs.asichain.io
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- **Docker** 20.10+ and **Docker Compose** 2.0+
+- **Java** 17+ (OpenJDK)
+- **sbt** 1.9+ (Scala Build Tool)
+- **Rust** 1.70+ and Cargo
+- **Node.js** 20+ (for wallet-generator)
+- **Git** 2.30+
+- **Make** and **Perl**
+
+System requirements: 16GB RAM minimum, 4+ CPU cores, 50GB free storage
+
+### Manual Network Setup
 
 ```bash
-git clone --branch develop https://github.com/asi-alliance/asi-chain.git
+# Clone with submodules
+git clone --recursive https://github.com/asi-alliance/asi-chain.git
 cd asi-chain
+
+# Initialize submodule (ASI Chain node)
+git submodule update --init --recursive
 ```
 
-All subsequent commands should be run from within this directory.
+**Note:** Automated deployment scripts are planned for future releases. Currently, use manual deployment steps outlined in [DEVELOPMENT.md](DEVELOPMENT.md#manual-deployment).
 
-## 2. Prerequisites
+**Manual deployment requires:**
+1. Building ASI Chain node Docker image from `node/` submodule
+2. Building Rust CLI from external repository
+3. Configuring and starting network services
+4. Verifying network operational status
 
-### System Requirements
+See [DEVELOPMENT.md](DEVELOPMENT.md) for complete manual deployment instructions.
 
-- **Operating System**: Linux/macOS (tested on Darwin 24.5.0) or Windows with WSL2
-- **Memory**: Minimum 12GB RAM recommended (was 36GB before optimization)
-- **Storage**: At least 20GB free space
-- **Network**: Stable internet connection for downloading dependencies
+---
 
-### Software Dependencies
+## Architecture
 
-Ensure you have the following versions installed:
+### Network Topology
 
-1. **Git** (2.30+) - For cloning repositories
-   ```bash
-   # macOS
-   brew install git
-   
-   # Linux
-   sudo apt-get install git
-   
-   # Verify version
-   git --version
-   ```
+The DevNet consists of multiple node types with decentralized peer-to-peer communication:
 
-2. **Java 17+** - Required JDK version
-   ```bash
-   # macOS with Homebrew
-   brew install openjdk@17
-   
-   # Configure jenv (recommended)
-   brew install jenv
-   echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
-   echo 'eval "$(jenv init -)"' >> ~/.zshrc
-   source ~/.zshrc
-   jenv add /usr/local/opt/openjdk@17
-   jenv global 17.0
-   ```
-
-3. **sbt** (1.9+) - Scala build tool
-   ```bash
-   # macOS
-   brew install sbt
-   
-   # Linux
-   echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
-   curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x99E82A75642AC823" | sudo apt-key add
-   sudo apt-get update && sudo apt-get install sbt
-   
-   # Verify version
-   sbt --version
-   ```
-
-4. **Docker** (20.10+) & **Docker Compose** (2.0+) - For containerized deployment
-   ```bash
-   # macOS
-   brew install --cask docker
-   
-   # Linux
-   sudo apt-get install docker.io docker-compose-plugin
-   
-   # Verify versions
-   docker --version
-   docker compose version
-   ```
-
-5. **Rust** (1.70+) & **Cargo** - For building the CLI
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   source $HOME/.cargo/env
-   
-   # Verify version
-   rustc --version
-   ```
-
-6. **Make** - Build automation tool (usually pre-installed)
-   ```bash
-   # Verify installation
-   make --version
-   ```
-
-## 3. Automated Deployment (Recommended)
-
-An automated script, `scripts/deploy.sh`, is included to handle the entire end-to-end process of cloning dependencies, building components, and launching the network.
-
-### Usage
-
-1.  **Make the script executable:**
-    ```bash
-    chmod +x scripts/deploy.sh
-    ```
-
-2.  **Run the deployment script:**
-    ```bash
-    ./scripts/deploy.sh
-    ```
-
-The script will perform the following actions:
-- Clone the `node` and `cli` repositories if they do not already exist.
-- **Automatically apply the VABN patch** from `patches/cli-vabn-support.patch` to enable `--valid-after-block-number` support.
-- **Copy custom configuration files** from `finalizer-bot/conf/` to `node/docker/conf/` (if present).
-- Build the `f1r3fly-scala-node` Docker image using `sbt`.
-- Build the patched `node-cli` Rust binary with VABN support.
-- Start all testnet services (bootstrap, validators, observer, and finalizer-bot) in the background using Docker Compose.
-- Verify that the network is operational by polling the observer node's bond status.
-
-### Configuration Customization
-
-The deployment script now supports custom node configurations. If you have modified configuration files in `finalizer-bot/conf/`, they will automatically replace the default configurations during deployment. This is useful for:
-- Adjusting API limits (e.g., `max-blocks-limit`)
-- Tuning memory settings
-- Modifying network parameters
-
-## 4. Manual Deployment & Interaction
-
-**Note**: The `deploy.sh` script automatically handles all these steps, including cloning repositories. Manual steps are only needed if you want to customize the process.
-
-### 4.1. Build Dependencies
-
-**Important**: The `node/` and `cli/` directories do not exist in the base repository. They must be cloned from external repositories.
-
-1.  **Clone Node & CLI Repositories:**
-    ```bash
-    # Only needed if not using deploy.sh
-    # (From the asi-chain workspace root)
-    git clone https://github.com/F1R3FLY-io/f1r3fly/ node
-    git clone -b preston/rholang_rust https://github.com/F1R3FLY-io/f1r3fly/ cli
-    
-    # Apply VABN patch manually (if not using deploy.sh)
-    # See patches/cli-vabn-support.patch for details
-    cd cli
-    patch -p1 < ../patches/cli-vabn-support.patch
-    cd ..
-    ```
-2.  **Compile the Scala Node & Build Docker Image:**
-    ```bash
-    cd node
-    sbt clean compile
-    sbt "project node" Docker/publishLocal
-    cd ..
-    ```
-3.  **Build the CLI Tool:**
-    ```bash
-    cd cli/node-cli
-    cargo build --release
-    cd ../..
-    ```
-
-### 4.2. Start and Verify the Network
-
-1.  **Prepare Docker Compose File:**
-    The docker-compose.integrated.yml file is maintained in `finalizer-bot/` directory.
-    The `deploy.sh` script automatically copies it to the expected location (`node/docker/`).
-    If doing this manually:
-    ```bash
-    # (From the asi-chain workspace root)
-    cp finalizer-bot/docker-compose.integrated.yml node/docker/
-    ```
-2.  **Start the Network:**
-    From the `node` directory, launch all services, including the `finalizer-bot`.
-    ```bash
-    cd node
-    docker compose -f docker/docker-compose.integrated.yml up -d --build finalizer-bot
-    cd ..
-    ```
-3.  **Verify Node Status:**
-    Check that all containers are running and healthy.
-    ```bash
-    docker ps
-    ```
-
-### 4.3. Interacting with the CLI
-
-All CLI commands should be run from the `cli/node-cli` directory.
-
-```bash
-cd ../cli/node-cli
+```
+                    ┌─────────────┐
+                    │  Bootstrap  │ ← Network entry point
+                    └─────┬───────┘    for peer discovery
+                          │
+            ┌─────────────┼─────────────┐
+            │             │             │
+            ▼             ▼             ▼
+      ┌──────────┐  ┌──────────┐  ┌──────────┐
+      │Validator │  │Validator │  │Validator │
+      │    1     │  │    2     │  │    3     │
+      └──────────┘  └──────────┘  └──────────┘
+            │             │             │
+            └─────────────┼─────────────┘
+                          │
+              Direct P2P mesh network            ┌──────────────────┐
+           (consensus & block production) =====> │     Observer     │
+                                                 │   (Read-only)    │
+                                                 │                  │
+                                                 │ Syncs & indexes  │
+                                                 │ blocks from all  │
+                                                 │ validator nodes  │
+                                                 └──────────────────┘
 ```
 
-**Key Workflow: Deploy & Propose on the Same Node**
+**Bootstrap Node:**
+- Genesis node that initializes the network
+- Provides initial peer discovery for new nodes
+- Nodes learn about each other through bootstrap, then communicate directly
+- Not a central coordinator - peers form independent mesh network
 
-Testing has conclusively shown that the **only reliable method** for getting a transaction included in a block is to send both the `deploy` and `propose` commands to the *same* node.
+**Validator Nodes (3 Active):**
+- Discover peers via bootstrap, then communicate directly with each other
+- Form decentralized P2P mesh for consensus and block propagation
+- Participate in consensus through CBC Casper
+- Produce and finalize blocks independently
+- Accept transaction submissions from users and developers
 
-1.  **Deploy a Contract:**
-    Send the deployment to any validator's `Deploy` port (e.g., `40401` for bootstrap).
-    ```bash
-    # Replace with your private key
-    # Note: --valid-after-block-number is now supported (requires patched CLI)
-    cargo run --release -- deploy --file ../../contracts/hello.rho --private-key <YOUR_PRIVATE_KEY> -p 40401 --valid-after-block-number 0
-    ```
-2.  **Propose a Block:**
-    Send the proposal to the **same node's** `Propose` port (`40402` for bootstrap).
-    ```bash
-    cargo run --release -- propose -p 40402
-    ```
-    A successful response will include the hash of the newly created block, confirming the deployment was included.
+**Observer Node:**
+- Connects to network via bootstrap for peer discovery
+- Receives blocks from all validators across the network (read-only synchronization)
+- Read-only access to blockchain state
+- Handles query requests from client applications
+- Does not participate in consensus or block production
+- Optimized for high-throughput read operations
 
-## 5. Testing & Documentation
+### Participant Roles
 
-This workspace includes a suite of scripts to automate testing and comprehensive documentation based on the results.
+**External Participants:**
+- **Users** - Interact with the blockchain through client applications (transfers, balance checks)
+- **Developers** - Deploy and test smart contracts via validator nodes
+- **Node Operators** - Run validator or observer nodes to support network infrastructure
 
-### 5.1. Testing
+**Client Applications:**
+- **Web Wallet** (https://wallet.dev.asichain.io) - Account management and contract deployment
+- **Block Explorer** (https://explorer.dev.asichain.io) - Real-time network monitoring
+- **Indexer** - Blockchain data indexing for efficient queries
+- **Faucet** (https://faucet.dev.asichain.io) - Test token distribution
 
-For testing the network functionality, see the testing section below.
+### Technology Stack
 
-For testing the network functionality:
-- Use the manual CLI commands documented in section 4.3
-- Monitor the finalizer-bot logs: `docker logs -f finalizer-bot`
-- Check network health through the observer node
-- Use the block explorer at http://localhost:5001 (if deployed with Docker) or http://localhost:8080 (if running locally)
+**Core Infrastructure:**
+- ASI Chain Node (Scala) - Blockchain node implementation based on RChain
+- Rust Client (CLI) - Command-line interface for node interaction
+- Docker - Containerization platform
 
-### 5.2. Documentation
+**Utilities:**
+- TypeScript - Wallet key generation
+- Bash - Deployment automation scripts
+- Rholang - Smart contract programming language
 
-The project includes comprehensive documentation in the `docs-external/` directory. Start with the [Documentation Index](docs/INDEX.md) for easy navigation.
+**Dependencies from package.json:**
+- @noble/curves 1.4.0 - Elliptic curve cryptography
+- @scure/base 1.1.6 - Base encoding utilities
+- blakejs 1.2.1 - BLAKE2 hashing
+- js-sha3 0.9.3 - SHA-3 hashing
+- js-sha256 0.11.0 - SHA-256 hashing
+- TypeScript 5.4.5 - Type-safe JavaScript
 
-#### Essential Documentation
--   **[Getting Started Guide](docs/GETTING_STARTED.md)**: Get running in 5 minutes
--   **[Architecture Overview](docs/ARCHITECTURE.md)**: System design, components, and data flow diagrams
--   **[Getting Started Guide](docs/GETTING_STARTED.md#cli-tutorial)**: Comprehensive guide for the `node-cli` tool
--   **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)**: Solutions for common issues
+---
 
-#### Development & Operations
--   **[Documentation Index](docs/INDEX.md)**: Overview of all available documentation
--   **[Repository Operations](docs/REPO_OPERATIONS_AND_MAINTENANCE.md)**: Git workflow and CI/CD processes
--   **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)**: Solutions and known limitations
+## Project Structure
 
-#### Technical Analysis
--   **[Block Explorer](docs/BLOCK_EXPLORER.md)**: Real-time blockchain monitoring
--   **[Wallet Guide](docs/WALLET.md)**: ASI Wallet v2 documentation
-
-#### Deprecated Documentation
--   **[Architecture Overview](docs/ARCHITECTURE.md)**: System design and data flow
-
-For a complete overview of all documentation, see the [Documentation Index](docs/INDEX.md).
-
-## 6. Additional Tools
-
-### ASI Wallet v2
-
-A modern, secure cryptocurrency wallet for the ASI Chain:
-
-- **100% Client-Side**: No backend servers, runs entirely in your browser
-- **Multi-Account Support**: Manage multiple accounts with AES-256 encryption
-- **WalletConnect Integration**: Connect to dApps using QR codes or deep links
-- **Integrated Rholang IDE**: Built-in Monaco editor for smart contract development
-
-#### Recent Updates (July 2025)
-- **Network Persistence Fix**: Custom network settings now persist across page reloads (Issue #12)
-- **Comprehensive Testing**: Added Jest testing framework with 62.88% store coverage
-- **LocalStorage Integration**: Automatic synchronization between Redux store and browser storage
-- **Build Optimization**: Excluded test files from production builds for smaller bundle size
-
-See the [Wallet Documentation](docs/WALLET.md) for usage instructions and installation guide.
-
-### Block Explorer
-
-A comprehensive blockchain explorer for monitoring the ASI Chain:
-
-- **Real-Time Updates**: Auto-refreshing interface with 5-second intervals
-- **REV Transfer Tracking**: Monitors and displays all REV token transfers with accurate status
-- **Deployment Tracking**: Full deployment history with Rholang code viewing
-- **Full Hash Display**: Shows complete 64-character block hashes
-- **Dark/Light Themes**: User-selectable themes with persistence
-- **Docker Support**: Run in an isolated container with automatic node discovery
-
-#### Docker Deployment (Recommended)
-```bash
-cd block-explorer
-# Build and start the explorer container
-docker-compose -f docker-compose.explorer.yml up -d
-
-# View logs
-docker logs -f asi-block-explorer
-
-# Access the explorer at http://localhost:5001
+```
+asi-chain/
+├── node/                      # ASI Chain node (Git submodule)
+│   └── docker/               # Node Docker configurations
+│
+├── chain/                     # Node configurations
+│   ├── genesis/              # Genesis node configurations
+│   │   ├── devnet-bootstrap/ # Bootstrap node setup
+│   │   ├── devnet-validator1-3/ # Validator configurations
+│   │   └── devnet-observer/  # Observer node setup
+│   └── validator/            # External validator setup
+│       ├── conf/             # Configuration files
+│       ├── scripts/          # Setup and connection scripts
+│       ├── configurator.Dockerfile
+│       ├── connector.Dockerfile
+│       └── validator.yml     # Docker Compose file
+│
+├── wallet-generator/          # Wallet key generation utility
+│   ├── walletGeneratorScript.ts
+│   ├── utils.ts
+│   ├── package.json
+│   └── README.md
+│
+├── deployer-bot/              # Automated deployment bot
+│   ├── bot.sh                # Deployment automation script
+│   ├── Dockerfile
+│   ├── deployer.yml
+│   └── .env.example
+│
+├── scripts/                   # Utility scripts (automation planned)
+│   ├── deploy.sh             # Network deployment (in development)
+│   ├── block-generator.sh
+│   └── docker-flush.sh
+│
+├── contracts/                 # Rholang smart contracts
+│   └── hello.rho
+│
+└── README.md                  # This file
 ```
 
-#### Local Development
-```bash
-cd block-explorer
-pip install -r requirements.txt
-python parser/enhanced_parser.py &  # Start the parser
-python web/app.py                   # Start the web server (http://localhost:8080)
-```
+**Note:** The `node/` directory is a Git submodule pointing to https://github.com/singnet/f1r3fly-node.git. Initialize it with `git submodule update --init --recursive`.
 
-See the [Block Explorer Documentation](docs/BLOCK_EXPLORER.md) for more information.
+---
 
-## 7. Troubleshooting
+## Documentation
 
-### Common Issues and Solutions
+### Core Documentation
 
-#### Docker Containers Not Starting
-- **Issue**: Containers fail to start or immediately exit
-- **Solution**: 
-  ```bash
-  # Check container logs
-  docker logs rnode.bootstrap
-  
-  # Ensure old containers are removed
-  docker compose -f node/docker/docker-compose.integrated.yml down -v
-  
-  # Rebuild and restart
-  ./scripts/deploy.sh
-  ```
+**[CONFIGURATION.md](CONFIGURATION.md)** - Configuration guide
+- Environment variables for all components
+- Network configuration parameters
+- Docker deployment settings
 
-#### Port Already in Use
-- **Issue**: Error "bind: address already in use"
-- **Solution**:
-  ```bash
-  # Find process using the port (example for port 40401)
-  lsof -i :40401
-  
-  # Kill the process or choose different ports
-  ```
+**[DEVELOPMENT.md](DEVELOPMENT.md)** - Development guide
+- Local development setup
+- Building from source
+- Manual deployment steps
+- Troubleshooting common issues
 
-#### CLI Commands Failing
-- **Issue**: "Protocol mismatch" or connection errors
-- **Solution**:
-  - Ensure you're using the correct port for the operation:
-    - Deploy: 40401 (bootstrap), 40411/21/31 (validators)
-    - Propose: 40402 (bootstrap), 40412/22/32 (validators)
-    - Query: 40453 (observer only)
-  - Check that nodes are fully synced (may take 1-2 minutes after startup)
+### Component Documentation
 
-#### Transaction Not Appearing
-- **Issue**: Deployed contract doesn't appear in blocks
-- **Solution**:
-  - Transaction gossip is broken - deploy directly to the validator that will propose
-  - Ensure a block is proposed after deployment
-  - Check the finalizer-bot logs: `docker logs finalizer-bot`
+**[chain/README.md](chain/README.md)** - Node configurations
+- Genesis nodes overview
+- DevNet structure
+- External validator setup
 
-#### Build Failures
-- **Issue**: Scala or Rust compilation errors
-- **Solution**:
-  ```bash
-  # Clean build artifacts
-  cd node && sbt clean
-  cd ../cli/node-cli && cargo clean
-  
-  # Ensure correct Java version (17+)
-  java -version
-  
-  # Rebuild
-  ./scripts/deploy.sh
-  ```
+**[chain/validator/README.md](chain/validator/README.md)** - External validator setup
+- Complete validator deployment guide
+- Docker image building
+- Bonding process
+- Node synchronization verification
 
-#### Network Not Finalizing Blocks
-- **Issue**: Blocks remain unfinalized
-- **Solution**:
-  - Check finalizer-bot is running: `docker ps | grep finalizer`
-  - View finalizer logs: `docker logs -f finalizer-bot`
-  - Restart if needed: `docker restart finalizer-bot`
+**[wallet-generator/README.md](wallet-generator/README.md)** - Wallet generation
+- Key generation process
+- secp256k1 algorithm usage
+- Secure key storage recommendations
 
-#### Block Production Stops at Block 50 - SOLVED ✅
-- **Issue**: Network stops producing blocks at block 50
-- **Root Cause**: Hardcoded `deployLifespan = 50` combined with all deploys having `validAfterBlockNumber = 0`
-- **Solution Implemented**: 
-  - CLI now supports `--valid-after-block-number` flag
-  - Finalizer bot sets VABN to current block number
-  - Deploys remain valid for 50 blocks from their VABN
-- **Status**: ✅ Fully resolved with patched CLI
-- **Details**: 
-  - Patch implementation in `patches/cli-vabn-support.patch`
+**[deployer-bot/README.md](deployer-bot/README.md)** - Deployment automation
+- Bot configuration
+- Automated contract deployment
+- Block proposal automation
 
-### Getting Help
+### External Resources
 
-If you encounter issues not covered here:
-1. Check the detailed [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
-2. Review the [Troubleshooting Guide](docs/TROUBLESHOOTING.md) for known limitations
-3. Check container logs: `docker logs <container-name>`
-4. Open an issue on GitHub with:
-   - Error messages
-   - Steps to reproduce
-   - Environment details (OS, Docker version, etc.)
+**Official Documentation Portal:**
+- **Main Portal:** https://docs.asichain.io
+- **Quick Start:** https://docs.asichain.io/quick-start/join-validator/
+- **DevNet Structure:** https://docs.asichain.io/shard-nodes/devnet-structure/
 
-## 8. Project Status
+**Network Endpoints:**
+- **Bootstrap Node:** `rnode://e5e6faf012f36a30176d459ddc0db81435f6f1dc@54.152.57.201?protocol=40400&discovery=40404`
+- **Validator HTTP:** http://54.152.57.201:40413
+- **Observer HTTP:** http://54.235.138.68:40402
 
-**Current Version**: Pre-Alpha Testnet v1.1 (July 2025)
+**Repositories:**
+- **Core:** https://github.com/asi-alliance/asi-chain
+- **Rust Client:** https://github.com/singnet/rust-client
+- **Block Explorer:** https://github.com/asi-alliance/asi-chain-explorer
+- **Web Wallet:** https://github.com/asi-alliance/asi-chain-wallet
+- **Faucet:** https://github.com/asi-alliance/asi-chain-faucet
+- **Documentation Portal:** https://github.com/asi-alliance/asi-chain-docs-portal
 
-See the [Documentation Index](docs/INDEX.md) for detailed information about the project status and available features.
+---
 
-### Key Working Features
-- ✅ Automated deployment with `deploy.sh`
-- ✅ Block production past block 50 (VABN patch)
-- ✅ Finalizer bot for continuous operation
-- ✅ ASI Wallet v2 with WalletConnect and persistent network settings
-- ✅ Block Explorer with real-time updates
-- ✅ Comprehensive documentation
-- ✅ Reduced memory requirements (2GB validators, 1GB observer)
-- ✅ Testing framework with 62.88% store coverage for wallet
+## License
+
+Copyright 2025 Artificial Superintelligence Alliance
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+---
+
+ASI Alliance founding members: Fetch.ai, SingularityNET, and CUDOS

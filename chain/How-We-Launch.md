@@ -38,50 +38,53 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ## Project Structure
 ```
 asichain/
-├── f1r3fly/
+├── node/
 │   └── docker/
 ├── cli/
-│      └── f1r3fly/
+│      └── rust-client/
 │               └── node-cli/
 ```
 
 ## Setup ASI:Chain
 
-### Clone repository for chain
+### Clone ASI Chain repository
 
 ```bash
-git clone https://github.com/F1R3FLY-io/f1r3fly
-cd f1r3fly
-# use the main branch
+git clone --recursive https://github.com/asi-alliance/asi-chain.git
+cd asi-chain
+```
+
+The `--recursive` flag automatically initializes the `node/` submodule.
+
+If you already cloned without `--recursive`, initialize the submodule:
+```bash
+git submodule update --init --recursive
 ```
 
 ### Setup CLI
 
 ```bash
-mkdir cli
+# Clone CLI tools (from asi-chain root directory)
+mkdir -p cli
 cd cli
-git clone https://github.com/F1R3FLY-io/f1r3fly
-cd f1r3fly
-git checkout preston/rholang_rust
-cd node-cli
+git clone https://github.com/singnet/rust-client
+cd rust-client/node-cli
+
+# Test CLI is working
 cargo run --
+
+# Return to project root
+cd ../../../
 ```
 
 ### Build Chain
 
-We used `f1r3flyindustries/f1r3fly-scala-node:latest` docker image for ASI:Chain
-
-Target Directory:
-
-```
-asichain/
-├── f1r3fly/
-│   └── docker/
-```
+We used `amamata/asi-scala-node:latest` docker image for ASI:Chain
 
 Here we launch 1 bootstrap node and 3 validator nodes:
 
 ```bash
+cd chain/genesis
 docker compose -f shard.yml up -d
 ```
 
@@ -95,8 +98,8 @@ This indicates the readiness of the blockchain.
 
 Next we launch observer:
 
-```
-docker compose -f observer.yml up -d
+```bash
+docker compose -f devnet-observer/observer.yml up -d
 ```
 
 ### Launch one more validator.
@@ -109,13 +112,13 @@ asichain/
 ├── ...
 │   └── ...
 ├── cli/
-│      └── f1r3fly/
+│      └── rust-client/
 │               └── node-cli/
 ```
 
 Check current bonds:
 ```bash
-cargo run -- bonds -p 40453
+cargo run -- bonds -p 40402
 ```
 
 We already have 4 bonds, so we can launch one more validator.
@@ -148,11 +151,17 @@ cargo run -- is-finalized -b <block_hash>
 We check that bonds after some time.  Must be run against observer node. Should now see 5 bonds.
 
 ```bash
-cargo run -- bonds -p 40453
+cargo run -- bonds -p 40402
 ```
 
 Last step - launch one more validator in separate terminal:
 
 ```bash
-docker compose -f docker/validator4.yml up
+# From asi-chain root directory
+cd chain/validator
+
+# Follow the external validator setup guide
+# See: chain/validator/README.md
 ```
+
+For complete external validator setup instructions, see [chain/validator/README.md](validator/README.md).
