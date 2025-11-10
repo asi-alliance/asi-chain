@@ -233,7 +233,7 @@ asi-chain/
 └── README.md                  # This file
 ```
 
-**Note:** The `node/` directory is a Git submodule pointing to https://github.com/singnet/f1r3fly-node.git. Initialize it with `git submodule update --init --recursive`.
+**Note:** The `node/` directory is a Git submodule pointing to the ASI Chain node implementation. Initialize it with `git submodule update --init --recursive`.
 
 ---
 
@@ -284,8 +284,8 @@ asi-chain/
 
 **Network Endpoints:**
 - **Bootstrap Node:** `rnode://e5e6faf012f36a30176d459ddc0db81435f6f1dc@54.152.57.201?protocol=40400&discovery=40404`
-- **Validator HTTP:** http://54.152.57.201:40413
-- **Observer HTTP:** http://54.235.138.68:40402
+- **Bootstrap HTTP:** http://54.152.57.201:40403
+- **Observer HTTP:** http://54.235.138.68:40403
 
 **Repositories:**
 - **Core:** https://github.com/asi-alliance/asi-chain

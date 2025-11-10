@@ -37,13 +37,25 @@ These parameters define the network connection settings and should not be change
 - Default: `https://ffyp8igwwc.execute-api.us-east-1.amazonaws.com`
 - Purpose: Automatic wallet funding during validator setup
 
-**BOOTSTRAP_PUBLIC_GRPC_PORT**
-- Description: Bootstrap node's public gRPC port for transaction submission
-- Default: `40401`
-
-**OBSERVER_INTERNAL_GRPC_PORT**
-- Description: Observer node's internal gRPC port for blockchain queries
+**BOOTSTRAP_GRPC_PORT**
+- Description: Bootstrap node's internal gRPC port
 - Default: `40402`
+- Purpose: Used for blockchain queries and validator bonding
+
+**BOOTSTRAP_HTTP_PORT**
+- Description: Bootstrap node's HTTP API port
+- Default: `40403`
+- Purpose: REST API access
+
+**OBSERVER_GRPC_PORT**
+- Description: Observer node's gRPC port
+- Default: `40402`
+- Purpose: Used for blockchain queries
+
+**OBSERVER_HTTP_PORT**
+- Description: Observer node's HTTP API port
+- Default: `40403`
+- Purpose: REST API access
 
 **STAKE**
 - Description: Amount of tokens to stake when bonding the validator

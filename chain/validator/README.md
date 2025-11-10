@@ -286,8 +286,10 @@ The validator uses the following ports:
 - `BOOTSTRAP` — Bootstrap node connection string
 - `OBSERVER_HOST` — Observer node host IP address
 - `FAUCET_API_URL` — Testnet faucet for automatic funding
-- `BOOTSTRAP_PUBLIC_GRPC_PORT` — Bootstrap gRPC port
-- `OBSERVER_INTERNAL_GRPC_PORT` — Observer internal port
+- `BOOTSTRAP_GRPC_PORT` — Bootstrap node gRPC port
+- `BOOTSTRAP_HTTP_PORT` — Bootstrap node HTTP port
+- `OBSERVER_GRPC_PORT` — Observer node gRPC port
+- `OBSERVER_HTTP_PORT` — Observer node HTTP port
 - `STAKE` — Amount to stake when bonding
 
 **Validator Config:**
@@ -298,6 +300,9 @@ The validator uses the following ports:
 
 ### Network Endpoints
 
-- **Observer API:** http://54.235.138.68:40403/api/last-finalized-block
-- **Faucet:** https://ffyp8igwwc.execute-api.us-east-1.amazonaws.com
+- **Bootstrap Node:** `rnode://e5e6faf012f36a30176d459ddc0db81435f6f1dc@54.152.57.201?protocol=40400&discovery=40404`
+- **Bootstrap HTTP:** http://54.152.57.201:40403
+- **Observer HTTP:** http://54.235.138.68:40403
+- **Observer API Example:** http://54.235.138.68:40403/api/last-finalized-block
+- **Faucet API:** https://ffyp8igwwc.execute-api.us-east-1.amazonaws.com
 - **Repository:** [ASI Chain - External Validator](https://github.com/asi-alliance/asi-chain/chain/validator)
