@@ -211,7 +211,7 @@ cd rust-client
 
 2. **Deploy a test transaction:**
 ```bash
-cargo run -- full-deploy -f ./rho_examples/stdout.rho --private-key <YOUR_PRIVATE_KEY> -p 40442
+cargo run -- full-deploy -f ./rho_examples/stdout.rho --private-key <YOUR_PRIVATE_KEY> -g 40442
 ```
 
 This confirms that an external validator (not known to the autopropose script) can successfully send transactions to the network.
