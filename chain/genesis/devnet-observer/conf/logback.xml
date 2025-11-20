@@ -18,10 +18,10 @@
   </appender>
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>/var/lib/rnode/rnode.log</file>
+	<file>/var/lib/rnode/rnode.log</file>
     <append>true</append>
     <encoder>
-      <pattern>%d{ISO8601, UTC} [%thread] %-5level %logger - %msg%n</pP1+r436F=323536\P1+r6B75=1B4F41\P1+r6B64=1B4F42\P1+r6B72=1B4F43\P1+r6B6C=1B4F44\P1+r2332=1B5B313B3248\P1+r2334=1B5B313B3244\P1+r2569=1B5B313B3243\P1+r2A37=1B5B313B3246\P1+r6B31=1B4F50\attern>
+      <pattern>%d{ISO8601, UTC} [%thread] %-5level %logger - %msg%n</pattern>
     </encoder>
   </appender>
 
