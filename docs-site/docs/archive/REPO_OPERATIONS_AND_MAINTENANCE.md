@@ -4,7 +4,7 @@
 **Status:** Adopted  
 **Last Updated:** 2025-07-13
 
-This document provides a Standard Operating Procedure (SOP) for all development, maintenance, and community operations related to the ASI-Chain repository. Its purpose is to ensure consistency, quality, and security as the project grows and transitions to a public, open-source model.
+This document provides a Standard Operating Procedure (SOP) for all development, maintenance, and community operations related to the ASI-Chain repository ecosystem. Its purpose is to ensure consistency, quality, and security as the project grows and transitions to a public, open-source model.
 
 ## 1. Guiding Principles
 
@@ -18,7 +18,7 @@ All contributions and maintenance activities must adhere to the following core p
 
 ## 2. Repository Structure
 
-The `asi-chain` workspace is a monorepo containing several key components:
+The `ASI-Chain` ecosystem is composed of repositories, each with its own lifecycle, CI/CD pipeline, and release schedule. These include:
 
 -   `contracts/`: Rholang smart contracts for the blockchain.
 -   `node/`: The Scala-based F1R3FLY node software (cloned from external repo during deployment).
@@ -34,7 +34,7 @@ The `asi-chain` workspace is a monorepo containing several key components:
 
 ### 3.1. Branching Strategy
 
-This repository follows a GitFlow-like branching model:
+The `ASI-Chain` ecosystem repositories follows a GitFlow-like branching model:
 
 -   `main`: The `main` branch represents the latest stable, production-ready release. Direct commits are forbidden. Merges are done only from `release` branches.
 -   `develop`: The `develop` branch is the primary branch for ongoing development. It contains the latest delivered development changes for the next release.
@@ -57,7 +57,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 
 ### 3.3. Pull Request (PR) Process
 
-1.  **Create PR**: Open a pull request from your `feature` or `fix` branch into the `develop` branch.
+1.  **Create PR**: Open a pull request from your `feature` or `fix` branch of the respective repository into the `develop` branch.
 2.  **Use Template**: Fill out the PR template completely, detailing the changes, motivation, and how to test them.
 3.  **Link Issues**: Link any relevant GitHub issues that the PR resolves.
 4.  **CI Checks**: Ensure all automated checks (linting, tests, build) pass.

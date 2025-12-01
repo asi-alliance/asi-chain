@@ -45,7 +45,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** + **Documentation Site** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, Hardware wallets, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet REV tokens. Documentation Site at http://13.251.66.61:3003 with Docusaurus 3.8.1.
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** + **Documentation Site** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet REV tokens. Documentation Site at http://13.251.66.61:3003 with Docusaurus 3.8.1.
 
 ## ⚙️ Technical Architecture
 
@@ -262,9 +262,6 @@ git submodule update --init --recursive
 chmod +x scripts/apply-f1r3fly-patches.sh
 ./scripts/apply-f1r3fly-patches.sh
 
-# 4. Set build environment
-export SBT_OPTS="-Xmx4g -Xss2m"
-export JAVA_OPTS="-Xmx8g"
 ```
 
 ### Option B: Docker-Only Setup (Recommended for beginners)
@@ -319,8 +316,6 @@ git submodule update --recursive
 <summary><b>2️⃣ Build from Source</b></summary>
 
 ```bash
-# Set environment variables for JVM
-export SBT_OPTS="-Xmx4g -Xss2m"
 
 # Build F1R3FLY blockchain core (Scala)
 cd f1r3fly
@@ -687,8 +682,6 @@ curl http://localhost:40403/api/validators | jq .
 ASI Wallet v2 is a comprehensive blockchain wallet with enterprise-grade security and modern features:
 
 #### Core Features
-- **🔐 Multi-layer Authentication**: Password + 2FA + Biometric
-- **🔑 Hardware Wallet Support**: Ledger & Trezor integration
 - **🔌 WalletConnect v2**: DApp connectivity
 - **💰 REV Token Management**: Native ASI Chain currency
 - **📱 Cross-Platform**: Web, mobile-responsive design
@@ -707,7 +700,6 @@ open http://13.251.66.61:3000
 # Features available immediately:
 # ✅ Create new wallet
 # ✅ Import existing wallet
-# ✅ Hardware wallet connection
 # ✅ DApp connectivity
 ```
 
@@ -744,9 +736,6 @@ npm start
 1. Visit http://13.251.66.61:3000
 2. Click "Create Wallet"
 3. Set secure password (12+ characters)
-4. Save recovery phrase (24 words)
-5. Enable 2FA (recommended)
-6. Setup biometric auth (if available)
 
 // Programmatic Creation
 import { Wallet } from '@asi-chain/wallet-sdk';
@@ -768,11 +757,6 @@ const wallet = await Wallet.fromPrivateKey({
   password: 'new-password'
 });
 
-// Import from mnemonic
-const wallet = await Wallet.fromMnemonic({
-  mnemonic: 'your 24 word recovery phrase',
-  password: 'new-password'
-});
 ```
 
 #### Address Generation
@@ -816,7 +800,6 @@ cargo run -- generate-key-pair
 # - Use encrypted storage for hot wallets
 # - Backup keys in multiple secure locations
 # - Use strong, unique passwords
-# - Enable 2FA on all accounts
 
 # ❌ DON'T:
 # - Store private keys in plain text
@@ -837,9 +820,6 @@ const wallet = await Wallet.importPrivateKey({
   password: password
 });
 
-// Hardware wallet integration
-const ledgerWallet = await wallet.connectLedger();
-const trezorWallet = await wallet.connectTrezor();
 ```
 
 ### Transaction Management
@@ -881,7 +861,7 @@ cd rust-client
 3. Enter amount (in REV)
 4. Set gas limit (default: 100000)
 5. Review transaction details
-6. Confirm with password/2FA
+6. Confirm with password
 7. Sign transaction
 8. Broadcast to network
 
@@ -1176,7 +1156,7 @@ asi-chain/
 ├── 📦 rust-client/            # Rust CLI client (Git submodule)
 │   └── src/                   # Node CLI implementation
 ├── 💼 asi_wallet_v2/          # ASI Wallet v2.2.0 (React 18, TypeScript) - DEPLOYED ✅
-│   ├── src/components/        # WalletConnect v2, Hardware wallets
+│   ├── src/components/        # WalletConnect v2
 │   ├── src/services/          # Global balance caching, RChain integration
 │   ├── src/store/             # Redux Toolkit state management
 │   └── AWS_LIGHTSAIL_WALLET_DEPLOYMENT.md # Production deployment guide
@@ -1216,8 +1196,6 @@ asi-chain/
 | **🔗 Smart Contracts** | Process calculus based (100+ examples) | ✅ Active |
 | **💰 REV Token** | Native cryptocurrency with 8 decimals | ✅ Active |
 | **🔌 WalletConnect v2** | DApp connectivity | ✅ Active |
-| **🔑 Hardware Wallets** | Ledger & Trezor support | ✅ Active |
-| **📱 Biometric Auth** | WebAuthn/FIDO2 | ✅ Active |
 | **🔄 Multi-Signature** | Enterprise wallets | ✅ Active |
 | **📊 GraphQL API** | Real-time subscriptions via Hasura | ✅ Active |
 | **💧 Token Faucet** | Testnet token distribution | ✅ Active |
@@ -1313,8 +1291,6 @@ export PROMETHEUS_PORT="9091"
 # Wallet
 export WALLETCONNECT_PROJECT_ID="your-project-id"
 
-# Build options
-export SBT_OPTS="-Xmx4g -Xss2m"
 ```
 
 ## 📚 Documentation
@@ -1385,8 +1361,6 @@ Before production deployment, you MUST:
 **Security Features:**
 - AES-256-GCM encryption with PBKDF2 (100k iterations)
 - TLS 1.2/1.3 for all communications
-- WebAuthn biometric authentication
-- Hardware wallet support (Ledger/Trezor)
 - Multi-signature wallet capabilities
 - Rate limiting and input validation
 - Database row-level security
@@ -1399,7 +1373,6 @@ For security vulnerabilities:
 ## 📊 Important Notes
 
 - F1R3FLY and rust-client are Git submodules from github.com/F1R3FLY-io - run `git submodule update --init --recursive` after cloning
-- Use `SBT_OPTS="-Xmx4g -Xss2m"` when building Scala components to avoid memory issues
 - Private keys and validator configs are in `f1r3fly/docker/` (⚠️ Replace test keys in production)
 - Always run lint and type checks before committing frontend code
 - Environment variables are managed through `.env` files per service
@@ -1432,7 +1405,7 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 
 | Service | URL | Port | Description | Status |
 |---------|-----|------|-------------|--------|
-| **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet with WalletConnect v2, Hardware wallets, Rholang IDE | ✅ Live |
+| **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet with WalletConnect v2, Rholang IDE | ✅ Live |
 | **Blockchain Explorer** | http://13.251.66.61:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
 | **Documentation Site** | http://13.251.66.61:3003 | 3003 | Interactive Docusaurus documentation | ✅ Live |
 | **Token Faucet** | http://13.251.66.61:5050 | 5050 | Testnet REV token distribution (100 REV/request) | ✅ Live |
