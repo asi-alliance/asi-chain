@@ -277,7 +277,7 @@ Create and configure the second node to connect to the main node:
 
 ```bash
 # Get the bootstrap node ID from rnode0
-BOOTSTRAP_NODE_ID=$(docker exec rnode0 cat /var/lib/rnode/node.certificate.der | grep -A 10 "Node ID" | tail -1 | tr -d '\n')
+BOOTSTRAP_NODE_ID=$(sudo docker exec rnode0 cat /var/lib/rnode/node.certificate.der | grep -A 10 "Node ID" | tail -1 | tr -d '\n')
 
 # Alternative method to get node ID via API
 BOOTSTRAP_NODE_ID=$(curl -s http://localhost:40403/api/status | jq -r '.id')
