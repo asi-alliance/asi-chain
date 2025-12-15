@@ -45,7 +45,7 @@ ASI Chain provides the blockchain foundation for the **Artificial Superintellige
 - 🖥️ **Compute resource marketplace transactions**
 - 🧠 **Parallel smart contract execution via Rholang**
 
-**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** + **Documentation Site** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet ASI tokens. Documentation Site at http://13.251.66.61:3003 with Docusaurus 3.8.1.
+**Project Status**: Production-ready blockchain infrastructure with enterprise-grade services, zero-touch indexer deployment (v2.1.1), comprehensive wallet implementation, and fully deployed blockchain explorer. **Complete AWS Lightsail deployment** at 13.251.66.61 with F1R3FLY network + Indexer + Explorer + **ASI Wallet v2** + **Faucet** + **Documentation Site** all operational. ASI Wallet v2.2.0 live at http://13.251.66.61:3000 with WalletConnect v2, Hardware wallets, and Rholang IDE. Explorer v1.0.2 at http://13.251.66.61:3001 with validator deduplication fixed. TypeScript Faucet at http://13.251.66.61:5050 distributing testnet REV tokens. Documentation Site at http://13.251.66.61:3003 with Docusaurus 3.8.1.
 
 ## ⚙️ Technical Architecture
 
@@ -734,7 +734,9 @@ npm start
 1. Visit http://13.251.66.61:3000
 2. Click "Create Wallet"
 3. Set secure password (12+ characters)
-4. Save password securely.
+4. Save recovery phrase (24 words)
+5. Enable 2FA (recommended)
+6. Setup biometric auth (if available)
 
 // Programmatic Creation
 import { Wallet } from '@asi-chain/wallet-sdk';
@@ -819,6 +821,11 @@ const wallet = await Wallet.importPrivateKey({
   password: password
 });
 
+// Hardware wallet integration
+const ledgerWallet = await wallet.connectLedger();
+const trezorWallet = await wallet.connectTrezor();
+```
+
 ### Transaction Management
 
 #### Balance Queries
@@ -857,9 +864,10 @@ cd rust-client
 2. Enter recipient address
 3. Enter amount (in ASI)
 4. Set gas limit (default: 100000)
-5. ASIiew transaction details
-6. Sign transaction
-7. Broadcast to network
+5. Review transaction details
+6. Confirm with password/2FA
+7. Sign transaction
+8. Broadcast to network
 
 # Via Rust CLI
 cd rust-client
@@ -1308,10 +1316,10 @@ ASI Chain is governed by the **Artificial Superintelligence Alliance**:
 
 | Service | URL | Port | Description | Status |
 |---------|-----|------|-------------|--------|
-| **ASI Wallet v2** | http://wallet.dev.asichain.io | Web wallet with WalletConnect v2, Rholang IDE | ✅ Live |
-| **Blockchain Explorer** | http://explorer.dev.asichain.io | Real-time blockchain explorer | ✅ Live |
-| **Documentation Site** | http://docs.asichain.io| Interactive Docusaurus documentation | ✅ Live |
-| **Token Faucet** | http://faucet.dev.asichain.io | Testnet ASI token distribution (100 ASI/request) | ✅ Live |
+| **ASI Wallet v2** | http://13.251.66.61:3000 | 3000 | Web wallet with WalletConnect v2, Hardware wallets, Rholang IDE | ✅ Live |
+| **Blockchain Explorer** | http://13.251.66.61:3001 | 3001 | Real-time blockchain explorer | ✅ Live |
+| **Documentation Site** | http://13.251.66.61:3003 | 3003 | Interactive Docusaurus documentation | ✅ Live |
+| **Token Faucet** | http://13.251.66.61:5050 | 5050 | Testnet REV token distribution (100 REV/request) | ✅ Live |
 
 ---
 
