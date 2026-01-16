@@ -300,6 +300,16 @@ asi-chain/
 
 ---
 
+## Contributing
+
+Known issues and bugs are tracked in the [Issues](https://github.com/asi-alliance/asi-chain/issues) section.  
+If you encounter a problem that is not listed, please feel free to open a new issue and provide as much detail as possible.
+
+For known issues and troubleshooting, see [KNOWN_ISSUES.md](KNOWN_ISSUES.md).  
+For acknowledgments, see [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
+
+---
+
 ## License
 
 Copyright 2025 Artificial Superintelligence Alliance
