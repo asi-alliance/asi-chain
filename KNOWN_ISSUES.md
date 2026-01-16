@@ -141,6 +141,3 @@ If you encounter a problem not listed here:
 - **FAQ:** [Frequently Asked Questions](https://docs.asichain.io/faq/)
 - **GitHub Issues:** [Report a Bug](https://github.com/asi-alliance/asi-chain/issues)
 
----
-
-*Last updated: January 2025*
