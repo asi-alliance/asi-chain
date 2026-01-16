@@ -26,7 +26,8 @@ Part of the [**Artificial Superintelligence Alliance**](https://superintelligenc
 5. [Architecture](#architecture)
 6. [Project Structure](#project-structure)
 7. [Documentation](#documentation)
-8. [License](#license)
+8. [Contributing](#contributing)
+9. [License](#license)
 
 ---
 
@@ -305,7 +306,6 @@ asi-chain/
 Known issues and bugs are tracked in the [Issues](https://github.com/asi-alliance/asi-chain/issues) section.  
 If you encounter a problem that is not listed, please feel free to open a new issue and provide as much detail as possible.
 
-For known issues and troubleshooting, see [KNOWN_ISSUES.md](KNOWN_ISSUES.md).  
 For acknowledgments, see [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
 
 ---
