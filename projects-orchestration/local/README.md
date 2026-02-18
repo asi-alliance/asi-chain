@@ -1,6 +1,6 @@
 # ASI-LAUNCH
 
-Local launch of all ASI-Chain infrastructure (blockchain, faucet, explorer, wallet, bot) in order from `launch.yml`
+Local launch of all ASI-Chain infrastructure (blockchain, faucet, explorer, wallet, bot) in order from `lasi-launch.yml`
 
 
 ## Apps
