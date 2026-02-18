@@ -1,0 +1,133 @@
+x-rnode: &default-rnode
+  image: amamata/asi-scala-node:latest
+  user: root
+  networks:
+    - devnet
+
+services:
+  boot:
+    <<: *default-rnode
+    environment:
+      - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
+    container_name: bootstrap
+    command:
+      [
+        "run",
+        "--host=$BOOTSTRAP_HOST",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+      ]
+    ports:
+      - "40400:40400"
+      - "40401:40401"
+      - "40402:40402"
+      - "40403:40403"
+      - "40404:40404"
+      - "40405:40405"
+    volumes:
+      - ./data/bootstrap:/var/lib/rnode/
+      - ./devnet-bootstrap/genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+      - ./devnet-bootstrap/genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+      - ./devnet-bootstrap/conf/bootstrap.conf:/var/lib/rnode/rnode.conf
+      - ./devnet-bootstrap/conf/bootstrap.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./devnet-bootstrap/conf/bootstrap.key.pem:/var/lib/rnode/node.key.pem
+      - ./devnet-bootstrap/conf/logback.xml:/var/lib/rnode/logback.xml
+
+  validator1:
+    <<: *default-rnode
+    environment:
+      - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
+    container_name: validator1
+    depends_on:
+      - boot
+
+    command:
+      [
+        "run",
+        "--host=$VALIDATOR1_HOST",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+      ]
+    ports:
+      - "40410:40410"
+      - "40411:40411"
+      - "40412:40412"
+      - "40413:40413"
+      - "40414:40414"
+      - "40415:40415"
+    volumes:
+      - ./data/validator1:/var/lib/rnode/
+      - ./devnet-validator1/genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+      - ./devnet-validator1/genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+      - ./devnet-validator1/conf/validator1.conf:/var/lib/rnode/rnode.conf
+      - ./devnet-validator1/conf/validator1.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./devnet-validator1/conf/validator1.key.pem:/var/lib/rnode/node.key.pem
+      - ./devnet-validator1/conf/logback.xml:/var/lib/rnode/logback.xml
+
+  validator2:
+    <<: *default-rnode
+    environment:
+      - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
+    container_name: validator2
+    depends_on:
+      - boot
+      - validator1
+
+    command:
+      [
+        "run",
+        "--host=$VALIDATOR2_HOST",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+      ]
+    ports:
+      - "40420:40420"
+      - "40421:40421"
+      - "40422:40422"
+      - "40423:40423"
+      - "40424:40424"
+      - "40425:40425"
+    volumes:
+      - ./data/validator2:/var/lib/rnode/
+      - ./devnet-validator2/genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+      - ./devnet-validator2/genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+      - ./devnet-validator2/conf/validator2.conf:/var/lib/rnode/rnode.conf
+      - ./devnet-validator2/conf/validator2.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./devnet-validator2/conf/validator2.key.pem:/var/lib/rnode/node.key.pem
+      - ./devnet-validator2/conf/logback.xml:/var/lib/rnode/logback.xml
+
+  validator3:
+    <<: *default-rnode
+    environment:
+      - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
+    container_name: validator3
+    depends_on:
+      - boot
+      - validator1
+      - validator2
+
+    command:
+      [
+        "run",
+        "--host=$VALIDATOR3_HOST",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+      ]
+    ports:
+      - "40430:40430"
+      - "40431:40431"
+      - "40432:40432"
+      - "40433:40433"
+      - "40434:40434"
+      - "40435:40435"
+    volumes:
+      - ./data/validator3:/var/lib/rnode/
+      - ./devnet-validator3/genesis/wallets.txt:/var/lib/rnode/genesis/wallets.txt
+      - ./devnet-validator3/genesis/bonds.txt:/var/lib/rnode/genesis/bonds.txt
+      - ./devnet-validator3/conf/validator3.conf:/var/lib/rnode/rnode.conf
+      - ./devnet-validator3/conf/validator3.certificate.pem:/var/lib/rnode/node.certificate.pem
+      - ./devnet-validator3/conf/validator3.key.pem:/var/lib/rnode/node.key.pem
+      - ./devnet-validator3/conf/logback.xml:/var/lib/rnode/logback.xml
