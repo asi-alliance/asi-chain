@@ -121,7 +121,7 @@ Delete chain data folder:
 
 
 ```bash
-rm -rf asi-chain/local-launch/chain/data
+rm -rf <path-to-repo>/asi-chain/local-launch/chain/data
 ```
 
 
