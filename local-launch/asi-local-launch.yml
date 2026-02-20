@@ -240,7 +240,13 @@ services:
         ipv4_address: 172.25.0.100
 
   # Indexer: build from upstream (no need to clone asi-chain-indexer locally)
+  # Profile "delayed": starts 360s after validators (see launch.sh)
+  # platform: linux/amd64 required — upstream uses snetrc-linux-amd64 only; on Apple Silicon
+  # an arm64 image would lack /lib64/ld-linux-x86-64.so.2 for the amd64 binary.
   indexer:
+    platform: linux/amd64
+    profiles:
+      - delayed
     container_name: asi-indexer
     build:
       context: https://github.com/asi-alliance/asi-chain-indexer.git#main
@@ -254,7 +260,7 @@ services:
       NODE_TIMEOUT: ${NODE_TIMEOUT:-30}
       
       # Rust CLI Configuration
-      RUST_CLI_PATH: ${RUST_CLI_PATH:-/app/node_cli_linux}
+      RUST_CLI_PATH: ${RUST_CLI_PATH:-/usr/local/bin/snetrc}
       NODE_HOST: ${NODE_HOST}
       GRPC_PORT: ${GRPC_PORT}
       HTTP_PORT: ${HTTP_PORT}
@@ -413,9 +419,11 @@ services:
     restart: unless-stopped
 
   # ==========================================================================
-  # EXPLORER: Frontend Service
+  # EXPLORER: Frontend Service (depends on indexer, same delayed profile)
   # ==========================================================================
   explorer-frontend:
+    profiles:
+      - delayed
     container_name: explorer-frontend
     build:
       context: ./explorer
