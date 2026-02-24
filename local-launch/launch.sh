@@ -2,7 +2,7 @@
 set -e
 
 COMPOSE_FILE="asi-local-launch.yml"
-INDEXER_DELAY=360
+INDEXER_DELAY=290
 CLEAN_DEPLOY=false
 
 # --- Parse arguments ---
