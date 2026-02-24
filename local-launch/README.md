@@ -182,3 +182,11 @@ docker compose -f asi-local-launch.yml up -d
 ```
 
 Volume name may differ by project; list volumes with `docker volume ls | grep postgres`.
+
+
+
+## Bot custom setup
+
+Change delay `sleep 260` or remove the whole in file: `local-launch/bot/bot.sh`
+
+This is required when you want to restart only the bot.
