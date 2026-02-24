@@ -122,9 +122,9 @@ After successful startup, the services will be accessible at:
 
 Faucet → http://localhost:3001/
 
-Wallet → http://localhost:8000/
-
 Explorer → http://localhost:4001/
+
+Wallet → http://localhost:8000/
 
 
 ## Stopping the Environment
@@ -133,7 +133,7 @@ Explorer → http://localhost:4001/
 docker stop $(docker ps -aq) && docker rm $(docker ps -aq)
 ```
 
-Delete chain data folder:
+Delete chain data folder(always, when you restart the chain):
 
 
 ```bash
@@ -146,3 +146,39 @@ rm -rf <path-to-repo>/asi-chain/local-launch/chain/data
 ```bash
 docker compose -f asi-local-launch.yml up -d
 ```
+
+
+## Indexer troubleshooting
+
+Use these steps when the indexer fails to sync, reports connection errors, or shows stale/empty data.
+
+### 1. Restart the indexer only
+
+Restarts the indexer container without touching the database. Use when the indexer lost connection to the node or is stuck.
+
+```bash
+docker compose -f asi-local-launch.yml restart indexer
+```
+
+### 2. Reset indexer state (clean database)
+
+Use when the indexer schema or data is corrupted, or you need a full re-sync from block 0. **This deletes all indexed data** (blocks, deployments, transfers, etc.).
+
+```bash
+# Stop all services and remove the Postgres volume (run from local-launch/)
+docker compose -f asi-local-launch.yml down
+docker volume rm local-launch_postgres_data 2>/dev/null || true
+
+# Bring the stack back up (Postgres will re-run migrations; indexer starts after delay if using launch.sh)
+./launch.sh
+```
+
+To only remove the Postgres volume without stopping other services:
+
+```bash
+docker compose -f asi-local-launch.yml stop indexer postgres hasura metrics-cron
+docker volume rm local-launch_postgres_data 2>/dev/null || true
+docker compose -f asi-local-launch.yml up -d
+```
+
+Volume name may differ by project; list volumes with `docker volume ls | grep postgres`.
