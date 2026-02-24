@@ -75,9 +75,25 @@ After renaming, the structure should be:
 
 ## 2. Start the Infrastructure
 
+**Recommended:** Use the unified launch script (starts chain first, then indexer after 360s delay):
+
 ```bash
-docker compose -f asi-local-launch.yml up -d
+./launch.sh
 ```
+
+Or with clean deploy (removes volumes and images):
+
+```bash
+./launch.sh --clean
+```
+
+**Alternative:** Start everything at once (indexer may need manual restart if chain isn't ready):
+
+```bash
+docker compose -f asi-local-launch.yml --profile delayed up -d
+```
+
+Without `--profile delayed`, indexer and explorer-frontend won't start (chain, postgres, hasura, etc. will run).
 
 
 This will start:
