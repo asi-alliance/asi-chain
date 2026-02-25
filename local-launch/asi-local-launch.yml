@@ -1,0 +1,440 @@
+# ============================================================================
+# ASI-Chain Complete Infrastructure
+# ============================================================================
+# This compose file launches the entire ASI-Chain ecosystem:
+# 1. Blockchain shard (1 Bootstrap + 3 Validators)
+# 2. Faucet (backend + frontend)
+# 3. Explorer (indexer and his services + frontend)
+# 4. Wallet (frontend)
+# 5. Block generator bot
+# ============================================================================
+volumes:
+  postgres_data:
+
+networks:
+  asi-chain-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
+
+x-rnode: &default-rnode
+  image: public.ecr.aws/f6y9h6x4/asi-chain/node:seqNumFix
+  user: root
+  networks:
+    - asi-chain-network
+
+# ==========================================================================
+# LOCAL ASI BLOCKCHAIN INFRASTRUCTURE
+# ==========================================================================
+
+services:
+  # ==========================================================================
+  # CHAIN: Bootstrap Node
+  # ==========================================================================
+  bootstrap:
+    <<: *default-rnode
+    environment:
+          - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+          - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
+    container_name: bootstrap
+    command:
+      [
+        "run",
+        "--host=$BOOTSTRAP_HOST",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+      ]
+    ports:
+      - "40400:40400"
+      - "40401:40401"
+      - "40402:40402"
+      - "40403:40403"
+      - "40404:40404"
+      - "40405:40405"
+    volumes:
+      - ./chain/data/bootstrap:/var/lib/rnode/data
+      - ./chain/genesis:/var/lib/rnode/genesis:ro
+      - ./chain/conf/bootstrap.conf:/var/lib/rnode/rnode.conf:ro
+      - ./chain/conf/bootstrap.certificate.pem:/var/lib/rnode/node.certificate.pem:ro
+      - ./chain/conf/bootstrap.node.pem:/var/lib/rnode/node.key.pem:ro
+      - ./chain/conf/logback.xml:/var/lib/rnode/logback.xml:ro
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.5
+    restart: unless-stopped
+
+  # ==========================================================================
+  # CHAIN: Validator 1
+  # ==========================================================================
+  validator1:
+    <<: *default-rnode
+    environment:
+      - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
+    container_name: validator1
+    command:
+      [
+        "run",
+        "--host=$VALIDATOR1_HOST",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+      ]
+    ports:
+      - "40410:40410"
+      - "40411:40411"
+      - "40412:40412"
+      - "40413:40413"
+      - "40414:40414"
+      - "40415:40415"
+    volumes:
+      - ./chain/data/validator1:/var/lib/rnode/data
+      - ./chain/genesis:/var/lib/rnode/genesis:ro
+      - ./chain/conf/validator1.conf:/var/lib/rnode/rnode.conf:ro
+      - ./chain/conf/validator1.certificate.pem:/var/lib/rnode/node.certificate.pem:ro
+      - ./chain/conf/validator1.node.pem:/var/lib/rnode/node.key.pem:ro
+      - ./chain/conf/logback.xml:/var/lib/rnode/logback.xml:ro
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.10
+    depends_on:
+      - bootstrap
+    restart: unless-stopped
+
+  # ==========================================================================
+  # CHAIN: Validator 2
+  # ==========================================================================
+  validator2:
+    <<: *default-rnode
+    environment:
+      - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
+    container_name: validator2
+    command:
+      [
+        "run",
+        "--host=$VALIDATOR2_HOST",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+      ]
+    ports:
+      - "40420:40420"
+      - "40421:40421"
+      - "40422:40422"
+      - "40423:40423"
+      - "40424:40424"
+      - "40425:40425"
+    volumes:
+      - ./chain/data/validator2:/var/lib/rnode/data
+      - ./chain/genesis:/var/lib/rnode/genesis:ro
+      - ./chain/conf/validator2.conf:/var/lib/rnode/rnode.conf:ro
+      - ./chain/conf/validator2.certificate.pem:/var/lib/rnode/node.certificate.pem:ro
+      - ./chain/conf/validator2.node.pem:/var/lib/rnode/node.key.pem:ro
+      - ./chain/conf/logback.xml:/var/lib/rnode/logback.xml:ro
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.20
+    depends_on:
+      - bootstrap
+      - validator1
+    restart: unless-stopped
+
+  # ==========================================================================
+  # CHAIN: Validator 3
+  # ==========================================================================
+  validator3:
+    <<: *default-rnode
+    environment:
+      - JAVA_OPTS=-Xss16m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      - SBT_OPTS=-Xmx4g -Xss2m -Dsbt.supershell=false
+    container_name: validator3
+    command:
+      [
+        "run",
+        "--host=$VALIDATOR3_HOST",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
+        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+      ]
+    ports:
+      - "40430:40430"
+      - "40431:40431"
+      - "40432:40432"
+      - "40433:40433"
+      - "40434:40434"
+      - "40435:40435"
+    volumes:
+      - ./chain/data/validator3:/var/lib/rnode/data
+      - ./chain/genesis:/var/lib/rnode/genesis:ro
+      - ./chain/conf/validator3.conf:/var/lib/rnode/rnode.conf:ro
+      - ./chain/conf/validator3.certificate.pem:/var/lib/rnode/node.certificate.pem:ro
+      - ./chain/conf/validator3.node.pem:/var/lib/rnode/node.key.pem:ro
+      - ./chain/conf/logback.xml:/var/lib/rnode/logback.xml:ro
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.30
+    depends_on:
+      - bootstrap
+      - validator1
+      - validator2
+    restart: unless-stopped
+
+  # ==========================================================================
+  #                       ### BACKEND SERVICES ###  
+  # ==========================================================================
+
+  # ==========================================================================
+  # BOT: BLOCK GENERATOR
+  # ==========================================================================
+  deployer-bot:
+    container_name: deployer-bot
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    env_file:
+      - ./bot/.env
+    networks:
+      - asi-chain-network
+    depends_on:
+      - validator3
+    restart: unless-stopped
+
+  # ==========================================================================
+  # FAUCET: Backend Service
+  # ==========================================================================
+  faucet-backend:
+    image: asi-launch-faucet-backend
+    container_name: asi-faucet-backend
+    build:
+      context: ./faucet/backend
+      dockerfile: Dockerfile
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.40
+    ports:
+      - "40470:40470"
+    env_file:
+      - ./faucet/backend/.env
+    depends_on:
+      - deployer-bot
+    restart: unless-stopped
+    
+
+  postgres:
+    image: postgres:14-alpine
+    container_name: asi-indexer-db
+    environment:
+      POSTGRES_DB: asichain
+      POSTGRES_USER: indexer
+      POSTGRES_PASSWORD: indexer_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./indexer/migrations/000_comprehensive_initial_schema.sql:/docker-entrypoint-initdb.d/000_comprehensive_initial_schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U indexer -d asichain" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.100
+
+  # Indexer: build from upstream (no need to clone asi-chain-indexer locally)
+  # Profile "delayed": starts 360s after validators (see launch.sh)
+  # platform: linux/amd64 required — upstream uses snetrc-linux-amd64 only; on Apple Silicon
+  # an arm64 image would lack /lib64/ld-linux-x86-64.so.2 for the amd64 binary.
+  indexer:
+    platform: linux/amd64
+    profiles:
+      - delayed
+    container_name: asi-indexer
+    build:
+      context: https://github.com/asi-alliance/asi-chain-indexer.git#main
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # ASI Node
+      NODE_URL: ${NODE_URL}
+      NODE_TIMEOUT: ${NODE_TIMEOUT:-30}
+      
+      # Rust CLI Configuration
+      RUST_CLI_PATH: ${RUST_CLI_PATH:-/usr/local/bin/snetrc}
+      NODE_HOST: ${NODE_HOST}
+      GRPC_PORT: ${GRPC_PORT}
+      HTTP_PORT: ${HTTP_PORT}
+
+      # Database
+      DATABASE_URL: ${DATABASE_URL:-postgresql://indexer:indexer_pass@postgres:5432/asichain}
+      DATABASE_POOL_SIZE: ${DATABASE_POOL_SIZE:-20}
+      
+      # Sync settings
+      SYNC_INTERVAL: ${SYNC_INTERVAL:-5}
+      BATCH_SIZE: ${BATCH_SIZE:-50}
+      START_FROM_BLOCK: ${START_FROM_BLOCK:-0}
+      
+      # Monitoring
+      MONITORING_PORT: 9090
+      
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_FORMAT: ${LOG_FORMAT:-json}
+      
+      # Features
+      ENABLE_ASI_TRANSFER_EXTRACTION: ${ENABLE_ASI_TRANSFER_EXTRACTION:-true}
+      ENABLE_METRICS: ${ENABLE_METRICS:-true}
+      ENABLE_HEALTH_CHECK: ${ENABLE_HEALTH_CHECK:-true}
+    ports:
+      - "9090:9090"  # Monitoring endpoints
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.120
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  metrics-cron:
+    image: alpine:3.19
+    container_name: asi-metrics-cron
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://indexer:indexer_pass@postgres:5432/asichain}
+      LOOKBACK_HOURS: 168
+      BUCKET_SECONDS: 300
+    volumes:
+      - ./indexer/scripts:/scripts:ro
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.115
+    restart: unless-stopped
+    entrypoint: >
+      sh -c '
+        set -e
+        echo "[metrics-cron] Container starting..."
+        apk update >/dev/null 2>&1
+        apk add --no-cache postgresql-client dcron >/dev/null 2>&1
+        echo "[metrics-cron] Installed psql & dcron."
+        echo "*/3 * * * * /scripts/refresh-network-metrics-once.sh >> /proc/1/fd/1 2>&1" | crontab -
+        echo "[metrics-cron] Current crontab:"
+        crontab -l
+        echo "[metrics-cron] Starting crond -f..."
+        crond -f -l 2
+      '
+
+  hasura:
+    image: hasura/graphql-engine:v2.36.0
+    container_name: asi-hasura
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database connection
+      HASURA_GRAPHQL_DATABASE_URL: postgresql://indexer:indexer_pass@postgres:5432/asichain
+      
+      # Console and admin
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET:-todo}
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "public"
+      
+      # Performance and real-time optimization
+      HASURA_GRAPHQL_LIVE_QUERIES_MULTIPLEXED_REFETCH_INTERVAL: "500"
+      HASURA_GRAPHQL_LIVE_QUERIES_MULTIPLEXED_BATCH_SIZE: "100"
+      HASURA_GRAPHQL_STREAMING_QUERIES_MULTIPLEXED_REFETCH_INTERVAL: "500"
+      HASURA_GRAPHQL_STREAMING_QUERIES_MULTIPLEXED_BATCH_SIZE: "100"
+      
+      # Security and features
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+      HASURA_GRAPHQL_CORS_DOMAIN: "*"
+      HASURA_GRAPHQL_WS_READ_COOKIE: "false"
+      HASURA_GRAPHQL_STRINGIFY_NUMERIC_TYPES: "true"
+    restart: unless-stopped
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.110
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================================
+  #                       ### FRONTEND SERVICE ###
+  # ==========================================================================
+
+  # ==========================================================================
+  # FAUCET: Frontend Service
+  # ==========================================================================
+  faucet-frontend:
+    image: asi-launch-faucet-frontend
+    container_name: asi-faucet-frontend
+    build:
+      context: ./faucet/frontend
+      dockerfile: Dockerfile
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.50
+    ports:
+      - "3001:5173"
+    env_file:
+      - ./faucet/frontend/.env
+    depends_on:
+      - faucet-backend
+    restart: unless-stopped
+
+  # ==========================================================================
+  # WALLET: Frontend
+  # ==========================================================================
+  wallet-frontend:
+    image: asi-launch-wallet-frontend
+    container_name: asi-wallet-frontend
+    build:
+      context: ./wallet
+      dockerfile: Dockerfile
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.80
+    ports:
+      - "8000:3000"
+    env_file:
+      - ./wallet/.env
+    depends_on:
+      - validator1
+      - validator2
+      - validator3
+    restart: unless-stopped
+
+  # ==========================================================================
+  # EXPLORER: Frontend Service (depends on indexer, same delayed profile)
+  # ==========================================================================
+  explorer-frontend:
+    profiles:
+      - delayed
+    container_name: explorer-frontend
+    build:
+      context: ./explorer
+      dockerfile: Dockerfile
+    env_file:
+      - ./explorer/.env
+    networks:
+      asi-chain-network:
+        ipv4_address: 172.25.0.90
+    ports:
+      - "4001:3000"
+    depends_on:
+      - indexer
+    restart: unless-stopped

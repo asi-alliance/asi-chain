@@ -1,0 +1,18 @@
+name: deployer
+
+services:
+  deployer-bot:
+    image: deployer-bot:latest
+    container_name: deployer-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    command: ["./bot.sh"]
+
+networks:
+  devnet:
+    external: true
+    name: devnet
