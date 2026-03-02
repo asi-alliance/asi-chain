@@ -1,6 +1,32 @@
 #!/bin/bash
 set -e
 
+echo "Welcome to the ASI:Chain Local Infrastructure!"
+echo "[INFO] Preparing environment files..."
+ENV_LOCAL_PATHS=(
+  ".env.local"
+  "bot/.env.local"
+  "explorer/.env.local"
+  "faucet/backend/.env.local"
+  "faucet/frontend/.env.local"
+  "wallet/.env.local"
+)
+
+for env_local in "${ENV_LOCAL_PATHS[@]}"; do
+  env_dir=$(dirname "$env_local")
+  env_file="${env_dir}/.env"
+
+  if [ -f "$env_local" ] && [ ! -f "$env_file" ]; then
+    cp "$env_local" "$env_file"
+    echo "   [SUCCESS]   $env_local -> $env_file"
+  elif [ -f "$env_local" ] && [ -f "$env_file" ]; then
+    echo "   [CHECKED] $env_file already exists, skipping $env_local"
+  else
+    echo "   [ERROR] $env_local not found"
+    exit 1
+  fi
+done
+
 COMPOSE_FILE="asi-local-launch.yml"
 INDEXER_DELAY=290
 CLEAN_DEPLOY=false
@@ -56,10 +82,7 @@ for var in "${REQUIRED_VARS[@]}"; do
   fi
 done
 
-echo "[SUCCESS] All required environment variables loaded from .env:"
-for var in "${REQUIRED_VARS[@]}"; do
-  echo "   • $var=${!var}"
-done
+echo "[SUCCESS] All required environment variables loaded from /local-launch/.env"
 
 echo ""
 echo "=== Phase 1: Chain, postgres, hasura, bot, faucet, wallet (without indexer) ==="
