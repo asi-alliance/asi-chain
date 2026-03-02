@@ -52,30 +52,27 @@ cd local-launch
 
 ## 1. Configure Environment Files
 
-Rename all .env.local files to .env in the following locations:
+The `launch.sh` script automatically generates the required `.env` files.
 
+After renaming or copying the template files (if applicable), the directory structure should look like this:
 
-`/.env.local`
-`bot/.env.local`
-`explorer/.env.local`
-`faucet/backend/.env.local`
-`faucet/frontend/.env.local`
-`wallet/.env.local`
-
-
-After renaming, the structure should be:
-
-`.env`
-`bot/.env`
-`explorer/.env`
-`faucet/backend/.env`
-`faucet/frontend/.env`
-`wallet/.env`
+.env
+bot/.env
+explorer/.env
+faucet/backend/.env
+faucet/frontend/.env
+wallet/.env
 
 
 ## 2. Start the Infrastructure
 
 **Recommended:** Use the unified launch script (starts chain first, then indexer after 360s delay):
+
+Make the script executable:
+
+```bash
+sudo chmod +x launch.sh
+```
 
 ```bash
 ./launch.sh
