@@ -1,6 +1,32 @@
 #!/bin/bash
 set -e
 
+echo "Welcome to the ASI:Chain Local Infrastructure!"
+echo "[INFO] Preparing environment files..."
+ENV_LOCAL_PATHS=(
+  ".env.local"
+  "bot/.env.local"
+  "explorer/.env.local"
+  "faucet/backend/.env.local"
+  "faucet/frontend/.env.local"
+  "wallet/.env.local"
+)
+
+for env_local in "${ENV_LOCAL_PATHS[@]}"; do
+  env_dir=$(dirname "$env_local")
+  env_file="${env_dir}/.env"
+
+  if [ -f "$env_local" ] && [ ! -f "$env_file" ]; then
+    cp "$env_local" "$env_file"
+    echo "   [SUCCESS]   $env_local -> $env_file"
+  elif [ -f "$env_local" ] && [ -f "$env_file" ]; then
+    echo "   [CHECKED] $env_file already exists, skipping $env_local"
+  else
+    echo "   [ERROR] $env_local not found"
+    exit 1
+  fi
+done
+
 COMPOSE_FILE="asi-local-launch.yml"
 INDEXER_DELAY=290
 CLEAN_DEPLOY=false
@@ -17,10 +43,10 @@ done
 
 # --- Optional clean deploy ---
 if [ "$CLEAN_DEPLOY" = true ]; then
-  echo "⚠️  Performing CLEAN deploy: stopping containers, removing volumes and images..."
+  echo "[WARNING]  Performing CLEAN deploy: stopping containers, removing volumes and images..."
   docker compose -f "$COMPOSE_FILE" down -v --remove-orphans || true
 
-  echo "🧹 Removing local images related to the project..."
+  echo "[INFO] Removing local images related to the project..."
   images=$(docker images --format "{{.Repository}}" | grep -E "indexer|hasura|postgres|asi-chain|asi-launch|explorer" || true)
   if [ -n "$images" ]; then
     echo "$images" | xargs docker rmi -f 2>/dev/null || true
@@ -28,7 +54,7 @@ if [ "$CLEAN_DEPLOY" = true ]; then
     echo "No project-related images found to remove."
   fi
 
-  echo "✅ Clean environment ready for fresh build."
+  echo "[SUCCESS] Clean environment ready for fresh build."
   echo
 fi
 
@@ -51,15 +77,12 @@ REQUIRED_VARS=(NODE_HOST HTTP_PORT GRPC_PORT HASURA_BASE HASURA_ADMIN_SECRET)
 
 for var in "${REQUIRED_VARS[@]}"; do
   if [ -z "${!var}" ]; then
-    echo "❌ ERROR: Environment variable $var is not set or empty in .env"
+    echo "[ERROR] Environment variable $var is not set or empty in .env"
     exit 1
   fi
 done
 
-echo "✅ All required environment variables loaded from .env:"
-for var in "${REQUIRED_VARS[@]}"; do
-  echo "   • $var=${!var}"
-done
+echo "[SUCCESS] All required environment variables loaded from /local-launch/.env"
 
 echo ""
 echo "=== Phase 1: Chain, postgres, hasura, bot, faucet, wallet (without indexer) ==="
@@ -90,13 +113,13 @@ while true; do
   done
 
   if [ "$all_ready" = true ]; then
-    echo "✅ Core services are up (Up/Exit 0)"
+    echo "[SUCCESS] Core services are up (Up/Exit 0)"
     break
   fi
 
   elapsed=$((elapsed + interval))
   if [ "$elapsed" -ge "$timeout" ]; then
-    echo "⚠️  Timeout waiting for services (>${timeout}s)"
+    echo "[WARNING] Timeout waiting for services (>${timeout}s)"
     docker compose -f "$COMPOSE_FILE" ps
     break
   fi
@@ -112,7 +135,7 @@ for i in $(seq $INDEXER_DELAY -10 10); do
   sleep 10
 done
 sleep $((INDEXER_DELAY % 10))
-echo "✅ Delay complete."
+echo "[OK] Delay complete."
 echo ""
 
 echo "=== Phase 2: Indexer + Explorer (delayed start) ==="
@@ -121,9 +144,9 @@ docker compose -f "$COMPOSE_FILE" --profile delayed up -d --build
 echo "--- Waiting for indexer to be up ---"
 sleep 15
 if docker compose -f "$COMPOSE_FILE" ps indexer 2>/dev/null | grep -q "Up"; then
-  echo "✅ Indexer is running"
+  echo "[SUCCESS] Indexer is running"
 else
-  echo "⚠️  Indexer may still be starting. Check: docker compose -f $COMPOSE_FILE ps"
+  echo "[WARNING] Indexer may still be starting. Check: docker compose -f $COMPOSE_FILE ps"
 fi
 
 echo ""
@@ -132,7 +155,7 @@ if [ -f "./scripts/full-init-hasura.sh" ]; then
   chmod +x ./scripts/full-init-hasura.sh
   ./scripts/full-init-hasura.sh
 else
-  echo "⚠️  ./scripts/full-init-hasura.sh not found, skipping."
+  echo "[WARNING] ./scripts/full-init-hasura.sh not found, skipping."
 fi
 
 echo ""
@@ -145,9 +168,9 @@ echo "Checking Hasura availability at $HASURA_URL..."
 status_code=$(curl -s -o /dev/null -w "%{http_code}" "$HASURA_URL" 2>/dev/null || echo "000")
 
 if echo "$status_code" | grep -qE "200|400"; then
-  echo "✅ Hasura endpoint reachable! (HTTP $status_code)"
+  echo "[SUCCESS] Hasura endpoint reachable! (HTTP $status_code)"
 else
-  echo "⚠️  Hasura not responding at $HASURA_URL (HTTP $status_code)"
+  echo "[WARNING] Hasura not responding at $HASURA_URL (HTTP $status_code)"
   echo "--- Done (skipping tests) ---"
   exit 0
 fi
@@ -163,12 +186,12 @@ select_resp=$(curl -s -X POST "$HASURA_URL" \
   -d "$PUBLIC_SELECT_QUERY")
 
 if echo "$select_resp" | grep -q '"errors"'; then
-  echo "❌ PUBLIC SELECT failed (expected success). Response:"
+  echo "[ERROR] PUBLIC SELECT failed (expected success). Response:"
   echo "$select_resp"
   exit 1
 fi
 
-echo "✅ PUBLIC SELECT passed."
+echo "[SUCCESS] PUBLIC SELECT passed."
 command -v jq >/dev/null 2>&1 && echo "$select_resp" | jq . || echo "$select_resp"
 
 # ------------------------------------------------------------
@@ -182,10 +205,10 @@ agg_resp=$(curl -s -X POST "$HASURA_URL" \
   -d "$PUBLIC_AGG_QUERY")
 
 if echo "$agg_resp" | grep -q '"errors"'; then
-  echo "✅ PUBLIC AGGREGATE correctly rejected."
+  echo "[SUCCESS] PUBLIC AGGREGATE correctly rejected."
   command -v jq >/dev/null 2>&1 && echo "$agg_resp" | jq . || echo "$agg_resp"
 else
-  echo "❌ PUBLIC AGGREGATE unexpectedly succeeded (expected errors). Response:"
+  echo "[ERROR] PUBLIC AGGREGATE unexpectedly succeeded (expected errors). Response:"
   echo "$agg_resp"
   exit 1
 fi
