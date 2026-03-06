@@ -130,8 +130,7 @@ Wallet → http://localhost:8000/
 docker stop $(docker ps -aq) && docker rm $(docker ps -aq)
 ```
 
-Delete chain data folder(always, when you restart the chain):
-
+## Clean the folder with blockchain data in <YOUR_PROJECT_PATH>/asi-chain/local-launch/chain/data
 
 ```bash
 rm -rf <path-to-repo>/asi-chain/local-launch/chain/data
