@@ -1,4 +1,4 @@
 [submodule "node"]
 	path = node
-	url = https://github.com/singnet/f1r3fly-node.git
+	url = https://github.com/asi-alliance/asi-chain-node.git
 	branch = ticker_rename_applied
