@@ -425,7 +425,7 @@ docker network inspect devnet
 
 Verify node is synchronized:
 ```bash
-curl http://54.235.138.68:40403/api/last-finalized-block
+curl http://52.45.73.187:40403/api/last-finalized-block
 ```
 
 Check if validators are active:

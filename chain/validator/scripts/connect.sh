@@ -8,10 +8,8 @@ VALIDATOR_CHECK_DELAY=60
 
 cd /app/rust-client
 
-# Get bootstrap host from bootstrap url
-BOOTSTRAP_HOST=$(echo "$BOOTSTRAP" | cut -d"@" -f2 | cut -d"?" -f1)
-echo "Bootstrap API: $BOOTSTRAP_HOST:$BOOTSTRAP_PUBLIC_GRPC_PORT"
-echo "Observer API: $OBSERVER_HOST:$OBSERVER_INTERNAL_GRPC_PORT"
+echo "Executor Node API: $EXEC_NODE_HOST:$EXEC_NODE_GRPC_PORT"
+echo "Observer API: $OBSERVER_HOST:$OBSERVER_GRPC_PORT"
 
 # Define function to check validator bonding status
 is_validator_bonded() {
@@ -81,7 +79,7 @@ if is_validator_bonded; then
 else
   echo "Bonding Validator to the network"
   {
-    cargo run -q -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$BOOTSTRAP_HOST" --grpc-port "$BOOTSTRAP_GRPC_PORT" --http-port "$BOOTSTRAP_HTTP_PORT"
+    cargo run -q -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$EXEC_NODE_HOST" --grpc-port "$EXEC_NODE_GRPC_PORT" --http-port "$EXEC_NODE_HTTP_PORT"
   } || {
     echo "Failed to bond validator"
     exit 1
