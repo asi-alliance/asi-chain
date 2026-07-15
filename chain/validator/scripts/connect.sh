@@ -6,14 +6,14 @@ BALANCE_REQUEST_DELAY=1
 VALIDATOR_CHECK_LIMIT=10
 VALIDATOR_CHECK_DELAY=60
 
-cd /app/rust-client
+cd /app/asi-chain-client
 
 echo "Executor Node API: $EXEC_NODE_HOST:$EXEC_NODE_GRPC_PORT"
 echo "Observer API: $OBSERVER_HOST:$OBSERVER_GRPC_PORT"
 
 # Define function to check validator bonding status
 is_validator_bonded() {
-  local CMD_OUT=$(cargo run -q -- validator-status -k "$VALIDATOR_PUBLIC_KEY" -H "$OBSERVER_HOST" --grpc-port "$OBSERVER_GRPC_PORT" --http-port "$OBSERVER_HTTP_PORT")
+  local CMD_OUT=$(cargo run -- validator-status -k "$VALIDATOR_PUBLIC_KEY" -H "$OBSERVER_HOST" --grpc-port "$OBSERVER_GRPC_PORT" --http-port "$OBSERVER_HTTP_PORT")
   if echo "$CMD_OUT" | grep "Bonded:" | grep -q "Yes" && \
      echo "$CMD_OUT" | grep "Active:" | grep -q "Yes"; then
     echo "$CMD_OUT"
@@ -79,7 +79,7 @@ if is_validator_bonded; then
 else
   echo "Bonding Validator to the network"
   {
-    cargo run -q -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$EXEC_NODE_HOST" --grpc-port "$EXEC_NODE_GRPC_PORT" --http-port "$EXEC_NODE_HTTP_PORT"
+    cargo run -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$EXEC_NODE_HOST" --grpc-port "$EXEC_NODE_GRPC_PORT" --http-port "$EXEC_NODE_HTTP_PORT"
   } || {
     echo "Failed to bond validator"
     exit 1

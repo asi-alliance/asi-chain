@@ -207,8 +207,9 @@ Verify your validator can submit transactions to the network:
 
 1. **Clone the Rust client:**
 ```bash
-git clone https://github.com/singnet/rust-client
-cd rust-client
+git clone https://github.com/asi-alliance/asi-chain-client
+cd asi-chain-client
+git checkout asi-main-scala
 ```
 
 2. **Deploy a test transaction:**

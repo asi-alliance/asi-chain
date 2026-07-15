@@ -16,9 +16,9 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-RUN ["git", "clone", "https://github.com/singnet/rust-client.git"]
+RUN ["git", "clone", "-b", "asi-main-scala", "https://github.com/asi-alliance/asi-chain-client.git"]
 
-WORKDIR /app/rust-client
+WORKDIR /app/asi-chain-client
 RUN ["cargo", "build", "--release"]
 WORKDIR /app
 

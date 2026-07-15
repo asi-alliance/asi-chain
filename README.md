@@ -293,7 +293,7 @@ asi-chain/
 
 **Repositories:**
 - **Core:** https://github.com/asi-alliance/asi-chain
-- **Rust Client:** https://github.com/singnet/rust-client
+- **Rust Client:** https://github.com/asi-alliance/asi-chain-client (`asi-main-scala` branch)
 - **Block Explorer:** https://github.com/asi-alliance/asi-chain-explorer
 - **Web Wallet:** https://github.com/asi-alliance/asi-chain-wallet
 - **Faucet:** https://github.com/asi-alliance/asi-chain-faucet

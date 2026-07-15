@@ -67,8 +67,9 @@ git submodule update --init --recursive
 # Clone CLI tools (from asi-chain root directory)
 mkdir -p cli
 cd cli
-git clone https://github.com/singnet/rust-client
-cd rust-client/node-cli
+git clone https://github.com/asi-alliance/asi-chain-client
+cd asi-chain-client
+git checkout asi-main-scala
 
 # Test CLI is working
 cargo run --

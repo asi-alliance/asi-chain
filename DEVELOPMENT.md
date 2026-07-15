@@ -216,8 +216,9 @@ cd ..
 git submodule update --init --recursive
 
 # Clone CLI repository
-git clone https://github.com/singnet/rust-client cli
+git clone https://github.com/asi-alliance/asi-chain-client cli
 cd cli
+git checkout asi-main-scala
 ```
 
 ### Step 2: Build Components
