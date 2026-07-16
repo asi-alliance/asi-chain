@@ -19,7 +19,7 @@ networks:
         - subnet: 172.25.0.0/24
 
 x-rnode: &default-rnode
-  image: public.ecr.aws/f6y9h6x4/asi-chain/node:seqNumFix
+  image: public.ecr.aws/f6y9h6x4/asi-chain/node:latest
   user: root
   networks:
     - asi-chain-network

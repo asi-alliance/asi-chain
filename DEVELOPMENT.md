@@ -216,8 +216,9 @@ cd ..
 git submodule update --init --recursive
 
 # Clone CLI repository
-git clone https://github.com/singnet/rust-client cli
+git clone https://github.com/asi-alliance/asi-chain-client cli
 cd cli
+git checkout asi-main-scala
 ```
 
 ### Step 2: Build Components
@@ -425,7 +426,7 @@ docker network inspect devnet
 
 Verify node is synchronized:
 ```bash
-curl http://54.235.138.68:40403/api/last-finalized-block
+curl http://52.45.73.187:40403/api/last-finalized-block
 ```
 
 Check if validators are active:

@@ -67,8 +67,9 @@ git submodule update --init --recursive
 # Clone CLI tools (from asi-chain root directory)
 mkdir -p cli
 cd cli
-git clone https://github.com/singnet/rust-client
-cd rust-client/node-cli
+git clone https://github.com/asi-alliance/asi-chain-client
+cd asi-chain-client
+git checkout asi-main-scala
 
 # Test CLI is working
 cargo run --
@@ -104,6 +105,11 @@ docker compose -f devnet-observer/observer.yml up -d
 
 ### Launch one more validator.
 
+For external validators, use the dedicated setup guide:
+
+**For Complete Instructions:**
+See [chain/validator/README.md](validator/README.md)
+
 #### Create bond (stake)
 
 Return to directory with CLI
@@ -129,39 +135,23 @@ Deploy bond contract with validator4 private key to bootsrap node
 cargo run -- bond-validator --private-key <PRIVATE KEY>
 ```
 
-We deployed some contracts to other validators:
+2. **Configure Environment:**
+   ```bash
+   cp conf/validator.env .env
+   # Edit .env with your validator settings:
+   # - VALIDATOR_PRIVATE_KEY, VALIDATOR_PUBLIC_KEY, VALIDATOR_ADDRESS
+   # - EXEC_NODE_HOST (executor node for bonding)
+   # - VALIDATOR_HOST (your validator's host)
+   ```
 
-```bash
-cargo run -- deploy -f ../rholang/examples/stdout.rho -p 40412
-cargo run -- deploy -f ../rholang/examples/stdout.rho -p 40422
-```
+3. **Start Validator:**
+   ```bash
+   docker compose -f validator.yml up -d
+   ```
+   The connector utility will automatically bond your validator to the network.
 
-And propose new block with our bond (stake):
-
-```bash
-cargo run -- propose
-```
-
-Checked after some time created block:
-
-```bash
-cargo run -- is-finalized -b <block_hash>
-```
-
-We check that bonds after some time.  Must be run against observer node. Should now see 5 bonds.
-
-```bash
-cargo run -- bonds -p 40402
-```
-
-Last step - launch one more validator in separate terminal:
-
-```bash
-# From asi-chain root directory
-cd chain/validator
-
-# Follow the external validator setup guide
-# See: chain/validator/README.md
-```
+4. **Verify Synchronization:**
+   - Check your validator: `http://<YOUR_VALIDATOR_HOST>:40443/api/last-finalized-block`
+   - Compare with observer: `http://<OBSERVER_HOST>:<OBSERVER_HTTP_PORT>/api/last-finalized-block`
 
 For complete external validator setup instructions, see [chain/validator/README.md](validator/README.md).

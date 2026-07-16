@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 
 RUN mkdir -p /out \
   && curl -fsSL -o /out/snetrc \
-    "https://github.com/singnet/rust-client/releases/download/${RUST_CLIENT_VERSION}/snetrc-linux-amd64-${RUST_CLIENT_VERSION}" \
+    "https://github.com/asi-alliance/asi-chain-client/releases/download/${RUST_CLIENT_VERSION}/snetrc-linux-amd64-${RUST_CLIENT_VERSION}" \
   && chmod +x /out/snetrc
 
 

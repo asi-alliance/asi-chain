@@ -149,10 +149,12 @@ docker compose -f .\validator.yml up -d
 ```
 
 This starts two services:
-1. **connector** — A utility container that sends the bonding transaction to register your validator (runs once and exits after successful bonding)
+1. **connector** — An utility container that sends the bonding transaction to register your validator (runs once and exits after successful bonding)
 2. **validator** — Runs the validator node
 
 The `-d` flag runs services in detached mode.
+
+**Note:** The connector utility sends bonding transactions to the executor node (using `EXEC_NODE_HOST`, `EXEC_NODE_GRPC_PORT` and `EXEC_NODE_HTTP_PORT`)
 
 ### Alternative: Manual Bonding
 
@@ -182,7 +184,7 @@ docker compose -f ./validator.yml up -d
 
 1. **Check the observer's latest finalized block:**
    ```
-   http://54.235.138.68:40403/api/last-finalized-block
+   http://52.45.73.187:40403/api/last-finalized-block
    ```
    If the response contains at least one block, the network is operational.
 
@@ -205,8 +207,9 @@ Verify your validator can submit transactions to the network:
 
 1. **Clone the Rust client:**
 ```bash
-git clone https://github.com/singnet/rust-client
-cd rust-client
+git clone https://github.com/asi-alliance/asi-chain-client
+cd asi-chain-client
+git checkout asi-main-scala
 ```
 
 2. **Deploy a test transaction:**
@@ -283,17 +286,18 @@ The validator uses the following ports:
 ### Key Parameters in validator.env
 
 **Chain Config:**
-- `BOOTSTRAP` — Bootstrap node connection string
-- `OBSERVER_HOST` — Observer node host IP address
+- `BOOTSTRAP` — Bootstrap node connection string (used by validator to join network)
+- `OBSERVER_HOST` — Observer node host IP address (used to check validator bonding status)
 - `FAUCET_API_URL` — Testnet faucet for automatic funding
-- `BOOTSTRAP_GRPC_PORT` — Bootstrap node gRPC port
-- `BOOTSTRAP_HTTP_PORT` — Bootstrap node HTTP port
+- `EXEC_NODE_HOST` — Executor node host IP address (used for bonding transaction via connector utility)
+- `EXEC_NODE_GRPC_PORT` — Executor node gRPC port (used for bonding transaction)
+- `EXEC_NODE_HTTP_PORT` — Executor node HTTP port (used for bonding transaction)
 - `OBSERVER_GRPC_PORT` — Observer node gRPC port
 - `OBSERVER_HTTP_PORT` — Observer node HTTP port
 - `STAKE` — Amount to stake when bonding
 
 **Validator Config:**
-- `VALIDATOR_HOST` — Validator's network host
+- `VALIDATOR_HOST` — Your validator's network host (used by your validator node for network communication)
 - `VALIDATOR_PRIVATE_KEY` — Private key for validator
 - `VALIDATOR_PUBLIC_KEY` — Public key for validator
 - `VALIDATOR_ADDRESS` — Validator address
@@ -302,7 +306,7 @@ The validator uses the following ports:
 
 - **Bond Validator Node:** `rnode://0d1312b556db1d3fa4745fd88c29f8e15095621e@54.152.57.201?protocol=40400&discovery=40404`
 - **Bootstrap HTTP:** http://54.152.57.201:40403
-- **Observer HTTP:** http://54.235.138.68:40403
-- **Observer API Example:** http://54.235.138.68:40403/api/last-finalized-block
+- **Observer HTTP:** http://52.45.73.187:40403
+- **Observer API Example:** http://52.45.73.187:40403/api/last-finalized-block
 - **Faucet API:** https://ffyp8igwwc.execute-api.us-east-1.amazonaws.com
 - **Repository:** [ASI Chain - External Validator](https://github.com/asi-alliance/asi-chain/chain/validator)

@@ -286,14 +286,14 @@ asi-chain/
 **Network Endpoints:**
 - **Bootstrap Node:** `rnode://2843a0bed9dcc8616d711f0be25d775a87bce831@34.196.119.4?protocol=40400&discovery=40404`
 - **Bootstrap HTTP:** http://34.196.119.4:40403
-- **Observer HTTP:** http://54.235.138.68:40403
+- **Observer HTTP:** http://52.45.73.187:40403
 
 > [!NOTE]
 > Bootstrap for External Nodes is a Validator 1 of the Genesis Shard
 
 **Repositories:**
 - **Core:** https://github.com/asi-alliance/asi-chain
-- **Rust Client:** https://github.com/singnet/rust-client
+- **Rust Client:** https://github.com/asi-alliance/asi-chain-client (`asi-main-scala` branch)
 - **Block Explorer:** https://github.com/asi-alliance/asi-chain-explorer
 - **Web Wallet:** https://github.com/asi-alliance/asi-chain-wallet
 - **Faucet:** https://github.com/asi-alliance/asi-chain-faucet
