@@ -84,7 +84,7 @@ Base image: `rust:slim`
 
 **Build process:**
 1. Install dependencies (make, git, curl, protobuf-compiler, jq)
-2. Clone Rust client from https://github.com/singnet/rust-client.git
+2. Clone Rust client from https://github.com/asi-alliance/asi-chain-client. Switch to `asi-main-scala` branch.
 3. Build Rust client with Cargo
 4. Copy deployment script `bot.sh`
 
@@ -280,5 +280,5 @@ VALIDATOR_PORTS=40412,40422,40432
 - [Main README](../README.md) - Project overview
 
 **External Resources:**
-- **Rust Client:** https://github.com/singnet/rust-client
+- **Rust Client:** https://github.com/asi-alliance/asi-chain-client
 - **ASI Chain Docs:** https://docs.asichain.io

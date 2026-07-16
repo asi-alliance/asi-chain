@@ -30,7 +30,7 @@ These parameters define the network connection settings and should not be change
 
 **OBSERVER_HOST**
 - Description: Observer node's host IP address for blockchain queries
-- Default: `54.235.138.68`
+- Default: `52.45.73.187`
 
 **FAUCET_API_URL**
 - Description: API endpoint for testnet faucet service

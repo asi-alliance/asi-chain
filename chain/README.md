@@ -112,10 +112,15 @@ External validators can join the existing network after genesis.
    ```
 
 5. **Verify Synchronization**
-   - Check local finalized block: `http://localhost:40443/api/last-finalized-block`
-   - Compare with network: `http://54.152.57.201:40453/api/last-finalized-block`
+   - Check local finalized block: `http://<VALIDATOR_HOST>:<VALIDATOR_HTTTP_PORT>/api/last-finalized-block`
+   - Compare with network: `http://<OBSERVER_HOST>:<OBSERVER_HTTP_PORT>/api/last-finalized-block`
 
 For detailed instructions and troubleshooting, see [validator/README.md](validator/README.md).
+
+**Important Note:** When bonding your external validator:
+- The connector utility sends bonding transactions to the **executor node** (configured via `EXEC_NODE_HOST`, `EXEC_NODE_GRPC_PORT`, and `EXEC_NODE_HTTP_PORT`)
+- Your validator node communicates with the bootstrap node via the `BOOTSTRAP` parameter for network participation
+- The observer node is used only to provide data from blockchain
 
 ---
 
@@ -124,7 +129,7 @@ For detailed instructions and troubleshooting, see [validator/README.md](validat
 **Official DevNet:**
 - **Bootstrap Node:** `rnode://0d1312b556db1d3fa4745fd88c29f8e15095621e@54.152.57.201?protocol=40400&discovery=40404`
 - **Bootstrap HTTP:** http://54.152.57.201:40403
-- **Observer HTTP:** http://54.235.138.68:40403
+- **Observer HTTP:** http://52.45.73.187:40403
 
 **Documentation Portal:**
 - **Main:** https://docs.asichain.io
