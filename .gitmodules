@@ -1,4 +1,3 @@
 [submodule "node"]
 	path = node
 	url = https://github.com/asi-alliance/asi-chain-node.git
-	branch = ticker_rename_applied
