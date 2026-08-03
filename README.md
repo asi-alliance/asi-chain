@@ -301,6 +301,15 @@ asi-chain/
 
 ---
 
+## Known Issues
+
+### Node Version Reporting via API
+
+> [!WARNING]
+> The `/api/status` endpoint may return a parent commit hash instead of the actual commit the node was built from. This is a known issue in the upstream node implementation where the build metadata resolution picks an ancestor commit rather than the current HEAD. The node itself is running the correct codebase — only the reported commit hash is inaccurate. This is being tracked and will be resolved in a future release.
+
+---
+
 ## Contributing
 
 Known issues and bugs are tracked in the [Issues](https://github.com/asi-alliance/asi-chain/issues) section.  
