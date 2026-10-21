@@ -79,7 +79,7 @@ if is_validator_bonded; then
 else
   echo "Bonding Validator to the network"
   {
-    cargo run -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$EXEC_NODE_HOST" --grpc-port "$EXEC_NODE_GRPC_PORT" --http-port "$EXEC_NODE_HTTP_PORT"
+    cargo run --quiet -- bond-validator --stake "$STAKE" --private-key "$VALIDATOR_PRIVATE_KEY" -H "$EXEC_NODE_HOST" --grpc-port "$EXEC_NODE_GRPC_PORT" --http-port "$EXEC_NODE_HTTP_PORT"
   } || {
     echo "Failed to bond validator"
     exit 1
