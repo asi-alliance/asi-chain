@@ -1,6 +1,6 @@
 services:
   readonly:
-    image: amamata/asi-scala-node:latest
+    image: ${F1R3FLY_RUST_IMAGE:-f1r3flyindustries/f1r3fly-rust:latest}
     user: root
     networks:
       - devnet
@@ -9,7 +9,8 @@ services:
     - run
     - --host=$OBSERVER_HOST
     - --bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404
-    - -Dlogback.configurationFile=/var/lib/rnode/logback.xml
+    # Disabled for the cost-accounted node: the Rust node rejects this JVM argument.
+    # - -Dlogback.configurationFile=/var/lib/rnode/logback.xml
     ports:
       - "40400:40400"
       - "40401:40401"

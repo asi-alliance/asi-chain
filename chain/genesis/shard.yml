@@ -1,5 +1,5 @@
 x-rnode: &default-rnode
-  image: amamata/asi-scala-node:latest
+  image: ${F1R3FLY_RUST_IMAGE:-f1r3flyindustries/f1r3fly-rust:latest}
   user: root
   networks:
     - devnet
@@ -14,8 +14,9 @@ services:
     command:
       [
         "run",
-        "--host=$BOOTSTRAP_HOST",
-        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+        "--host=$BOOTSTRAP_HOST"
+        # Disabled for the cost-accounted node: the Rust node rejects this JVM argument.
+        # "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
       ]
     ports:
       - "40400:40400"
@@ -46,8 +47,15 @@ services:
       [
         "run",
         "--host=$VALIDATOR1_HOST",
-        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
-        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+        "--protocol-port=40410",
+        "--api-port-grpc-external=40411",
+        "--api-port-grpc-internal=40412",
+        "--api-port-http=40413",
+        "--discovery-port=40414",
+        "--api-port-admin-http=40415",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404"
+        # Disabled for the cost-accounted node: the Rust node rejects this JVM argument.
+        # "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
       ]
     ports:
       - "40410:40410"
@@ -79,8 +87,15 @@ services:
       [
         "run",
         "--host=$VALIDATOR2_HOST",
-        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
-        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+        "--protocol-port=40420",
+        "--api-port-grpc-external=40421",
+        "--api-port-grpc-internal=40422",
+        "--api-port-http=40423",
+        "--discovery-port=40424",
+        "--api-port-admin-http=40425",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404"
+        # Disabled for the cost-accounted node: the Rust node rejects this JVM argument.
+        # "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
       ]
     ports:
       - "40420:40420"
@@ -113,8 +128,15 @@ services:
       [
         "run",
         "--host=$VALIDATOR3_HOST",
-        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404",
-        "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
+        "--protocol-port=40430",
+        "--api-port-grpc-external=40431",
+        "--api-port-grpc-internal=40432",
+        "--api-port-http=40433",
+        "--discovery-port=40434",
+        "--api-port-admin-http=40435",
+        "--bootstrap=rnode://$BOOTSTRAP_NODE_ID@$BOOTSTRAP_HOST?protocol=40400&discovery=40404"
+        # Disabled for the cost-accounted node: the Rust node rejects this JVM argument.
+        # "-Dlogback.configurationFile=/var/lib/rnode/logback.xml"
       ]
     ports:
       - "40430:40430"
