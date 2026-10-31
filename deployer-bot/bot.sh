@@ -15,7 +15,6 @@ echo "======== Deployer-bot: Configuration ========="
 echo "Ports: ${ports[@]}"
 echo "Hosts: ${hosts[@]}"
 echo "Nodes: ${nodes[@]}"
-echo "Private key: ${private_key}"
 echo "Delay after deploy: ${DELAY_AFTER_DEPLOY} seconds"
 echo "Delay after propose: ${DELAY_AFTER_PROPOSE} seconds"
 echo "=============================================="
@@ -35,7 +34,7 @@ while true; do
     echo "Working with $node: (node: $i, host: $host, port: $port)"
     echo "=========================================================="
     # ----------------- DEPLOY ———————————————— #
-    deploy_out=$(cargo run -- deploy -f ./rho_examples/stdout.rho --private-key $private_key -H $host --grpc-port $port 2>&1)
+    deploy_out=$(cargo run --quiet -- deploy -f ./rho_examples/stdout.rho --private-key $private_key -H $host --grpc-port $port 2>&1)
     deploy_status=$?
     printf '%s' "$deploy_out" | tee -a "$LOGFILE"
     [[ $deploy_out == *$'\n' ]] || printf '\n' | tee -a "$LOGFILE"
@@ -48,7 +47,7 @@ while true; do
     echo | tee -a "$LOGFILE"
     sleep $DELAY_AFTER_DEPLOY
     # ----------------- PROPOSE ———————————————— #
-    propose_out=$(cargo run -- propose --private-key $private_key -H $host --grpc-port $port 2>&1)
+    propose_out=$(cargo run --quiet -- propose --private-key $private_key -H $host --grpc-port $port 2>&1)
     propose_status=$?
     printf '%s' "$propose_out" | tee -a "$LOGFILE"
     [[ $propose_out == *$'\n' ]] || printf '\n' | tee -a "$LOGFILE"

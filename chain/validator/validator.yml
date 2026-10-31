@@ -1,7 +1,7 @@
 name: validator
 
 x-rnode: &default-rnode
-  image: public.ecr.aws/f6y9h6x4/asi-chain/node:latest
+  image: ${F1R3FLY_RUST_IMAGE:-f1r3flyindustries/f1r3fly-rust:latest}
   user: root
   networks:
     - devnet

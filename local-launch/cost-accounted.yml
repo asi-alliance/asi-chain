@@ -1,0 +1,92 @@
+services:
+  validator1:
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:40413/api/ready"]
+  validator2:
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:40423/api/ready"]
+  validator3:
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:40433/api/ready"]
+  deployer-bot:
+    image: asi-local/deployer-bot:cost-accounted
+    build: !override
+      context: ./cost-accounted
+      dockerfile: client.Dockerfile
+      target: bot
+      additional_contexts:
+        client_source: ${ASI_CLIENT_SOURCE:-../../asi-chain-faucet/server/rust-client}
+        infra_source: ..
+    env_file: !override
+      - ./bot/.env.local
+  faucet-backend:
+    image: asi-local/faucet-backend:cost-accounted
+    build: !override
+      context: ../../asi-chain-faucet/server
+      dockerfile: Dockerfile
+    env_file: !override
+      - ./faucet/backend/.env.local
+  postgres:
+    volumes:
+      - ../../asi-chain-indexer/migrations/000_comprehensive_initial_schema.sql:/docker-entrypoint-initdb.d/000_comprehensive_initial_schema.sql:ro
+  indexer:
+    image: asi-local/indexer:cost-accounted
+    build: !override
+      context: ../../asi-chain-indexer
+      dockerfile: Dockerfile
+  faucet-frontend:
+    image: asi-local/faucet-frontend:cost-accounted
+    build: !override
+      context: ../../asi-chain-faucet/web
+      dockerfile: ../../asi-chain/local-launch/cost-accounted/web.Dockerfile
+      target: faucet
+      additional_contexts:
+        infra_source: ..
+    env_file: !override
+      - ./faucet/frontend/.env.local
+  wallet-frontend:
+    image: asi-local/wallet:cost-accounted
+    build: !override
+      context: ../../asi-chain-wallet
+      dockerfile: ../asi-chain/local-launch/cost-accounted/web.Dockerfile
+      target: wallet
+      additional_contexts:
+        sdk_source: ../../asi-chain-wallet-sdk
+        infra_source: ..
+    env_file: !override
+      - ./wallet/.env.local
+  explorer-frontend:
+    image: asi-local/explorer:cost-accounted
+    build: !override
+      context: ../../asi-chain-explorer
+      dockerfile: ../asi-chain/local-launch/cost-accounted/web.Dockerfile
+      target: explorer
+      additional_contexts:
+        infra_source: ..
+    env_file: !override
+      - ./explorer/.env.local
+  connector:
+    profiles:
+      - connector
+    image: asi-local/connector:cost-accounted
+    build:
+      context: ./cost-accounted
+      dockerfile: client.Dockerfile
+      target: connector
+      additional_contexts:
+        client_source: ${ASI_CLIENT_SOURCE:-../../asi-chain-faucet/server/rust-client}
+        infra_source: ..
+    networks:
+      - asi-chain-network
+    environment:
+      - VALIDATOR_PUBLIC_KEY
+      - VALIDATOR_PRIVATE_KEY
+      - VALIDATOR_ADDRESS
+      - STAKE
+      - FAUCET_API_URL
+      - EXEC_NODE_HOST
+      - EXEC_NODE_GRPC_PORT
+      - EXEC_NODE_HTTP_PORT
+      - OBSERVER_HOST
+      - OBSERVER_GRPC_PORT
+      - OBSERVER_HTTP_PORT
